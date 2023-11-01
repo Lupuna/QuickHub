@@ -37,10 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.apps.ProjectConfig',
-    'django.apps.EmployeeConfig',
-    'django.apps.CompanyConfig',
-    'django.apps.ChatConfig',
+    'django.apps.TeamConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +51,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'QuickHub.urls'
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
 
 TEMPLATES = [
     {
