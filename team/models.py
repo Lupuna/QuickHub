@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 
 class Employee(models.Model):
@@ -12,7 +11,7 @@ class Employee(models.Model):
 
     class Meta:
         ordering = ['name']
-        unique_together = ('name', 'email')  # заменить email на password
+        unique_together = ['name', 'email']  # заменить email на password
 
 
 class Company(models.Model):
@@ -56,8 +55,33 @@ class Project(models.Model):
         ordering = ['title']
 
 
-class Task(models.Model):
-    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+class EmployeeCompany(models.Model):
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    # возможно models.SET_NULL не лучшая идея
+    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL)
+    json_with_employee_info = models.JSONField(null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['company_id', 'employee_id'])
+        ]
+
+
+class Chat(models.Model):
+    title = models.CharField(max_length=250)
+    employees = models.ManyToManyField(Employee)
+
+    class Meta:
+        ordering = ['title']
+
+
+class Message(models.Model):
+    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    last_update = models.DateTimeField(auto_now=True)
+    is_read = models.BooleanField(default=False)
+    json_with_content = models.JSONField(null=True)
     
 
 
