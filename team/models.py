@@ -1,17 +1,17 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
-class Employee(models.Model):
+class Employee(AbstractUser):
     name = models.CharField(max_length=40)
     slug = models.SlugField(max_length=40)
     email = models.EmailField(unique=True)
-    #   поле password добавить позже
     json_with_optional_info = models.JSONField(null=True)
     json_with_settings_info = models.JSONField(null=True)
 
     class Meta:
         ordering = ['name']
-        unique_together = ['name', 'email']  # заменить email на password
+        unique_together = ['name', 'password']
 
 
 class Company(models.Model):
