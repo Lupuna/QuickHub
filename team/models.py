@@ -1,60 +1,41 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 
 
-def base_employee_optional():
-    return {
-        'city': '',
-        'birthday': '',
-        'LinksResources': [],
-        'telephone': '',
-    }
-
-
-def base_employee_settings():
-    return {}
-
-
-def base_company_department():
-    return {}
-
-
-def base_company_settings():
-    return {}
-
-
-def base_employeecompany_info():
-    return {}
-
-
-def base_message_info():
-    return {
-        'text': '',
-        'video': '',
-        'voice': '',
-        'photo': '',
-    }
-
-
-class Employee(AbstractUser):
+class Employee(models.Model):
     name = models.CharField(max_length=40)
     slug = models.SlugField(max_length=40)
     email = models.EmailField(unique=True)
-    json_with_optional_info = models.JSONField(default=base_employee_optional())
-    json_with_settings_info = models.JSONField(default=base_employee_settings())
+    password = models.CharField(max_length=40)
+    city = models.CharField(max_length=40, blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
+    telephone = models.CharField(max_length=40, blank=True, null=True)
+    json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['name']
         unique_together = ['name', 'password']
+
+    @property
+    def is_authenticated(self):
+        """Всегда возвращает True. Это способ узнать был ли пользователь аунтотефецирован"""
+        return True
+
+    def __str__(self):
+        return self.email
+
+
+class LinksResources(models.Model):
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    link = models.URLField(max_length=200)
 
 
 class Company(models.Model):
     title = models.CharField(max_length=250)
     owner_id = models.IntegerField(
         help_text='Тут будет храниться id создателя компании(т. е. того человека, который будет платить)')
-    json_with_department_info = models.JSONField(default=base_company_department())
-    json_with_settings_info = models.JSONField(default=base_company_settings())
+    json_with_department_info = models.JSONField(blank=True, default=dict)
+    json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
@@ -71,7 +52,7 @@ class Positions(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
     weight = models.SmallIntegerField(choices=Weight.choices, default=Weight.PARTIAL_ACCESS)
-    json_with_optional_info = models.JSONField(null=True)
+    json_with_optional_info = models.JSONField(blank=True, default=dict)
 
 
 class Project(models.Model):
@@ -84,7 +65,7 @@ class Project(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
     view_counter = models.IntegerField(choices=DisplayTypes.choices, default=DisplayTypes.NONE_DISPLAY)
-    json_info_with_access_level = models.JSONField(null=True)
+    json_info_with_access_level = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
@@ -95,7 +76,7 @@ class EmployeeCompany(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     # возможно models.SET_NULL не лучшая идея
     position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True)
-    json_with_employee_info = models.JSONField(default=base_employeecompany_info())
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         indexes = [
@@ -116,7 +97,7 @@ class Message(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     last_update = models.DateTimeField(auto_now=True)
     is_read = models.BooleanField(default=False)
-    json_with_content = models.JSONField(default=base_message_info())
+    json_with_content = models.JSONField(blank=True, default=dict)
 
 
 class Customization(models.Model):
@@ -128,12 +109,13 @@ class Customization(models.Model):
 
 class Task(models.Model):
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
-    counter_id = models.IntegerField(primary_key=True, validators=[MinValueValidator(project_id)])  # По этому полю будет происходить индексация на самом деле (реальное id)
+    counter_id = models.IntegerField(primary_key=True, validators=[
+        MinValueValidator(project_id)])  # По этому полю будет происходить индексация на самом деле (реальное id)
     title = models.CharField(max_length=40)
     parent_id = models.IntegerField()
     status = models.IntegerField(default=2)
-    json_with_employee_info = models.JSONField()
-    json_with_task_info = models.JSONField(blank=True)
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    json_with_task_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
@@ -143,7 +125,7 @@ class Subtasks(models.Model):
     title = models.CharField(max_length=40)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     status_yes_no = models.BooleanField(default=False)
-    json_with_subtask_info = models.JSONField(blank=True)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить
+    json_with_subtask_info = models.JSONField(blank=True, default=dict)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить
 
     class Meta:
         ordering = ['title']
@@ -158,15 +140,15 @@ class UserProject(models.Model):
 
 
 class UserProjectTime(models.Model):
-    json_with_time_and_name_info = models.JSONField()
+    json_with_time_and_name_info = models.JSONField(blank=True, default=dict)
 
 
 class UserProjectTask(models.Model):
     user_project_id = models.ForeignKey(UserProject, on_delete=models.CASCADE)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
-    task_personal_notes = models.JSONField(blank=True)
-    json_with_subtask_and_subtask_personal_not = models.JSONField(blank=True)
+    task_personal_notes = models.JSONField(blank=True, default=dict)
+    json_with_subtask_and_subtask_personal_not = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
