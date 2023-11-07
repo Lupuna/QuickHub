@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
 
 
 def base_employee_optional():
@@ -93,7 +94,7 @@ class EmployeeCompany(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     # возможно models.SET_NULL не лучшая идея
-    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL)
+    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True)
     json_with_employee_info = models.JSONField(default=base_employeecompany_info())
 
     class Meta:
@@ -116,3 +117,56 @@ class Message(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     is_read = models.BooleanField(default=False)
     json_with_content = models.JSONField(default=base_message_info())
+
+
+class Customization(models.Model):
+    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
+    color_scheme = models.CharField(max_length=40, default='')
+    font_size = models.CharField(max_length=40, default='')
+    background = models.CharField(max_length=40, default='')
+
+
+class Task(models.Model):
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+    counter_id = models.IntegerField(primary_key=True, validators=[MinValueValidator(project_id)])  # По этому полю будет происходить индексация на самом деле (реальное id)
+    title = models.CharField(max_length=40)
+    parent_id = models.IntegerField()
+    status = models.IntegerField(default=2)
+    json_with_employee_info = models.JSONField()
+    json_with_task_info = models.JSONField(blank=True)
+
+    class Meta:
+        ordering = ['title']
+
+
+class Subtasks(models.Model):
+    title = models.CharField(max_length=40)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    status_yes_no = models.BooleanField(default=False)
+    json_with_subtask_info = models.JSONField(blank=True)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить
+
+    class Meta:
+        ordering = ['title']
+
+
+class UserProject(models.Model):
+    title = models.IntegerField()
+    project_personal_notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['title']
+
+
+class UserProjectTime(models.Model):
+    json_with_time_and_name_info = models.JSONField()
+
+
+class UserProjectTask(models.Model):
+    user_project_id = models.ForeignKey(UserProject, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    title = models.CharField(max_length=40)
+    task_personal_notes = models.JSONField(blank=True)
+    json_with_subtask_and_subtask_personal_not = models.JSONField(blank=True)
+
+    class Meta:
+        ordering = ['title']
