@@ -30,8 +30,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(models.Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('project_id', 'counter_id', 'title')
-    list_display_links = ('counter_id', )
+    list_display = ('project_id', 'title')
 
 
 @admin.register(models.Subtasks)

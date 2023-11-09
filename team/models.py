@@ -108,17 +108,21 @@ class Customization(models.Model):
 
 
 class Task(models.Model):
+    class StatusType(models.IntegerChoices):
+        ACCEPTED = 1, 'Accepted'
+        WORK = 2, 'Work'
+        INSPECTION = 3, 'Inspection'
+        REVISION = 4, 'Revision'
+
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
-    counter_id = models.IntegerField(primary_key=True, validators=[
-        MinValueValidator(project_id)])  # По этому полю будет происходить индексация на самом деле (реальное id)
     title = models.CharField(max_length=40)
-    parent_id = models.IntegerField()
-    status = models.IntegerField(default=2)
+    parent_id = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
+    status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
     json_with_task_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
-        ordering = ['title']
+        ordering = ['project_id', 'title']
 
 
 class Subtasks(models.Model):
@@ -128,7 +132,7 @@ class Subtasks(models.Model):
     json_with_subtask_info = models.JSONField(blank=True, default=dict)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить
 
     class Meta:
-        ordering = ['title']
+        ordering = ['task_id', 'title']
 
 
 class UserProject(models.Model):
