@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator
 
 
 class Employee(models.Model):
@@ -41,6 +40,16 @@ class Company(models.Model):
         ordering = ['title']
 
 
+class Department(models.Model):
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    title = models.CharField(max_length=40)
+    supervisor = models.IntegerField()
+
+    class Meta:
+        ordering = ['company_id', 'title']
+
+
 class Positions(models.Model):
     # В бедующем его нужно будет заменить на Json файл с очень точной настройкой каждой должности,
     # но это уже после создания большей части функционала (это про weight)
@@ -75,7 +84,8 @@ class EmployeeCompany(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     # возможно models.SET_NULL не лучшая идея
-    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True)
+    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
+    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
