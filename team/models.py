@@ -1,24 +1,18 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Employee(models.Model):
+class Employee(AbstractUser):
     name = models.CharField(max_length=40)
-    slug = models.SlugField(max_length=40)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=40)
     city = models.CharField(max_length=40, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
     json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
-        ordering = ['name']
-        unique_together = ['name', 'password']
-
-    @property
-    def is_authenticated(self):
-        """Всегда возвращает True. Это способ узнать был ли пользователь аунтотефецирован"""
-        return True
+        ordering = ['username']
+        unique_together = ['password', 'username']
 
     def __str__(self):
         return self.email
@@ -42,7 +36,7 @@ class Company(models.Model):
 
 class Department(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=40)
     supervisor = models.IntegerField()
 
@@ -126,7 +120,7 @@ class Task(models.Model):
 
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
-    parent_id = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
+    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
     json_with_task_info = models.JSONField(blank=True, default=dict)
