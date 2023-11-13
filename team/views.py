@@ -19,5 +19,6 @@ def sign_up(request):
     return render(request, 'registration/sign_up.html', context)
 
 
+@login_required(login_url=reverse_lazy('team:login'))
 def homepage(request):
     return render(request, 'team/main_functionality/homepage.html')
