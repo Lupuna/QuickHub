@@ -3,8 +3,8 @@
 {%block title%} Log-in {%endblock%}
 {%block content%}
   <form action="{%url 'team:login'%}" method="post">
-    {{form.as_p}}
     {%csrf_token%}
+    {{form.as_p}}
     <button type="submit" value="login">Login</button>
   </form>
 {%endblock%}
