@@ -1,7 +1,121 @@
-{% extends 'team/base.html' %}
-
-{% block title %}HomePage{%endblock%}
-
-{%block content%}
-  <h1>Трум турум лайвхаки</h1>
-{%endblock%}
+<!DOCTYPE html>
+<html lang="en" class="html">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/header.css">
+	<link rel="stylesheet" href="css/style0.css">
+	<link rel="stylesheet" href="css/left_menu.css">
+	<link rel="stylesheet" href="css/main_part.css">
+	<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500&display=swap" rel="stylesheet">
+	<title>Document</title>
+</head>
+<body class="body">
+	<div class="wrapper">
+		<div class="header">
+			<div class="header_1">
+				<div class="btn_burger">
+					<button class="button_burger">
+						<img src="img/header/burger.svg" alt="">
+					</button>
+				</div>
+				<div class="logo_header_of_quickbub">
+					<img src="img/header/logo.svg" alt="">
+				</div>
+				<div class="name_header_of_quickhub">
+					QuickHub
+				</div>
+				<div class="edit_for_search_button closed_1">
+					<div class="edit_search_body">
+						<img src="img/header/header_search.svg" alt="">
+						<div class="line_edit_search">
+							<input type="text" class="search_of_header w50" 
+							placeholder="Поиск">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="header_2">
+				<div class="notifications_of_profile">
+					<button class="btn_notifications">
+						<img src="img/header/notifications.svg" alt="">
+					</button>
+				</div>
+				<div class="messages_of_profile">
+					<button class="btn_messages">
+						<img src="img/header/messages.svg" alt="">
+					</button>
+				</div>
+				<div class="profile_options_donw">
+					<div class="body_of_options_profile">
+						<div class="icon_of_profile_header">
+							<img src="img/header/icon_of_profile.svg" alt="">
+						</div>
+						<div class="name_of_person">
+							Алексей Симонов
+						</div>
+						<div class="button_options_down">
+							<button class="btn_down_options">
+								<img src="img/header/arrow_down.svg" alt="">
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="main">
+			<div class="left_menu _w200">
+				<nav class="sub_menu_left _w200">
+					<ul>
+						<li class="left_menu_item_body">
+							<button class="1">
+								<img src="img/left_menu/my_tasks.svg" alt="">
+								<span class="text_on_left_menu _show">
+									Мои задачи
+								</span>
+							</button>
+						</li>
+						<li class="left_menu_item_body">
+							<button class="2">
+								<img src="img/left_menu/projects.svg" alt="">
+								<span class="text_on_left_menu _show">
+									Проекты
+								</span>
+							</button>
+						</li>
+						<li class="left_menu_item_body">
+							<button class="3">
+								<img src="img/left_menu/companies.svg" alt="">
+								<span class="text_on_left_menu _show">
+									Компании
+								</span>
+							</button>
+						</li>
+						<li class="left_menu_item_body">
+							<button class="4">
+								<img src="img/left_menu/settings.svg" alt="">
+								<span class="text_on_left_menu _show">
+									Настройки
+								</span>
+							</button>
+						</li>
+						<li class="left_menu_item_body">
+							<button class="5">
+								<img src="img/left_menu/support.svg" alt="">
+								<span class="text_on_left_menu _show">
+									Поддержка
+								</span>
+							</button>
+						</li>
+					</ul>
+				</nav>
+			</div>
+			<div class="place_for_work">
+				
+			</div>
+		</div>
+	</div>
+	<script src="js/menu_left_hide.js"></script>
+	<script src="js/header_search.js"></script>
+</body>
+</html>
