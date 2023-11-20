@@ -8,3 +8,10 @@ class CustomUserCreationFrom(UserCreationForm):
     class Meta:
         model = models.Employee
         fields = ('name', 'username', 'email', 'password1', 'password2')
+
+
+class CompanyCreationForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Company
+        fields = ('title', )

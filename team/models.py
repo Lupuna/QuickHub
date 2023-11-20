@@ -27,11 +27,14 @@ class Company(models.Model):
     title = models.CharField(max_length=250)
     owner_id = models.IntegerField(
         help_text='Тут будет храниться id создателя компании(т. е. того человека, который будет платить)')
-    json_with_department_info = models.JSONField(blank=True, default=dict)
-    json_with_settings_info = models.JSONField(blank=True, default=dict)
+    # json_with_department_info = models.JSONField(blank=True, default=dict)
+    # json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
+
+    def __str__(self):
+        return f'{self.owner_id}, {self.title}'
 
 
 class Department(models.Model):
@@ -80,7 +83,7 @@ class EmployeeCompany(models.Model):
     # возможно models.SET_NULL не лучшая идея
     position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
     department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    # json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         indexes = [

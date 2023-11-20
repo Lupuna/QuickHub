@@ -46,3 +46,9 @@ class ChatAdmin(admin.ModelAdmin):
 @admin.register(models.Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'chat_id', 'employee_id')
+
+
+@admin.register(models.EmployeeCompany)
+class EmployeeCompanyAdmin(admin.ModelAdmin):
+    list_display = ('company_id', 'employee_id', 'position_id', 'department_id')
+
