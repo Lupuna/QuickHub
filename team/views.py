@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django .contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from . import forms, models
 
 
@@ -39,6 +40,27 @@ def create_company(request):
 
     context = {'form': form}
     return render(request, 'team/main_functionality/create_company.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def create_project(request, id):
+    try:
+        company_id = models.Company.objects.get(id=id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    if request.method == 'POST':
+        form = forms.ProjectCreationForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.project_creater = request.user.id
+            project.company_id = company_id
+            project.save()
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.ProjectCreationForm()
+
+    context = {'form': form}
+    return render(request, 'team/main_functionality/create_project.html', context)
 
 
 def add_new_employee(company_id, employee_id):

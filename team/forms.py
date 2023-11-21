@@ -15,3 +15,10 @@ class CompanyCreationForm(forms.ModelForm):
     class Meta:
         model = models.Company
         fields = ('title', )
+
+
+class ProjectCreationForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Project
+        fields = ('title', 'view_counter')

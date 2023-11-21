@@ -70,6 +70,7 @@ class Project(models.Model):
 
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
+    project_creater = models.IntegerField()
     view_counter = models.IntegerField(choices=DisplayTypes.choices, default=DisplayTypes.NONE_DISPLAY)
     json_info_with_access_level = models.JSONField(blank=True, default=dict)
 
