@@ -82,7 +82,6 @@ def create_task(request, company_id, project_id):
             task.project_id = project_id
             task.text = form.cleaned_data.get('text')
             task.title = form.cleaned_data.get('title')
-            # Нужно разобраться с системой наследования
     else:
         form = forms.TaskCreationForm(company_id, project_id.id)
 
