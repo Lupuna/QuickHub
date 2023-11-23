@@ -124,6 +124,7 @@ class Task(models.Model):
 
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
+    text = models.TextField(blank=True, null=True)
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
@@ -132,9 +133,13 @@ class Task(models.Model):
     class Meta:
         ordering = ['project_id', 'title']
 
+    def __str__(self):
+        return self.title
+
 
 class Subtasks(models.Model):
     title = models.CharField(max_length=40)
+    text = models.TextField(blank=True, null=True)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     status_yes_no = models.BooleanField(default=False)
     json_with_subtask_info = models.JSONField(blank=True, default=dict)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить

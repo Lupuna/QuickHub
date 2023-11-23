@@ -63,6 +63,33 @@ def create_project(request, id):
     return render(request, 'team/main_functionality/create_project.html', context)
 
 
+@login_required(login_url=reverse_lazy('team:login'))
+def create_task(request, company_id, project_id):
+    try:
+        company_id = models.Company.objects.get(id=company_id)
+        project_id = models.Project.objects.get(id=project_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    if request.method == 'POST':
+        form = forms.TaskCreationForm(company_id, project_id.id, request.POST)
+        if form.is_valid():
+            task = models.Task()
+            task.json_with_employee_info = {
+                'appoint': [request.user.email],
+                'responsible': [i.email for i in form.cleaned_data.get('responsible')],
+                'executor': [i.email for i in form.cleaned_data.get('executor')]
+            }
+            task.project_id = project_id
+            task.text = form.cleaned_data.get('text')
+            task.title = form.cleaned_data.get('title')
+            # Нужно разобраться с системой наследования
+    else:
+        form = forms.TaskCreationForm(company_id, project_id.id)
+
+    context = {'form': form}
+    return render(request, 'team/main_functionality/create_task.html', context)
+
+
 def add_new_employee(company_id, employee_id):
     company_id = models.Company.objects.get(id=company_id)
     employee_id = models.Employee.objects.get(id=employee_id)
