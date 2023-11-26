@@ -57,7 +57,7 @@ class TaskCreationForm(forms.Form):
     title = forms.CharField(max_length=40)
     images = MultipleImageField(required=False)
     text = forms.CharField(widget=forms.Textarea, required=False)
-    files = MultipleFileField(required=True)
+    files = MultipleFileField(required=False)
     responsible = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
     executor = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple, required=False)
     parent_id = forms.ModelChoiceField(queryset=None, required=False)
