@@ -128,13 +128,22 @@ class Task(models.Model):
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
-    json_with_task_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['project_id', 'title']
 
     def __str__(self):
         return self.title
+
+
+class TaskImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+
+class TaskFile(models.Model):
+    file = models.ImageField(upload_to='files/%Y/%m/%d/%H/')
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
 
 
 class Subtasks(models.Model):
@@ -169,3 +178,4 @@ class UserProjectTask(models.Model):
 
     class Meta:
         ordering = ['title']
+

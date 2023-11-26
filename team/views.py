@@ -71,7 +71,7 @@ def create_task(request, company_id, project_id):
     except ObjectDoesNotExist:
         return redirect(reverse_lazy('team:homepage'))
     if request.method == 'POST':
-        form = forms.TaskCreationForm(company_id, project_id.id, request.POST)
+        form = forms.TaskCreationForm(company_id, project_id.id, request.POST, request.FILES)
         if form.is_valid():
             task = models.Task()
             task.json_with_employee_info = {
@@ -82,6 +82,10 @@ def create_task(request, company_id, project_id):
             task.project_id = project_id
             task.text = form.cleaned_data.get('text')
             task.title = form.cleaned_data.get('title')
+            task.save()
+            for f in request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
+            for i in request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
+            return redirect(reverse_lazy('team:homepage'))
     else:
         form = forms.TaskCreationForm(company_id, project_id.id)
 
