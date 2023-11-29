@@ -22,6 +22,9 @@ class LinksResources(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     link = models.URLField(max_length=200)
 
+    class Meta:
+        order_with_respect_to = 'employee_id'
+
 
 class Company(models.Model):
     title = models.CharField(max_length=250)
@@ -140,10 +143,16 @@ class TaskImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
 
+    class Meta:
+        order_with_respect_to = 'task_id'
+
 
 class TaskFile(models.Model):
     file = models.ImageField(upload_to='files/%Y/%m/%d/%H/')
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'task_id'
 
 
 class Subtasks(models.Model):
