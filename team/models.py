@@ -22,16 +22,22 @@ class LinksResources(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     link = models.URLField(max_length=200)
 
+    class Meta:
+        order_with_respect_to = 'employee_id'
+
 
 class Company(models.Model):
     title = models.CharField(max_length=250)
     owner_id = models.IntegerField(
         help_text='Тут будет храниться id создателя компании(т. е. того человека, который будет платить)')
-    json_with_department_info = models.JSONField(blank=True, default=dict)
-    json_with_settings_info = models.JSONField(blank=True, default=dict)
+    # json_with_department_info = models.JSONField(blank=True, default=dict)
+    # json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
+
+    def __str__(self):
+        return f'{self.owner_id}, {self.title}'
 
 
 class Department(models.Model):
@@ -67,6 +73,7 @@ class Project(models.Model):
 
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
+    project_creater = models.IntegerField()
     view_counter = models.IntegerField(choices=DisplayTypes.choices, default=DisplayTypes.NONE_DISPLAY)
     json_info_with_access_level = models.JSONField(blank=True, default=dict)
 
@@ -80,7 +87,7 @@ class EmployeeCompany(models.Model):
     # возможно models.SET_NULL не лучшая идея
     position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
     department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    # json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         indexes = [
@@ -120,17 +127,37 @@ class Task(models.Model):
 
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
+    text = models.TextField(blank=True, null=True)
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
-    json_with_task_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['project_id', 'title']
 
+    def __str__(self):
+        return self.title
+
+
+class TaskImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'task_id'
+
+
+class TaskFile(models.Model):
+    file = models.ImageField(upload_to='files/%Y/%m/%d/%H/')
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'task_id'
+
 
 class Subtasks(models.Model):
     title = models.CharField(max_length=40)
+    text = models.TextField(blank=True, null=True)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     status_yes_no = models.BooleanField(default=False)
     json_with_subtask_info = models.JSONField(blank=True, default=dict)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить

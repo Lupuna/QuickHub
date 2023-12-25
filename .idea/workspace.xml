@@ -4,7 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f76ac19-3336-4ce2-8387-5a70a39118e2" name="Changes" comment="" />
+    <list default="true" id="1f76ac19-3336-4ce2-8387-5a70a39118e2" name="Changes" comment="Create Task (field images and field files is required, it's not good)">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0002_remove_company_json_with_department_info_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0003_remove_employeecompany_json_with_employee_info.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0004_project_project_creater.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0005_subtasks_text_task_text.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0006_task_file_task_image.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0007_remove_task_file_remove_task_image_taskimage_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0008_remove_task_json_with_task_info.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0009_alter_linksresources_order_with_respect_to_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_company.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_project.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_task.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuickHub/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/QuickHub/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/templates/team/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,5 +59,16 @@
       <updated>1700045595834</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
