@@ -4,26 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f76ac19-3336-4ce2-8387-5a70a39118e2" name="Changes" comment="Create Task (field images and field files is required, it's not good)">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0002_remove_company_json_with_department_info_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0003_remove_employeecompany_json_with_employee_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0004_project_project_creater.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0005_subtasks_text_task_text.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0006_task_file_task_image.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0007_remove_task_file_remove_task_image_taskimage_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0008_remove_task_json_with_task_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0009_alter_linksresources_order_with_respect_to_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_company.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_project.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_task.html" afterDir="false" />
+    <list default="true" id="1f76ac19-3336-4ce2-8387-5a70a39118e2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_subtask.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/QuickHub/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/QuickHub/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0002_remove_company_json_with_department_info_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0003_remove_employeecompany_json_with_employee_info.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0004_project_project_creater.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0005_subtasks_text_task_text.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0006_task_file_task_image.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0007_remove_task_file_remove_task_image_taskimage_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0008_remove_task_json_with_task_info.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/migrations/0009_alter_linksresources_order_with_respect_to_and_more.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/templates/team/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/templates/team/main_functionality/create_task.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_task.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
     </list>
@@ -32,8 +30,18 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2YD1ymuxXakFy64imcfwNlTa0wR" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -45,10 +53,35 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/terra/orders/QuickHub/manage.py&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="runner" type="PythonConfigurationType" factoryName="Python">
+      <module name="QuickHub" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\terra\QuickHub\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/manage.py" />
+      <option name="PARAMETERS" value="runserver" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

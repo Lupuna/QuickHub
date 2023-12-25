@@ -83,3 +83,5 @@ class SubtaskCreationForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.employee_list = models.Employee.objects.filter(
             id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
+        self.fields['responsible'].queryset = self.employee_list
+        self.fields['executor'].queryset = self.employee_list

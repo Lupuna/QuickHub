@@ -93,6 +93,37 @@ def create_task(request, company_id, project_id):
     return render(request, 'team/main_functionality/create_task.html', context)
 
 
+@login_required(login_url=reverse_lazy('team:login'))
+def create_subtask(request, company_id, project_id, task_id):
+    try:
+        company_id = models.Company.objects.get(id=company_id)
+        project_id = models.Project.objects.get(id=project_id)
+        task_id = models.Task.objects.get(id=task_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    if request.method == 'POST':
+        form = forms.SubtaskCreationForm(company_id, request.POST, request.FILES)
+        if form.is_valid():
+            subtask = models.Subtasks()
+            subtask.json_with_employee_info = {
+                'appoint': [request.user.email],
+                'responsible': [i.email for i in form.cleaned_data.get('responsible')],
+                'executor': [i.email for i in form.cleaned_data.get('executor')]
+            }
+            subtask.task_id_id = task_id.id
+            subtask.text = form.cleaned_data.get('text')
+            subtask.title = form.cleaned_data.get('title')
+            subtask.save()
+            for f in request.FILES.getlist('files'): models.SubtaskFile.objects.create(file=f, subtask_id=subtask)
+            for i in request.FILES.getlist('images'): models.SubtaskImage.objects.create(image=i, subtask_id=subtask)
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.SubtaskCreationForm(company_id)
+
+    context = {'form': form}
+    return render(request, 'team/main_functionality/create_subtask.html', context)
+
+
 def add_new_employee(company_id, employee_id):
     company_id = models.Company.objects.get(id=company_id)
     employee_id = models.Employee.objects.get(id=employee_id)

@@ -2,3 +2,5 @@ db.sqlite3
 *.pdf
 *.docx
 *.png
+*.ppt
+*.xlsx

@@ -13,4 +13,5 @@ urlpatterns = [
     # id - это временное решение, ешо нужно будет заменить не токен
     path('create/<int:id>/project/', views.create_project, name='create_project'),
     path('create/<int:company_id>/<int:project_id>/task', views.create_task, name='create_task'),
+    path('create/<int:company_id>/<int:project_id>/<int:task_id>/subtask', views.create_subtask, name='create_subtask')
 ]

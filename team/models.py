@@ -156,14 +156,33 @@ class TaskFile(models.Model):
 
 
 class Subtasks(models.Model):
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
     text = models.TextField(blank=True, null=True)
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     status_yes_no = models.BooleanField(default=False)
-    json_with_subtask_info = models.JSONField(blank=True, default=dict)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['task_id', 'title']
+
+    def __str__(self):
+        return self.title
+
+
+class SubtaskImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'subtask_id'
+
+
+class SubtaskFile(models.Model):
+    file = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'subtask_id'
 
 
 class UserProject(models.Model):
