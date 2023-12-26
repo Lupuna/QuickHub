@@ -5,23 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f76ac19-3336-4ce2-8387-5a70a39118e2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_subtask.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/view_company_employees.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/QuickHub/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/QuickHub/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0002_remove_company_json_with_department_info_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0003_remove_employeecompany_json_with_employee_info.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0004_project_project_creater.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0005_subtasks_text_task_text.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0006_task_file_task_image.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0007_remove_task_file_remove_task_image_taskimage_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0008_remove_task_json_with_task_info.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/migrations/0009_alter_linksresources_order_with_respect_to_and_more.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/templates/team/main_functionality/create_task.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_task.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
     </list>
@@ -51,14 +38,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/terra/orders/QuickHub/manage.py&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/terra/orders/QuickHub/media"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\terra\orders\QuickHub\media" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="runner" type="PythonConfigurationType" factoryName="Python">
       <module name="QuickHub" />
