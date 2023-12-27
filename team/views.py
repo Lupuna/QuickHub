@@ -68,6 +68,7 @@ def create_task(request, company_id, project_id):
     try:
         company_id = models.Company.objects.get(id=company_id)
         project_id = models.Project.objects.get(id=project_id)
+        user = models.Employee.objects.get(id=request.user.id)
     except ObjectDoesNotExist:
         return redirect(reverse_lazy('team:homepage'))
     if request.method == 'POST':
@@ -83,6 +84,9 @@ def create_task(request, company_id, project_id):
             task.text = form.cleaned_data.get('text')
             task.title = form.cleaned_data.get('title')
             task.save()
+
+            user.tasks.add(task)
+
             for f in request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
             for i in request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
             return redirect(reverse_lazy('team:homepage'))
@@ -129,3 +133,26 @@ def add_new_employee(company_id, employee_id):
     employee_id = models.Employee.objects.get(id=employee_id)
     new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
     new_employee.save()
+
+@login_required(login_url=reverse_lazy('team:login'))
+def create_category(request):
+    if request.method == 'POST':
+        form = forms.CategoryCreationForm(request.POST)
+
+        if form.is_valid():
+            user_proj = form.save(commit=False)
+            user_proj.title = form.cleaned_data.get('title')
+            user_proj.employee_id = models.Employee.objects.get(id=request.user.id)
+            user_proj.project_personal_notes = form.cleaned_data.get('project_personal_notes')
+
+            user_proj.save()
+
+            return redirect(reverse_lazy('team:homepage'))
+
+    else:
+        form = forms.CategoryCreationForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'team/main_functionality/create_category.html', context)
