@@ -85,3 +85,8 @@ class SubtaskCreationForm(forms.Form):
             id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
+
+class CategoryCreationForm(forms.ModelForm):
+    class Meta:
+        model = models.UserProject
+        fields = ('title', 'project_personal_notes')
