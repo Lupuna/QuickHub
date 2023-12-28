@@ -86,7 +86,25 @@ class SubtaskCreationForm(forms.Form):
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
 
+
 class CategoryCreationForm(forms.ModelForm):
     class Meta:
         model = models.UserProject
         fields = ('title', 'project_personal_notes')
+
+
+class TaskboardCreationForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=None)
+    project = forms.ModelChoiceField(queryset=None)
+    tasks = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
+    text = forms.CharField(widget=forms.Textarea, required=False)
+
+    def __init__(self, emp_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.projects = models.Project.objects\
+            .filter(company_id__in=models.EmployeeCompany.objects.filter(employee_id=emp_id).values('company_id'))
+
+        self.fields['category'].queryset = models.UserProject.objects.filter(employee_id=emp_id).all()
+        self.fields['project'].queryset = self.projects
+        self.fields['tasks'].queryset = models.Employee.objects.get(id=emp_id).tasks.all()

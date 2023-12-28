@@ -134,6 +134,7 @@ def add_new_employee(company_id, employee_id):
     new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
     new_employee.save()
 
+
 @login_required(login_url=reverse_lazy('team:login'))
 def create_category(request):
     if request.method == 'POST':
@@ -148,7 +149,6 @@ def create_category(request):
             user_proj.save()
 
             return redirect(reverse_lazy('team:homepage'))
-
     else:
         form = forms.CategoryCreationForm()
     
@@ -156,3 +156,39 @@ def create_category(request):
         'form': form,
     }
     return render(request, 'team/main_functionality/create_category.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def create_taskboard(request):
+    if request.method == "POST":
+        form = forms.TaskboardCreationForm(request.user.id, request.POST)
+
+        if form.is_valid():
+            upt = models.UserProjectTask()
+            task = models.Employee.objects.get(id=request.user.id).tasks.get(title=form.cleaned_data.get('tasks'))
+            category = form.cleaned_data.get('category')
+
+            upt.user_project_id = category
+            upt.task_id = task
+            upt.title = str(category)
+            upt.task_personal_notes = {
+                'notes': form.cleaned_data.get('text'),
+                'task_notes': task.text
+            }
+
+            # try:
+            #     subtasks = models.Subtasks.objects.get(task_id=task)
+            #     upt.json_with_subtask_and_subtask_personal_not = {
+            #         'subtasks': [subtask.id for subtask in subtasks],
+            # }
+            # except ObjectDoesNotExist:
+            #     ...
+
+            upt.save()
+    else:
+        form = forms.TaskboardCreationForm(request.user.id)
+
+    context = {
+        'form': form
+    }
+    return render(request, 'team/main_functionality/create_taskboard.html', context)
