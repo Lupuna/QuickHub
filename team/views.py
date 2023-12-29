@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django .contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from . import forms, models
 
 
@@ -126,6 +127,32 @@ def create_subtask(request, company_id, project_id, task_id):
 
     context = {'form': form}
     return render(request, 'team/main_functionality/create_subtask.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def check_employee(request, company_id):
+    try:
+        company_id = models.Company.objects.get(id=company_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    employees = models.Employee.objects.filter(
+        id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
+
+    info_about_employees = []
+    for employee in employees:
+        info_about_employee = employee.get_all_info()
+        for link in models.LinksResources.objects.filter(employee_id=employee.id):
+            info_about_employee.update(link.get_info())
+
+        positions = models.Positions.objects.filter(
+            id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id)))
+        for position in positions:
+            info_about_employee.update({'position_title': position.title})
+            
+        info_about_employees.append(info_about_employee)
+
+    context = {'employees': employees}
+    return render(request, 'team/main_functionality/view_company_employees.html', context)
 
 
 def add_new_employee(company_id, employee_id):
