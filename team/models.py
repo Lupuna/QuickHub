@@ -10,6 +10,18 @@ class Employee(AbstractUser):
     telephone = models.CharField(max_length=40, blank=True, null=True)
     json_with_settings_info = models.JSONField(blank=True, default=dict)
     tasks = models.ManyToManyField('Task', blank=True, null=True)
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
+
+    def get_all_info(self):
+        information = {
+            'name': self.name,
+            'email': self.email,
+            'city': self.city,
+            'birthday': self.birthday,
+            'telephone': self.telephone,
+            'image': self.image,
+        }
+        return information
 
     class Meta:
         ordering = ['username']
@@ -21,7 +33,11 @@ class Employee(AbstractUser):
 
 class LinksResources(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
     link = models.URLField(max_length=200)
+
+    def get_info(self):
+        return {self.title: self.link}
 
     class Meta:
         order_with_respect_to = 'employee_id'
@@ -49,6 +65,9 @@ class Department(models.Model):
 
     class Meta:
         ordering = ['company_id', 'title']
+
+    def __str__(self):
+        return self.title
 
 
 class Positions(models.Model):

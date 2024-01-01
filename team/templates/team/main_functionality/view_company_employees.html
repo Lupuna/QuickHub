@@ -1,0 +1,19 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    {% for employee in employees %}
+        <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+        <p>{{employee.name}}</p>
+        <p>{{employee.email}}</p>
+        <p>
+            {% if employee.telephone %}
+                {{employee.telephone}}
+            {%else%}
+                Телефон не задан
+            {%endif%}
+        </p>
+    {% endfor %}
+{%endblock%}

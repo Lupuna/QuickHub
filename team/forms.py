@@ -90,3 +90,20 @@ class CategoryCreationForm(forms.ModelForm):
     class Meta:
         model = models.UserProject
         fields = ('title', 'project_personal_notes')
+
+
+class DepartmentCreationForm(forms.Form):
+    title = forms.CharField(max_length=40)
+    parent = forms.ModelChoiceField(queryset=None, required=False)
+    supervisor = forms.ModelChoiceField(queryset=None, required=True)
+    employees = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple, required=True)
+
+    def __init__(self, company_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.employee_list = models.Employee.objects.filter(
+            id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
+        
+        self.fields['parent'].queryset = models.Department.objects.filter(company_id=company_id)
+        self.fields['supervisor'].queryset = self.employee_list
+        self.fields['employees'].queryset = self.employee_list
