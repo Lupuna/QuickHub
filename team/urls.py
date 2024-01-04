@@ -17,5 +17,5 @@ urlpatterns = [
     path('<int:company_id>/check-employee', views.check_employee, name='check_employee'),
     path('create/category', views.create_category, name='create_category'),
     path('create/<int:company_id>/department', views.create_department, name='create_department'),
-    path('<int:company_id>/<int:department_id>', views.view_department, name='department')
+    path('<int:company_id>/department/<int:department_id>', views.view_department, name='department'),
 ]

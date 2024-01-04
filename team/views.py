@@ -161,6 +161,7 @@ def add_new_employee(company_id, employee_id):
     new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
     new_employee.save()
 
+
 @login_required(login_url=reverse_lazy('team:login'))
 def create_category(request):
     if request.method == 'POST':
@@ -175,7 +176,6 @@ def create_category(request):
             user_proj.save()
 
             return redirect(reverse_lazy('team:homepage'))
-
     else:
         form = forms.CategoryCreationForm()
     
@@ -187,14 +187,20 @@ def create_category(request):
 
 @login_required(login_url=reverse_lazy('team:login'))
 def create_department(request, company_id):
+    try:
+        company = models.Company.objects.get(id=company_id) 
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    
     if request.method == 'POST':
         form = forms.DepartmentCreationForm(company_id, request.POST)
 
         if form.is_valid():
             department = models.Department()
+            supervisor = models.Employee.objects.get(email=form.cleaned_data.get('supervisor'))
 
             department.title = form.cleaned_data.get('title')
-            department.supervisor = models.Employee.objects.get(email=form.cleaned_data.get('supervisor')).id
+            department.supervisor = supervisor.id
             department.company_id = models.Company.objects.get(id=company_id)
             try:
                 department.parent_id = models.Department.objects\
@@ -204,8 +210,12 @@ def create_department(request, company_id):
 
             department.save()
 
+            user = models.EmployeeCompany.objects.get(employee_id=supervisor, company_id=company)
+            user.department_id = department
+            user.save()
+
             for employee in form.cleaned_data.get('employees'):
-                user = models.EmployeeCompany.objects.get(Q(employee_id=employee) & Q(company_id=company_id))
+                user = models.EmployeeCompany.objects.get(employee_id=employee, company_id=company)
                 user.department_id = department
                 user.save()
 
@@ -219,6 +229,7 @@ def create_department(request, company_id):
     return render(request, 'team/main_functionality/create_department.html', context)
 
 
+@login_required(login_url=reverse_lazy('team:homepage'))
 def view_department(request, company_id, department_id):
     department = models.Department.objects.get(Q(company_id=company_id) & Q(id=department_id))
     supervisor = models.Employee.objects.get(id=department.supervisor)

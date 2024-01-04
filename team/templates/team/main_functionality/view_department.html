@@ -6,21 +6,24 @@
 {%block content%}
     <p>{{ department.title }}</p>
     <p>
-        Вышестоящий отдел:    
-        {{ department.parent_id.title }}
+        {% if department.parent_id %}
+            Вышестоящий отдел:    
+            {{ department.parent_id.title }}
+        {% endif %}
     </p>
     <p>
-        Директор: 
+        Руководитель: 
         <img src="{% if department.supervisor.image %} {{ department.supervisor.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
         {{ supervisor.name }}
-        {{ supervisor.email }}
+        <!-- {{ supervisor.email }} -->
     </p>
 
     <p>
+        Сотрудники:
     {% for employee in employees %}
         <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
         {{employee.name}}
-        {{employee.email}}
+        <!-- {{employee.email}} -->
     {% endfor %}
     </p>
 {%endblock%}
