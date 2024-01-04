@@ -224,6 +224,21 @@ def create_taskboard(request):
 
 
 @login_required(login_url=reverse_lazy('team:login'))
+def taskboard(request):
+    categories = models.UserProject.objects.filter(employee_id=request.user.id)
+    
+    cats = {}
+    for cat in categories:
+        cats[cat] = models.Employee.objects.get(id=request.user.id).tasks\
+            .filter(id__in=models.UserProjectTask.objects.filter(user_project_id=cat).values('task_id'))
+
+    context = {
+        'cats': cats,
+    }
+    return render(request, 'team/main_functionality/taskboard.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
 def create_department(request, company_id):
     try:
         company = models.Company.objects.get(id=company_id) 

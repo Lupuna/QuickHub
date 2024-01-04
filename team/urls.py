@@ -20,4 +20,5 @@ urlpatterns = [
     path('create/taskboard', views.create_taskboard, name='create_taskboard'),
     path('create/<int:company_id>/department', views.create_department, name='create_department'),
     path('<int:company_id>/department/<int:department_id>', views.view_department, name='department'),
+    path('taskboard', views.taskboard, name='taskboard'),
 ]
