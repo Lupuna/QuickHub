@@ -221,3 +221,63 @@ def create_taskboard(request):
         'form': form
     }
     return render(request, 'team/main_functionality/create_taskboard.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def create_department(request, company_id):
+    try:
+        company = models.Company.objects.get(id=company_id) 
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    
+    if request.method == 'POST':
+        form = forms.DepartmentCreationForm(company_id, request.POST)
+
+        if form.is_valid():
+            department = models.Department()
+            supervisor = models.Employee.objects.get(email=form.cleaned_data.get('supervisor'))
+
+            department.title = form.cleaned_data.get('title')
+            department.supervisor = supervisor.id
+            department.company_id = models.Company.objects.get(id=company_id)
+            try:
+                department.parent_id = models.Department.objects\
+                    .get(Q(title=form.cleaned_data.get('parent')) & Q(company_id=company_id))
+            except ObjectDoesNotExist:
+                department.parent_id = None
+
+            department.save()
+
+            user = models.EmployeeCompany.objects.get(employee_id=supervisor, company_id=company)
+            user.department_id = department
+            user.save()
+
+            for employee in form.cleaned_data.get('employees'):
+                user = models.EmployeeCompany.objects.get(employee_id=employee, company_id=company)
+                user.department_id = department
+                user.save()
+
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.DepartmentCreationForm(company_id)
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'team/main_functionality/create_department.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:homepage'))
+def view_department(request, company_id, department_id):
+    department = models.Department.objects.get(Q(company_id=company_id) & Q(id=department_id))
+    supervisor = models.Employee.objects.get(id=department.supervisor)
+    employees = models.Employee.objects\
+        .filter(id__in=models.EmployeeCompany.objects\
+                .filter(Q(department_id=department_id) & Q(company_id=company_id)).values('employee_id'))
+
+    context = {
+        'department': department,
+        'employees': employees,
+        'supervisor': supervisor,
+    }
+    return render(request, 'team/main_functionality/view_department.html', context)

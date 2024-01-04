@@ -66,6 +66,9 @@ class Department(models.Model):
     class Meta:
         ordering = ['company_id', 'title']
 
+    def __str__(self):
+        return self.title
+
 
 class Positions(models.Model):
     # В бедующем его нужно будет заменить на Json файл с очень точной настройкой каждой должности,

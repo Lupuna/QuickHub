@@ -4,4 +4,8 @@ db.sqlite3
 *.png
 *.ppt
 *.xlsx
+<<<<<<< HEAD
 __pycache__/
+=======
+**/__pycache__/
+>>>>>>> create_department_creation_form
