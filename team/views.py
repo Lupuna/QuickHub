@@ -191,27 +191,29 @@ def create_taskboard(request):
         form = forms.TaskboardCreationForm(request.user.id, request.POST)
 
         if form.is_valid():
-            upt = models.UserProjectTask()
-            task = models.Employee.objects.get(id=request.user.id).tasks.get(title=form.cleaned_data.get('tasks'))
+            tasks = models.Employee.objects.get(id=request.user.id).tasks.filter(id__in=form.cleaned_data.get('tasks'))
             category = form.cleaned_data.get('category')
+            
+            for task in tasks:
+                upt = models.UserProjectTask()
 
-            upt.user_project_id = category
-            upt.task_id = task
-            upt.title = str(category)
-            upt.task_personal_notes = {
-                'notes': form.cleaned_data.get('text'),
-                'task_notes': task.text
-            }
+                upt.user_project_id = category
+                upt.task_id = task
+                upt.title = str(category)
+                upt.task_personal_notes = {
+                    'notes': form.cleaned_data.get('text'),
+                    'task_notes': task.text
+                }
 
-            # try:
-            #     subtasks = models.Subtasks.objects.get(task_id=task)
-            #     upt.json_with_subtask_and_subtask_personal_not = {
-            #         'subtasks': [subtask.id for subtask in subtasks],
-            # }
-            # except ObjectDoesNotExist:
-            #     ...
+                try:
+                    subtasks = models.Subtasks.objects.filter(task_id=task)
+                    upt.json_with_subtask_and_subtask_personal_not = {
+                        'subtasks': [subtask.id for subtask in subtasks],
+                }
+                except ObjectDoesNotExist:
+                    ...
 
-            upt.save()
+                upt.save()
     else:
         form = forms.TaskboardCreationForm(request.user.id)
 
