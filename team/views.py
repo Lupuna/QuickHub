@@ -238,8 +238,12 @@ def taskboard(request):
     return render(request, 'team/main_functionality/taskboard.html', context)
 
 
+
 @login_required(login_url=reverse_lazy('team:login'))
 def create_department(request, company_id):
+    '''
+    Создание отдела в компании
+    '''
     try:
         company = models.Company.objects.get(id=company_id) 
     except ObjectDoesNotExist:
@@ -284,6 +288,9 @@ def create_department(request, company_id):
 
 @login_required(login_url=reverse_lazy('team:homepage'))
 def view_department(request, company_id, department_id):
+    '''
+    Отображение отдела
+    '''
     department = models.Department.objects.get(Q(company_id=company_id) & Q(id=department_id))
     supervisor = models.Employee.objects.get(id=department.supervisor)
     employees = models.Employee.objects\
