@@ -303,3 +303,55 @@ def view_department(request, company_id, department_id):
         'supervisor': supervisor,
     }
     return render(request, 'team/main_functionality/view_department.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:homepage'))
+def create_position(request, company_id):
+    try:
+        company = models.Company.objects.get(id=company_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    
+    if request.method == 'POST':
+        form = forms.PositionCreationForm(request.POST)
+        if form.is_valid():
+            position = form.save(commit=False)
+            position.company_id = company
+            position.json_with_optional_info = {
+                'text': form.cleaned_data.get('text')
+            }
+            position.save()
+
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.PositionCreationForm()
+        
+    context = {
+        'form': form
+    }
+    return render(request, 'team/main_functionality/create_position.html', context)
+
+
+def set_position(request, employee_id, company_id, position_id):
+    user = models.Employee.objects.get(id=employee_id)
+    position = models.Positions.objects.get(id=position_id)
+    company = models.Company.objects.get(id=company_id)
+
+    employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
+    employee.position_id = position
+    employee.save()
+
+
+def view_positions(request, company_id):
+    try:
+        company = models.Company.objects.get(id=company_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+
+    positions = models.Positions.objects.filter(company_id=company).all()
+    
+    context = {
+        'company': company,
+        'positions': positions,
+    }
+    return render(request, 'team/main_functionality/view_positions.html', context)

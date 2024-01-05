@@ -120,3 +120,11 @@ class DepartmentCreationForm(forms.Form):
         self.fields['parent'].queryset = models.Department.objects.filter(company_id=company_id)
         self.fields['supervisor'].queryset = self.employee_list
         self.fields['employees'].queryset = self.employee_list
+
+
+class PositionCreationForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.Textarea, required=False)
+    
+    class Meta:
+        model = models.Positions
+        fields = ('title', 'weight',)
