@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from . import utils
 
 
 class Employee(AbstractUser):
@@ -8,17 +9,17 @@ class Employee(AbstractUser):
     city = models.CharField(max_length=40, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
-    json_with_settings_info = models.JSONField(blank=True, default=dict)
+    json_with_settings_info = models.JSONField(blank=True, default=utils.create_base_settings_json_to_employee)
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
 
     def get_all_info(self):
         information = {
+            'image': self.image,
             'name': self.name,
             'email': self.email,
             'city': self.city,
             'birthday': self.birthday,
             'telephone': self.telephone,
-            'image': self.image,
         }
         return information
 

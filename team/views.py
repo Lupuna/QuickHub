@@ -131,24 +131,47 @@ def check_employee(request, company_id):
         company_id = models.Company.objects.get(id=company_id)
     except ObjectDoesNotExist:
         return redirect(reverse_lazy('team:homepage'))
+
+    info_filter_about_employee = request.user.json_with_settings_info["settings_info_about_company_employee"]
     employees = models.Employee.objects.filter(
         id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
 
     info_about_employees = []
     for employee in employees:
-        info_about_employee = employee.get_all_info()
+        info_about_employee = dict(filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
         for link in models.LinksResources.objects.filter(employee_id=employee.id):
-            info_about_employee.update(link.get_info())
+            if link.title in info_filter_about_employee:
+                info_about_employee.update(link.get_info())
 
-        positions = models.Positions.objects.filter(
-            id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id)))
-        for position in positions:
-            info_about_employee.update({'position_title': position.title})
-            
+        if 'position_title' in info_filter_about_employee:
+            position = models.Positions.objects.filter(
+                id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id)))
+            if position: position = position[0].title
+            else: position = None
+            info_about_employee.update({'position_title': position})
+
         info_about_employees.append(info_about_employee)
 
-    context = {'employees': employees}
+    context = {'employees': info_about_employees, 'id': company_id.id}
     return render(request, 'team/main_functionality/view_company_employees.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def choice_parameters(request, company_id):
+    if request.method == 'POST':
+        form = forms.ChoiceEmployeeParametersForm(request.POST)
+        if form.is_valid():
+            request.user.json_with_settings_info["settings_info_about_company_employee"] = []
+            for item, flag in form.cleaned_data.items():
+                if flag: request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
+                request.user.save()
+            return redirect(reverse_lazy('team:check_employee', kwargs={'company_id': company_id}))
+
+    else:
+        form = forms.ChoiceEmployeeParametersForm()
+
+    context = {'form': form}
+    return render(request, 'team/main_functionality/choice_parameters.html', context)
 
 
 def add_new_employee(company_id, employee_id):

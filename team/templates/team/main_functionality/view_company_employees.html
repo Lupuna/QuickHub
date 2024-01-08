@@ -5,15 +5,25 @@
 
 {%block content%}
     {% for employee in employees %}
-        <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
-        <p>{{employee.name}}</p>
-        <p>{{employee.email}}</p>
-        <p>
-            {% if employee.telephone %}
-                {{employee.telephone}}
+        {% for key, value in employee.items %}
+            {% if key == 'image' %}
+                <img src="{% if value %} {{ value.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {% elif key == 'telephone' %}
+                {%if value %}
+                    <p>{{value}}</p>
+                {%else%}
+                    <p>Телефон не указан</p>
+                {%endif%}
+            {% elif key == 'position_title' %}
+                {%if value %}
+                    <p>{{value}}</p>
+                {%else%}
+                    <p>Должность не указана</p>
+                {%endif%}
             {%else%}
-                Телефон не задан
+                <p>{{value}}</p>
             {%endif%}
-        </p>
+        {% endfor %}
     {% endfor %}
+    <a href="{% url 'team:choice_parameters' company_id=id%}" type="button">Settings</a>
 {%endblock%}
