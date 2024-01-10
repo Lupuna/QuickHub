@@ -1,4 +1,5 @@
 from django import forms
+from . import models
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -39,3 +40,7 @@ def create_base_settings_json_to_employee():
     }
     return js
 
+
+def create_employee_list(company_id: int) -> list:
+    return models.Employee.objects.filter(
+            id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))

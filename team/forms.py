@@ -33,8 +33,7 @@ class TaskCreationForm(forms.Form):
 
     def __init__(self, company_id, project_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.employee_list = models.Employee.objects.filter(
-            id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
+        self.employee_list = utils.create_employee_list(company_id)
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
         self.fields['parent_id'].queryset = models.Project.objects.get(id=project_id).task_set.all()
@@ -50,8 +49,7 @@ class SubtaskCreationForm(forms.Form):
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.employee_list = models.Employee.objects.filter(
-            id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
+        self.employee_list = utils.create_employee_list(company_id)
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
 
@@ -62,3 +60,15 @@ class ChoiceEmployeeParametersForm(forms.Form):
     email = forms.BooleanField(required=False)
     telephone = forms.BooleanField(required=False)
     position = forms.BooleanField(required=False)
+
+
+class CreateDepartmentForm(forms.Form):
+    title = forms.CharField(max_length=40)
+    supervisor = forms.ModelChoiceField(queryset=None)
+    parent_id = forms.ModelChoiceField(queryset=None, required=False)
+
+    def __init__(self, company_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['supervisor'].queryset = utils.create_employee_list(company_id)
+        self.fields['parent_id'].queryset = models.Company.objects.get(id=company_id.id).department_set.all()
+

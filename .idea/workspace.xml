@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f76ac19-3336-4ce2-8387-5a70a39118e2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/choice_parameters.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_department.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/templates/team/main_functionality/view_company_employees.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/view_company_employees.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

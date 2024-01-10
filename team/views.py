@@ -174,6 +174,30 @@ def choice_parameters(request, company_id):
     return render(request, 'team/main_functionality/choice_parameters.html', context)
 
 
+@login_required(login_url=reverse_lazy('team:login'))
+def create_department(request, company_id):
+    try:
+        company_id = models.Company.objects.get(id=company_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+    if request.method == 'POST':
+        form = forms.CreateDepartmentForm(company_id, request.POST)
+        if form.is_valid():
+            department = models.Department()
+            department.company_id = company_id
+            department.title = form.cleaned_data['title']
+            department.supervisor = form.cleaned_data['supervisor'].id
+            parent_id = form.cleaned_data['parent_id']
+            if parent_id: department.parent_id = parent_id
+            department.save()
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.CreateDepartmentForm(company_id)
+
+    context = {'form': form}
+    return render(request, 'team/main_functionality/create_department.html', context)
+
+
 def add_new_employee(company_id, employee_id):
     company_id = models.Company.objects.get(id=company_id)
     employee_id = models.Employee.objects.get(id=employee_id)
