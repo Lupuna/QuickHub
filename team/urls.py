@@ -21,6 +21,5 @@ urlpatterns = [
     path('create/taskboard', views.create_taskboard, name='create_taskboard'),
     # отображение
     path('<int:company_id>/check-employee', views.check_employee, name='check_employee'),
-    path('<int:company_id>/department/<int:department_id>', views.view_department, name='department'),
     path('taskboard', views.taskboard, name='taskboard'),
 ]

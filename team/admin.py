@@ -55,7 +55,3 @@ class EmployeeCompanyAdmin(admin.ModelAdmin):
 @admin.register(models.UserProject)
 class UserProjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'employee_id')
-
-@admin.register(models.Department)
-class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'parent_id', 'supervisor')
