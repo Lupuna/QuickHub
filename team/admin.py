@@ -55,3 +55,6 @@ class EmployeeCompanyAdmin(admin.ModelAdmin):
 @admin.register(models.UserProject)
 class UserProjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'employee_id')
+
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'supervisor', 'company_id', 'parent_id')

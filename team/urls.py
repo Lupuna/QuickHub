@@ -19,7 +19,9 @@ urlpatterns = [
     path('create/<int:company_id>/<int:project_id>/<int:task_id>/subtask', views.create_subtask, name='create_subtask'),
     path('create/category', views.create_category, name='create_category'),
     path('create/taskboard', views.create_taskboard, name='create_taskboard'),
+    path('create/<int:company_id>/position', views.create_position, name='create_position'),
     # отображение
     path('<int:company_id>/check-employee', views.check_employee, name='check_employee'),
+    path('<int:company_id>/positions', views.view_positions, name='positions'),
     path('taskboard', views.taskboard, name='taskboard'),
 ]
