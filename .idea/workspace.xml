@@ -4,22 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38189788-0bac-4a4e-af4c-bb36511a56e0" name="Changes" comment="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
-      <change afterPath="$PROJECT_DIR$/team/migrations/0010_merge_20240111_2203.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_position.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/taskboard.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/view_positions.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/templates/team/main_functionality/create_department.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_department.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/templates/team/main_functionality/view_department.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/view_department.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="38189788-0bac-4a4e-af4c-bb36511a56e0" name="Changes" comment="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced)." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
