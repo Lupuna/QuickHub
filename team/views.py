@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django .contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.db.models import Q
-from . import forms, models
+from . import forms, models, utils
 
 
 def sign_up(request):
@@ -34,7 +35,7 @@ def create_company(request):
             company = form.save(commit=False)
             company.owner_id = request.user.id
             company.save()
-            add_new_employee(company.id, request.user.id)
+            utils.add_new_employee(company.id, request.user.id)
             return redirect(reverse_lazy('team:homepage'))
     else:
         form = forms.CompanyCreationForm()
@@ -69,6 +70,7 @@ def create_task(request, company_id, project_id):
     try:
         company_id = models.Company.objects.get(id=company_id)
         project_id = models.Project.objects.get(id=project_id)
+        user = models.Employee.objects.get(id=request.user.id)
     except ObjectDoesNotExist:
         return redirect(reverse_lazy('team:homepage'))
     if request.method == 'POST':
@@ -84,6 +86,9 @@ def create_task(request, company_id, project_id):
             task.text = form.cleaned_data.get('text')
             task.title = form.cleaned_data.get('title')
             task.save()
+
+            user.tasks.add(task)
+
             for f in request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
             for i in request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
             return redirect(reverse_lazy('team:homepage'))
@@ -138,7 +143,8 @@ def check_employee(request, company_id):
 
     info_about_employees = []
     for employee in employees:
-        info_about_employee = dict(filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
+        info_about_employee = dict(
+            filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
         for link in models.LinksResources.objects.filter(employee_id=employee.id):
             if link.title in info_filter_about_employee:
                 info_about_employee.update(link.get_info())
@@ -146,13 +152,27 @@ def check_employee(request, company_id):
         if 'position_title' in info_filter_about_employee:
             position = models.Positions.objects.filter(
                 id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id)))
-            if position: position = position[0].title
+            if position:
+                position = position[0].title
             else: position = None
             info_about_employee.update({'position_title': position})
 
+        if 'department' in info_filter_about_employee:
+            department = models.Department.objects.filter(
+                id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id))
+            )
+            if department:
+                department = department[0].title
+            else: department = None
+            info_about_employee.update({'department': department})
+
         info_about_employees.append(info_about_employee)
 
-    context = {'employees': info_about_employees, 'id': company_id.id}
+    paginator = Paginator(info_about_employees, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {'page_obj': page_obj, 'id': company_id.id}
     return render(request, 'team/main_functionality/view_company_employees.html', context)
 
 
@@ -175,31 +195,121 @@ def choice_parameters(request, company_id):
 
 
 @login_required(login_url=reverse_lazy('team:login'))
-def create_department(request, company_id):
-    try:
-        company_id = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
+def create_category(request):
     if request.method == 'POST':
-        form = forms.CreateDepartmentForm(company_id, request.POST)
+        form = forms.CategoryCreationForm(request.POST)
+
         if form.is_valid():
-            department = models.Department()
-            department.company_id = company_id
-            department.title = form.cleaned_data['title']
-            department.supervisor = form.cleaned_data['supervisor'].id
-            parent_id = form.cleaned_data['parent_id']
-            if parent_id: department.parent_id = parent_id
-            department.save()
+            user_proj = form.save(commit=False)
+            user_proj.title = form.cleaned_data.get('title')
+            user_proj.employee_id = models.Employee.objects.get(id=request.user.id)
+            user_proj.project_personal_notes = form.cleaned_data.get('project_personal_notes')
+
+            user_proj.save()
+
             return redirect(reverse_lazy('team:homepage'))
     else:
-        form = forms.CreateDepartmentForm(company_id)
+        form = forms.CategoryCreationForm()
 
-    context = {'form': form}
+    context = {
+        'form': form,
+    }
+    return render(request, 'team/main_functionality/create_category.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def create_taskboard(request):
+    if request.method == "POST":
+        form = forms.TaskboardCreationForm(request.user.id, request.POST)
+
+        if form.is_valid():
+            tasks = models.Employee.objects.get(id=request.user.id).tasks.filter(id__in=form.cleaned_data.get('tasks'))
+            category = form.cleaned_data.get('category')
+
+            for task in tasks:
+                upt = models.UserProjectTask()
+
+                upt.user_project_id = category
+                upt.task_id = task
+                upt.title = str(category)
+                upt.task_personal_notes = {
+                    'notes': form.cleaned_data.get('text'),
+                    'task_notes': task.text
+                }
+
+                try:
+                    subtasks = models.Subtasks.objects.filter(task_id=task)
+                    upt.json_with_subtask_and_subtask_personal_not = {
+                        'subtasks': [subtask.id for subtask in subtasks],
+                    }
+                except ObjectDoesNotExist:
+                    ...
+
+                upt.save()
+    else:
+        form = forms.TaskboardCreationForm(request.user.id)
+
+    context = {
+        'form': form
+    }
+    return render(request, 'team/main_functionality/create_taskboard.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def create_department(request, company_id):
+    try:
+        company = models.Company.objects.get(id=company_id)
+    except ObjectDoesNotExist:
+        return redirect(reverse_lazy('team:homepage'))
+
+    if request.method == 'POST':
+        form = forms.DepartmentCreationForm(company_id, request.POST)
+
+        if form.is_valid():
+            department = models.Department()
+            supervisor = models.Employee.objects.get(email=form.cleaned_data.get('supervisor'))
+
+            department.title = form.cleaned_data.get('title')
+            department.supervisor = supervisor.id
+            department.company_id = models.Company.objects.get(id=company_id)
+            try:
+                department.parent_id = models.Department.objects \
+                    .get(Q(title=form.cleaned_data.get('parent')) & Q(company_id=company_id))
+            except ObjectDoesNotExist:
+                department.parent_id = None
+
+            department.save()
+
+            user = models.EmployeeCompany.objects.get(employee_id=supervisor, company_id=company)
+            user.department_id = department
+            user.save()
+
+            for employee in form.cleaned_data.get('employees'):
+                user = models.EmployeeCompany.objects.get(employee_id=employee, company_id=company)
+                user.department_id = department
+                user.save()
+
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.DepartmentCreationForm(company_id)
+
+    context = {
+        'form': form,
+    }
     return render(request, 'team/main_functionality/create_department.html', context)
 
 
-def add_new_employee(company_id, employee_id):
-    company_id = models.Company.objects.get(id=company_id)
-    employee_id = models.Employee.objects.get(id=employee_id)
-    new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
-    new_employee.save()
+@login_required(login_url=reverse_lazy('team:homepage'))
+def view_department(request, company_id, department_id):
+    department = models.Department.objects.get(Q(company_id=company_id) & Q(id=department_id))
+    supervisor = models.Employee.objects.get(id=department.supervisor)
+    employees = models.Employee.objects \
+        .filter(id__in=models.EmployeeCompany.objects \
+                .filter(Q(department_id=department_id) & Q(company_id=company_id)).values('employee_id'))
+
+    context = {
+        'department': department,
+        'employees': employees,
+        'supervisor': supervisor,
+    }
+    return render(request, 'team/main_functionality/view_department.html', context)

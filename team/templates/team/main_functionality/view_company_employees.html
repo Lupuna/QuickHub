@@ -4,26 +4,21 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    {% for employee in employees %}
+    {% for employee in page_obj %}
         {% for key, value in employee.items %}
             {% if key == 'image' %}
                 <img src="{% if value %} {{ value.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
             {% elif key == 'telephone' %}
-                {%if value %}
-                    <p>{{value}}</p>
-                {%else%}
-                    <p>Телефон не указан</p>
-                {%endif%}
+                {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Телефон не указан' %}
             {% elif key == 'position_title' %}
-                {%if value %}
-                    <p>{{value}}</p>
-                {%else%}
-                    <p>Должность не указана</p>
-                {%endif%}
+                {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Должность не указана' %}
+            {% elif key == 'department' %}
+                {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Отдел не указан' %}
             {%else%}
                 <p>{{value}}</p>
             {%endif%}
         {% endfor %}
     {% endfor %}
+    {% include "team/main_functionality/includes/pagination.html" with page=page_obj %}
     <a href="{% url 'team:choice_parameters' company_id=id%}" type="button">Settings</a>
 {%endblock%}

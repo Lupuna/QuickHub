@@ -10,6 +10,7 @@ class Employee(AbstractUser):
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
     json_with_settings_info = models.JSONField(blank=True, default=utils.create_base_settings_json_to_employee)
+    tasks = models.ManyToManyField('Task', blank=True, null=True)
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
 
     def get_all_info(self):
@@ -66,6 +67,9 @@ class Department(models.Model):
     class Meta:
         ordering = ['company_id', 'title']
 
+    def __str__(self):
+        return self.title
+
 
 class Positions(models.Model):
     # В бедующем его нужно будет заменить на Json файл с очень точной настройкой каждой должности,
@@ -97,6 +101,8 @@ class Project(models.Model):
     class Meta:
         ordering = ['title']
 
+    def __str__(self):
+        return self.title
 
 class EmployeeCompany(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
@@ -203,11 +209,15 @@ class SubtaskFile(models.Model):
 
 
 class UserProject(models.Model):
-    title = models.IntegerField()
-    project_personal_notes = models.TextField(blank=True)
+    title = models.CharField(max_length=40)
+    employee_id = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE)
+    project_personal_notes = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['title']
+
+    def __str__(self):
+        return self.title
 
 
 class UserProjectTime(models.Model):
