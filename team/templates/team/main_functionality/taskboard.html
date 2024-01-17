@@ -1,0 +1,21 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <div>
+        {% for cat, tasks in cats.items %}
+        {{ cat.title }}
+            {% for task in tasks %}
+            <p>
+                {{ task.title }}
+                {% for executor in task.json_with_employee_info.executor %}
+                    {{ executor }}
+                {% endfor %}
+            </p>
+
+            {% endfor %}
+        {% endfor %}
+    </div>
+{%endblock%}

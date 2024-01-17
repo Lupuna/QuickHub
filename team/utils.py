@@ -43,7 +43,7 @@ def create_base_settings_json_to_employee():
 
 def create_employee_list(company_id: int) -> list:
     return models.Employee.objects.filter(
-            id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
+        id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
 
 
 def add_new_employee(company_id, employee_id):

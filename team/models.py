@@ -9,7 +9,11 @@ class Employee(AbstractUser):
     city = models.CharField(max_length=40, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
+<<<<<<< HEAD
     json_with_settings_info = models.JSONField(blank=True, default=utils.create_base_settings_json_to_employee)
+=======
+    json_with_settings_info = models.JSONField(blank=True, default=dict)
+>>>>>>> bd57e57bb3edb7d441d75409845e449cd5d9de67
     tasks = models.ManyToManyField('Task', blank=True, null=True)
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
 
@@ -218,7 +222,10 @@ class UserProject(models.Model):
 
     def __str__(self):
         return self.title
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd57e57bb3edb7d441d75409845e449cd5d9de67
 
 class UserProjectTime(models.Model):
     json_with_time_and_name_info = models.JSONField(blank=True, default=dict)
