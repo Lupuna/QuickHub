@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from . import forms, models, utils
 
+creator = 'team/main_functionality/includes/creator.html'
 
 def sign_up(request):
     if request.method == 'POST':
@@ -40,8 +41,11 @@ def create_company(request):
     else:
         form = forms.CompanyCreationForm()
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_company.html', context)
+    context = {
+        'form': form,
+        'title': 'QuickHub: Company-create',
+       }
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -61,8 +65,11 @@ def create_project(request, id):
     else:
         form = forms.ProjectCreationForm()
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_project.html', context)
+    context = {
+        'form': form,
+        'title': 'QuickHub: Project-create'
+        }
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -95,8 +102,11 @@ def create_task(request, company_id, project_id):
     else:
         form = forms.TaskCreationForm(company_id, project_id.id)
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_task.html', context)
+    context = {
+        'form': form,
+        'title': 'QuickHub: Task-create',
+       }
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -126,8 +136,11 @@ def create_subtask(request, company_id, project_id, task_id):
     else:
         form = forms.SubtaskCreationForm(company_id)
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_subtask.html', context)
+    context = {
+        'form': form,
+        'title': 'QuickHub: Subtask-create',
+        }
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -192,8 +205,12 @@ def choice_parameters(request, company_id):
     else:
         form = forms.ChoiceEmployeeParametersForm()
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/choice_parameters.html', context)
+    context = {
+        'form': form,
+        'title': 'QuickHub: Company-create',
+        'button': 'Choice'       
+        }
+    return render(request, creator, context)
 
 
 def add_new_employee(company_id, employee_id):
@@ -222,8 +239,9 @@ def create_category(request):
 
     context = {
         'form': form,
+        'title': 'QuickHub: Category-create',
     }
-    return render(request, 'team/main_functionality/create_category.html', context)
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -258,9 +276,10 @@ def create_taskboard(request):
         form = forms.TaskboardCreationForm(request.user.id)
 
     context = {
-        'form': form
+        'form': form,
+        'title': 'QuickHub: Taskboard-create',
     }
-    return render(request, 'team/main_functionality/create_taskboard.html', context)
+    return render(request, creator, context)
 
 
 def taskboard(request):
@@ -319,6 +338,7 @@ def create_department(request, company_id):
         form = forms.DepartmentCreationForm(company_id)
     context = {
         'form': form,
+        'title': 'QuickHub: Department-create'
     }
     return render(request, 'team/main_functionality/create_department.html', context)
 
@@ -361,7 +381,8 @@ def create_position(request, company_id):
         form = forms.PositionCreationForm()
 
     context = {
-        'form': form
+        'form': form,
+        'title': 'QuickHub: Position-create',
     }
     return render(request, 'team/main_functionality/create_position.html', context)
 
