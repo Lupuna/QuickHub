@@ -25,7 +25,10 @@ def sign_up(request):
 
 @login_required(login_url=reverse_lazy('team:login'))
 def homepage(request):
-    return render(request, 'team/main_functionality/homepage.html')
+    context = {
+        # 'user': request.user, 
+    }
+    return render(request, 'team/main_functionality/homepage.html', context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -340,7 +343,7 @@ def create_department(request, company_id):
         'form': form,
         'title': 'QuickHub: Department-create'
     }
-    return render(request, 'team/main_functionality/create_department.html', context)
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))
@@ -384,17 +387,7 @@ def create_position(request, company_id):
         'form': form,
         'title': 'QuickHub: Position-create',
     }
-    return render(request, 'team/main_functionality/create_position.html', context)
-
-
-def set_position(employee_id, company_id, position_id):
-    user = models.Employee.objects.get(id=employee_id)
-    position = models.Positions.objects.get(id=position_id)
-    company = models.Company.objects.get(id=company_id)
-
-    employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
-    employee.position_id = position
-    employee.save()
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))

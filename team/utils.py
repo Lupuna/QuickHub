@@ -51,3 +51,13 @@ def add_new_employee(company_id, employee_id):
     employee_id = models.Employee.objects.get(id=employee_id)
     new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
     new_employee.save()
+
+
+def set_position(employee_id, company_id, position_id):
+    user = models.Employee.objects.get(id=employee_id)
+    position = models.Positions.objects.get(id=position_id)
+    company = models.Company.objects.get(id=company_id)
+
+    employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
+    employee.position_id = position
+    employee.save()
