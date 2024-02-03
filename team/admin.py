@@ -61,3 +61,8 @@ class UserProjectAdmin(admin.ModelAdmin):
 @admin.register(models.Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'parent_id', 'supervisor')
+
+
+# @admin.register(models.CompanyEventImage)
+# class CompanyEventImageAdmin(admin.ModelAdmin):
+#     list_display = ['id', 'title', 'description', 'date']

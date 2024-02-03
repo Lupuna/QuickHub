@@ -1,4 +1,8 @@
 from django import forms
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, redirect
+from django.core.exceptions import ObjectDoesNotExist
 from . import models
 
 
@@ -32,6 +36,22 @@ class MultipleFileField(forms.FileField):
         else:
             result = single_file_clean(data, initial)
         return result
+
+
+class ModifiedFormView(FormView):
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if self.kwargs.get('company_id'):
+                self.kwargs['company_id'] = models.Company.objects.get(id=self.kwargs['company_id'])
+            if self.kwargs.get('project_id'):
+                self.kwargs['project_id'] = models.Project.objects.get(id=self.kwargs['project_id'])
+            if self.kwargs.get('task_id'):
+                self.kwargs['task_id'] = models.Task.objects.get(id=self.kwargs['task_id'])
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:homepage'))
+
+        return super().dispatch(request, *args, **kwargs)
 
 
 def create_base_settings_json_to_employee():

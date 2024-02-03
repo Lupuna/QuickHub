@@ -1,11 +1,152 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
 from . import forms, models, utils
+
+
+class CreateCompany(LoginRequiredMixin, FormView):
+    template_name = 'team/main_functionality/create_company.html'
+    form_class = forms.CompanyCreationForm
+    success_url = reverse_lazy('team:homepage')
+    login_url = reverse_lazy('team:login')
+
+    def form_valid(self, form):
+        company = form.save(commit=False)
+        company.owner_id = self.request.user.id
+        company.save()
+        utils.add_new_employee(company.id, self.request.user.id)
+        return super().form_valid(company)
+
+
+class CreateProject(LoginRequiredMixin, utils.ModifiedFormView):
+    template_name = 'team/main_functionality/create_project.html'
+    success_url = reverse_lazy('team:homepage')
+    login_url = reverse_lazy('team:login')
+    form_class = forms.ProjectCreationForm
+
+    def form_valid(self, form):
+        project = form.save(commit=False)
+        project.project_creater = self.request.user.id
+        project.company_id = self.kwargs['company_id']
+        form.save()
+        return super().form_valid(form)
+
+
+class CreateTask(LoginRequiredMixin, utils.ModifiedFormView):
+    login_url = reverse_lazy('team:login')
+    template_name = 'team/main_functionality/create_task.html'
+    success_url = reverse_lazy('team:homepage')
+    form_class = forms.TaskCreationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.kwargs['user'] = models.Employee.objects.get(id=self.request.user.id)
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:homepage'))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company_id']
+        kwargs['project_id'] = self.kwargs['project_id'].id
+        return kwargs
+
+    def form_valid(self, form):
+        task = models.Task()
+        task.json_with_employee_info = {
+            'appoint': [self.kwargs['user'].email],
+            'responsible': [i.email for i in form.cleaned_data.get('responsible')],
+            'executor': [i.email for i in form.cleaned_data.get('executor')]
+        }
+        task.project_id = self.kwargs['project_id']
+        task.text = form.cleaned_data.get('text')
+        task.title = form.cleaned_data.get('title')
+        task.save()
+
+        self.kwargs['user'].tasks.add(task)
+
+        for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
+        for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
+        return super().form_valid(task)
+
+
+class CreateSubtask(LoginRequiredMixin, utils.ModifiedFormView):
+    login_url = reverse_lazy('team:login')
+    template_name = 'team/main_functionality/create_subtask.html'
+    success_url = reverse_lazy('team:homepage')
+    form_class = forms.SubtaskCreationForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company_id']
+        return kwargs
+
+    def form_valid(self, form):
+        subtask = models.Subtasks()
+        subtask.json_with_employee_info = {
+            'appoint': [self.request.user.email],
+            'responsible': [i.email for i in form.cleaned_data.get('responsible')],
+            'executor': [i.email for i in form.cleaned_data.get('executor')]
+        }
+        subtask.task_id_id = self.kwargs['task_id'].id
+        subtask.text = form.cleaned_data.get('text')
+        subtask.title = form.cleaned_data.get('title')
+        subtask.save()
+        for f in self.request.FILES.getlist('files'): models.SubtaskFile.objects.create(file=f, subtask_id=subtask)
+        for i in self.request.FILES.getlist('images'): models.SubtaskImage.objects.create(image=i, subtask_id=subtask)
+        return super().form_valid(subtask)
+
+
+class ChoiceParameters(LoginRequiredMixin, FormView):
+    login_url = reverse_lazy('team:login')
+    template_name = 'team/main_functionality/choice_parameters.html'
+    form_class = forms.ChoiceEmployeeParametersForm
+
+    def get_success_url(self):
+        return reverse_lazy('team:check_employee', kwargs={'company_id': self.kwargs['company_id']})
+
+    def form_valid(self, form):
+        self.request.user.json_with_settings_info["settings_info_about_company_employee"] = []
+        for item, flag in form.cleaned_data.items():
+            if flag: self.request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
+            self.request.user.save()
+        return super().form_valid(form)
+
+
+class CreateCategory(LoginRequiredMixin, FormView):
+    login_url = reverse_lazy('team:login')
+    form_class = forms.CategoryCreationForm
+    success_url = reverse_lazy('team:homepage')
+    template_name = 'team/main_functionality/create_category.html'
+
+    def form_valid(self, form):
+        user_proj = form.save(commit=False)
+        user_proj.title = form.cleaned_data.get('title')
+        user_proj.employee_id = models.Employee.objects.get(id=self.request.user.id)
+        user_proj.project_personal_notes = form.cleaned_data.get('project_personal_notes')
+        user_proj.save()
+        return super().form_valid(user_proj)
+
+
+class CreatePosition(LoginRequiredMixin, FormView):
+    login_url = reverse_lazy('team:login')
+    success_url = reverse_lazy('team:homepage')
+    form_class = forms.PositionCreationForm
+    template_name = 'team/main_functionality/create_position.html'
+
+    def form_valid(self, form):
+        position = form.save(commit=False)
+        position.company_id = self.kwargs['company_id']
+        position.json_with_optional_info = {'text': form.cleaned_data.get('text')}
+        position.save()
+        return super().form_valid(position)
 
 
 def sign_up(request):
@@ -25,109 +166,6 @@ def sign_up(request):
 @login_required(login_url=reverse_lazy('team:login'))
 def homepage(request):
     return render(request, 'team/main_functionality/homepage.html')
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def create_company(request):
-    if request.method == 'POST':
-        form = forms.CompanyCreationForm(request.POST)
-        if form.is_valid():
-            company = form.save(commit=False)
-            company.owner_id = request.user.id
-            company.save()
-            utils.add_new_employee(company.id, request.user.id)
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.CompanyCreationForm()
-
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_company.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def create_project(request, id):
-    try:
-        company_id = models.Company.objects.get(id=id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-    if request.method == 'POST':
-        form = forms.ProjectCreationForm(request.POST)
-        if form.is_valid():
-            project = form.save(commit=False)
-            project.project_creater = request.user.id
-            project.company_id = company_id
-            project.save()
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.ProjectCreationForm()
-
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_project.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def create_task(request, company_id, project_id):
-    try:
-        company_id = models.Company.objects.get(id=company_id)
-        project_id = models.Project.objects.get(id=project_id)
-        user = models.Employee.objects.get(id=request.user.id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-    if request.method == 'POST':
-        form = forms.TaskCreationForm(company_id, project_id.id, request.POST, request.FILES)
-        if form.is_valid():
-            task = models.Task()
-            task.json_with_employee_info = {
-                'appoint': [request.user.email],
-                'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-                'executor': [i.email for i in form.cleaned_data.get('executor')]
-            }
-            task.project_id = project_id
-            task.text = form.cleaned_data.get('text')
-            task.title = form.cleaned_data.get('title')
-            task.save()
-
-            user.tasks.add(task)
-
-            for f in request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
-            for i in request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.TaskCreationForm(company_id, project_id.id)
-
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_task.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def create_subtask(request, company_id, project_id, task_id):
-    try:
-        company_id = models.Company.objects.get(id=company_id)
-        project_id = models.Project.objects.get(id=project_id)
-        task_id = models.Task.objects.get(id=task_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-    if request.method == 'POST':
-        form = forms.SubtaskCreationForm(company_id, request.POST, request.FILES)
-        if form.is_valid():
-            subtask = models.Subtasks()
-            subtask.json_with_employee_info = {
-                'appoint': [request.user.email],
-                'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-                'executor': [i.email for i in form.cleaned_data.get('executor')]
-            }
-            subtask.task_id_id = task_id.id
-            subtask.text = form.cleaned_data.get('text')
-            subtask.title = form.cleaned_data.get('title')
-            subtask.save()
-            for f in request.FILES.getlist('files'): models.SubtaskFile.objects.create(file=f, subtask_id=subtask)
-            for i in request.FILES.getlist('images'): models.SubtaskImage.objects.create(image=i, subtask_id=subtask)
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.SubtaskCreationForm(company_id)
-
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_subtask.html', context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -178,52 +216,11 @@ def check_employee(request, company_id):
     return render(request, 'team/main_functionality/view_company_employees.html', context)
 
 
-@login_required(login_url=reverse_lazy('team:login'))
-def choice_parameters(request, company_id):
-    if request.method == 'POST':
-        form = forms.ChoiceEmployeeParametersForm(request.POST)
-        if form.is_valid():
-            request.user.json_with_settings_info["settings_info_about_company_employee"] = []
-            for item, flag in form.cleaned_data.items():
-                if flag: request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
-                request.user.save()
-            return redirect(reverse_lazy('team:check_employee', kwargs={'company_id': company_id}))
-
-    else:
-        form = forms.ChoiceEmployeeParametersForm()
-
-    context = {'form': form}
-    return render(request, 'team/main_functionality/choice_parameters.html', context)
-
-
 def add_new_employee(company_id, employee_id):
     company_id = models.Company.objects.get(id=company_id)
     employee_id = models.Employee.objects.get(id=employee_id)
     new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
     new_employee.save()
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def create_category(request):
-    if request.method == 'POST':
-        form = forms.CategoryCreationForm(request.POST)
-
-        if form.is_valid():
-            user_proj = form.save(commit=False)
-            user_proj.title = form.cleaned_data.get('title')
-            user_proj.employee_id = models.Employee.objects.get(id=request.user.id)
-            user_proj.project_personal_notes = form.cleaned_data.get('project_personal_notes')
-
-            user_proj.save()
-
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.CategoryCreationForm()
-
-    context = {
-        'form': form,
-    }
-    return render(request, 'team/main_functionality/create_category.html', context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -257,12 +254,11 @@ def create_taskboard(request):
     else:
         form = forms.TaskboardCreationForm(request.user.id)
 
-    context = {
-        'form': form
-    }
+    context = {'form': form}
     return render(request, 'team/main_functionality/create_taskboard.html', context)
 
 
+@login_required(login_url=reverse_lazy('team:login'))
 def taskboard(request):
     categories = models.UserProject.objects.filter(employee_id=request.user.id)
 
@@ -271,9 +267,7 @@ def taskboard(request):
         cats[cat] = models.Employee.objects.get(id=request.user.id).tasks \
             .filter(id__in=models.UserProjectTask.objects.filter(user_project_id=cat).values('task_id'))
 
-    context = {
-        'cats': cats,
-    }
+    context = {'cats': cats}
     return render(request, 'team/main_functionality/taskboard.html', context)
 
 
@@ -317,9 +311,8 @@ def create_department(request, company_id):
             return redirect(reverse_lazy('team:homepage'))
     else:
         form = forms.DepartmentCreationForm(company_id)
-    context = {
-        'form': form,
-    }
+
+    context = {'form': form}
     return render(request, 'team/main_functionality/create_department.html', context)
 
 
@@ -337,33 +330,6 @@ def view_department(request, company_id, department_id):
         'supervisor': supervisor,
     }
     return render(request, 'team/main_functionality/view_department.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:homepage'))
-def create_position(request, company_id):
-    try:
-        company = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-
-    if request.method == 'POST':
-        form = forms.PositionCreationForm(request.POST)
-        if form.is_valid():
-            position = form.save(commit=False)
-            position.company_id = company
-            position.json_with_optional_info = {
-                'text': form.cleaned_data.get('text')
-            }
-            position.save()
-
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.PositionCreationForm()
-
-    context = {
-        'form': form
-    }
-    return render(request, 'team/main_functionality/create_position.html', context)
 
 
 def set_position(employee_id, company_id, position_id):
