@@ -255,6 +255,12 @@ def create_taskboard(request):
     else:
         form = forms.TaskboardCreationForm(request.user.id)
 
+    context = {
+        'form': form,
+        'title': 'Taskboard-create'
+    }
+    return render(request, creator, context)
+
 
 @login_required(login_url=reverse_lazy('team:login'))
 def taskboard(request):
