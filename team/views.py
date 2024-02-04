@@ -142,7 +142,7 @@ class CreateCategory(LoginRequiredMixin, FormView):
         return super().form_valid(user_proj)
 
 
-class CreatePosition(LoginRequiredMixin, FormView):
+class CreatePosition(LoginRequiredMixin, utils.ModifiedFormView):
     login_url = reverse_lazy('team:login')
     success_url = reverse_lazy('team:homepage')
     form_class = forms.PositionCreationForm
