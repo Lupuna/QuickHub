@@ -255,6 +255,12 @@ def create_taskboard(request):
     else:
         form = forms.TaskboardCreationForm(request.user.id)
 
+    context = {
+        'form': form,
+        'title': 'Taskboard-create'
+    }
+    return render(request, creator, context)
+
 
 @login_required(login_url=reverse_lazy('team:login'))
 def taskboard(request):
@@ -288,7 +294,7 @@ def create_department(request, company_id):
 
             department.title = form.cleaned_data.get('title')
             department.supervisor = supervisor.id
-            department.company_id = models.Company.objects.get(id=company)
+            department.company_id = models.Company.objects.get(id=company_id)
             try:
                 department.parent_id = models.Department.objects \
                     .get(Q(title=form.cleaned_data.get('parent')) & Q(company_id=company))
@@ -313,9 +319,7 @@ def create_department(request, company_id):
         'form': form,
         'title': 'QuickHub: Department-create'
     }
-
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_department.html', context)
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))
