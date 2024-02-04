@@ -16,4 +16,9 @@
             {% endif %}
         </button>
     </form>
+    {% block warning %}
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    {% endblock %}
 {%endblock%}
