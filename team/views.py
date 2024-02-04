@@ -162,6 +162,8 @@ def sign_up(request):
         form = forms.CustomUserCreationFrom(request.POST)
         if form.is_valid():
             user = form.save()
+            user.json_with_settings_info = utils.create_base_settings_json_to_employee()
+            user.save()
             login(request, user)
             return redirect(reverse_lazy('team:homepage'))
     else:
