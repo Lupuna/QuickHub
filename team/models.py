@@ -61,7 +61,7 @@ class Company(models.Model):
 class Department(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=40, unique=True)
     supervisor = models.IntegerField()
 
     class Meta:

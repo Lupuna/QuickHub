@@ -5,17 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38189788-0bac-4a4e-af4c-bb36511a56e0" name="Changes" comment="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
-      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/18/NM_3.ppsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/19/NM_4.ppsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/19/NM_5.ppsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/19/NM_5_1.ppsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/team/migrations/0011_companyevent_alter_employee_json_with_settings_info_and_more.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_04_02_2024_14_23__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_04_02_2024_14_23__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/templates/team/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

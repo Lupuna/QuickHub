@@ -54,7 +54,9 @@
 						</div>
 						<div class="name_of_person">
 							{% block userbar %}
-								{{ request.user.name }}
+								{% if request.user %}
+									{{ request.user.name }}
+								{%endif%}
 							{% endblock %}
 							<!-- Алексей Симонов -->
 						</div>
