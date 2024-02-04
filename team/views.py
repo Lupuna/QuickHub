@@ -1,5 +1,7 @@
+from typing import Any
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic.edit import FormView
@@ -147,7 +149,7 @@ class CreatePosition(LoginRequiredMixin, utils.ModifiedFormView):
     success_url = reverse_lazy('team:homepage')
     form_class = forms.PositionCreationForm
     template_name = creator
-    extra_context = {'title': 'Position: Company-create'}
+    extra_context = {'title': 'QuickHub: Position-create'}
 
     def form_valid(self, form):
         position = form.save(commit=False)
@@ -157,11 +159,61 @@ class CreatePosition(LoginRequiredMixin, utils.ModifiedFormView):
         return super().form_valid(position)
 
 
+class CreateDepartment(LoginRequiredMixin, utils.ModifiedFormView):
+    login_url = reverse_lazy('team:login')
+    success_url = reverse_lazy('team:homepage')
+    form_class = forms.DepartmentCreationForm
+    template_name = creator
+    extra_context = {'title': 'QuickHub: Department-create'}
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company_id']
+        return kwargs
+
+    def form_valid(self, form):
+        department = models.Department()
+        try:
+            department.title = form.cleaned_data.get('title')
+            department.company_id = self.kwargs['company_id']
+
+            department.parent_id = form.cleaned_data.get('parent')
+            department.supervisor = form.cleaned_data.get('supervisor')
+            department.save()
+
+            employees = list(form.cleaned_data.get('employees'))
+            if not department.supervisor in employees:
+                employees += [department.supervisor]
+
+            for employee in employees:
+                employee_company = models.EmployeeCompany.objects\
+                    .get(employee_id=employee, 
+                        company_id=self.kwargs['company_id'])
+                if not employee_company.department_id:
+                    employee_company.department_id = department     # если запись о работнике есть, но он не прикреплён к отделу
+                    employee_company.save()                         # тогда просто заполняется поле отдела в существующей записи
+                else:
+                    employee_company = models.EmployeeCompany()
+                    employee_company.company_id = self.kwargs['company_id']
+                    employee_company.employee_id = employee
+                    employee_company.department_id = department     # если же работник уже прикреплён к отделу, 
+                    employee_company.save()                         # создаётся новая запись в таблице EmployeeCompany
+        except:
+            self.extra_context.update({
+                'error': f'{department.title} уже существует'
+            })
+            return redirect('team:create_department', 
+                            company_id=self.kwargs['company_id'].id)
+        return super().form_valid(department)
+
+
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)
         if form.is_valid():
             user = form.save()
+            user.json_with_settings_info = utils.create_base_settings_json_to_employee()
+            user.save()
             login(request, user)
             return redirect(reverse_lazy('team:homepage'))
     else:
@@ -273,54 +325,6 @@ def taskboard(request):
 
     context = {'cats': cats}
     return render(request, 'team/main_functionality/taskboard.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def create_department(request, company_id):
-    '''
-    Создание отдела в компании
-    '''
-    try:
-        company = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-
-    if request.method == 'POST':
-        form = forms.DepartmentCreationForm(company_id, request.POST)
-
-        if form.is_valid():
-            department = models.Department()
-            supervisor = models.Employee.objects.get(email=form.cleaned_data.get('supervisor'))
-
-            department.title = form.cleaned_data.get('title')
-            department.supervisor = supervisor.id
-            department.company_id = models.Company.objects.get(id=company_id)
-            try:
-                department.parent_id = models.Department.objects \
-                    .get(Q(title=form.cleaned_data.get('parent')) & Q(company_id=company_id))
-            except ObjectDoesNotExist:
-                department.parent_id = None
-
-            department.save()
-
-            user = models.EmployeeCompany.objects.get(employee_id=supervisor, company_id=company)
-            user.department_id = department
-            user.save()
-
-            for employee in form.cleaned_data.get('employees'):
-                user = models.EmployeeCompany.objects.get(employee_id=employee, company_id=company)
-                user.department_id = department
-                user.save()
-
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.DepartmentCreationForm(company_id)
-
-    context = {
-        'form': form,
-        'title': 'QuickHub: Department-create'
-    }
-    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))
