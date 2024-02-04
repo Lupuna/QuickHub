@@ -104,6 +104,7 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+
 class EmployeeCompany(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
@@ -233,3 +234,33 @@ class UserProjectTask(models.Model):
 
     class Meta:
         ordering = ['title']
+
+
+class CompanyEvent(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    title = models.CharField(max_length=40)
+    description = models.TextField(blank=True, null=True)
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    date = models.DateField()
+    time_start = models.TimeField()
+    time_end = models.TimeField()
+
+    class Meta:
+        ordering = ['-date']
+
+
+class CompanyEventImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'company_event'
+
+
+class CompanyEventFile(models.Model):
+    image = models.FileField(upload_to='images/%Y/%m/%d/%H/')
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE)
+
+    class Meta:
+        order_with_respect_to = 'company_event'
+

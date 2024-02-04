@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38189788-0bac-4a4e-af4c-bb36511a56e0" name="Changes" comment="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
+      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/18/NM_3.ppsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/19/NM_4.ppsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/19/NM_5.ppsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/files/2024/02/02/19/NM_5_1.ppsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/team/migrations/0011_companyevent_alter_employee_json_with_settings_info_and_more.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/team/templates/team/main_functionality/create_department.html" beforeDir="false" afterPath="$PROJECT_DIR$/team/templates/team/main_functionality/create_department.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
@@ -28,6 +32,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="create_calendar" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="MIXED" />
   </component>
@@ -94,7 +103,14 @@
       <option name="project" value="LOCAL" />
       <updated>1705486798336</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
+      <created>1707031634477</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1707031634477</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

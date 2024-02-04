@@ -101,3 +101,19 @@ class PositionCreationForm(forms.ModelForm):
     class Meta:
         model = models.Positions
         fields = ('title', 'weight',)
+
+
+class CompanyEventCreationForm(forms.Form):
+    title = forms.CharField(max_length=40)
+    images = utils.MultipleImageField(required=False)
+    files = utils.MultipleImageField(required=False)
+    description = forms.CharField(widget=forms.Textarea, required=False)
+    date = forms.DateField()
+    time_start = forms.TimeField()
+    time_end = forms.TimeField()
+    present_employees = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple, required=False)
+
+    def __init__(self, company_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['present_employees'] = utils.create_employee_list(company_id=company_id)
+
