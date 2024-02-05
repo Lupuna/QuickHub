@@ -1,21 +1,49 @@
 {% extends 'team/base.html' %}
 {% load static %}
-
 {%block title%}QuickHub{%endblock%}
 
+<head>
+    <link href="{% static 'css/main_part.css' %}" rel="stylesheet" >
+</head>
 {%block content%}
-    <div>
+    <div class="cards">
         {% for cat, tasks in cats.items %}
-        {{ cat.title }}
+        <!-- Карточка -->
+        <div class="card">
+            <!-- Верхняя часть -->
+            <div class="card__top">
+                <div class="category_title">
+                    {{ cat.title }}
+                </div>
+                <div class="tripple-dot">
+                    ...
+                </div>
+            </div>
+            <button class="card__add">
+                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
+                <div class="button-text">
+                    Добавить задачу
+                </div>
+            </button>
+            <!-- Нижняя часть -->
+            <div class="card__bottom">
             {% for task in tasks %}
-            <p>
-                {{ task.title }}
-                {% for executor in task.json_with_employee_info.executor %}
-                    {{ executor }}
-                {% endfor %}
-            </p>
-
+                <div class="task">
+                    <div class="title_svg">
+                        <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                        <div class="task__title">
+                            {{ task.title }}
+                        </div>
+                    </div>
+                    <div class="executors">
+                        {% for executor in task.json_with_employee_info.executor %}
+                            {{ executor }}
+                        {% endfor %}
+                    </div>
+                </div>
             {% endfor %}
+            </div>    
+        </div>
         {% endfor %}
     </div>
 {%endblock%}
