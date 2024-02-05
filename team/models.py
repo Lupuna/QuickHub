@@ -220,6 +220,7 @@ class UserProject(models.Model):
 
     class Meta:
         ordering = ['title']
+        unique_together = ['title', 'employee_id']
 
     def __str__(self):
         return self.title
