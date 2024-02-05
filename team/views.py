@@ -362,11 +362,11 @@ def taskboard(request):
 
 @login_required(login_url=reverse_lazy('team:homepage'))
 def view_department(request, company_id, department_id):
-    department = models.Department.objects.get(Q(company_id=company_id) & Q(id=department_id))
-    supervisor = models.Employee.objects.get(id=department.supervisor)
+    department = models.Department.objects.get(id=department_id, company_id=company_id)
+    supervisor = models.Employee.objects.get(id=department.supervisor.id)
     employees = models.Employee.objects \
         .filter(id__in=models.EmployeeCompany.objects \
-                .filter(Q(department_id=department_id) & Q(company_id=company_id)).values('employee_id'))
+                .filter(department_id=department_id, company_id=company_id).values('employee_id'))
 
     context = {
         'department': department,
