@@ -6,6 +6,16 @@
     <link href="{% static 'css/main_part.css' %}" rel="stylesheet" >
 </head>
 {%block content%}
+    <div class="add_pad">
+        <a href="{% url 'team:create_category' %}">
+            <button class="category__add">
+                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
+                <div class="button-text">
+                    Добавить категорию
+                </div>
+            </button>
+        </a>
+    </div>
     <div class="cards">
         {% for cat, tasks in cats.items %}
         <!-- Карточка -->
@@ -15,9 +25,7 @@
                 <div class="category_title">
                     {{ cat.title }}
                 </div>
-                <div class="tripple-dot">
-                    ...
-                </div>
+                <img src="{% static 'img/tasks/tripple-dot.svg'%}">
             </div>
             <button class="card__add">
                 <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">

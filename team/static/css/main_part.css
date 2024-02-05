@@ -27,7 +27,7 @@
 }
 
 .card {
-	width: 331px;
+	width: 100%;
 	min-height: 100px;
 	display: flex;
 	flex-direction: column;
@@ -58,7 +58,7 @@
 	border-radius: 10px;
 }
 
-.card__add {
+.card__add, .category__add {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
@@ -98,4 +98,16 @@
 	margin-top: 13px;
 	display: flex;
 	flex-direction: row;
+}
+
+.add_pad {
+	width: 18%;
+	align-content: center;
+	align-items: center;
+}
+
+.category__add:hover {
+	border-radius: 25px 7px 7px 7px;
+	background-color: #ff6633;
+	color: #fff;
 }

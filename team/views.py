@@ -132,7 +132,7 @@ class ChoiceParameters(LoginRequiredMixin, FormView):
 class CreateCategory(LoginRequiredMixin, FormView):
     login_url = reverse_lazy('team:login')
     form_class = forms.CategoryCreationForm
-    success_url = reverse_lazy('team:homepage')
+    success_url = reverse_lazy('team:taskboard')
     extra_context = {'title': 'QuickHub: Category-create'}
     template_name = creator
 
@@ -220,7 +220,7 @@ class CreateDepartment(LoginRequiredMixin, utils.ModifiedFormView):
 
 class CreateTaskboard(LoginRequiredMixin, utils.ModifiedFormView):
     login_url = reverse_lazy('team:login')
-    success_url = reverse_lazy('team:homepage')
+    success_url = reverse_lazy('team:taskboard')
     form_class = forms.TaskboardCreationForm
     template_name = creator
     extra_context = {'title': 'QuickHub: Taskboard-creation'}
