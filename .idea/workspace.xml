@@ -5,9 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38189788-0bac-4a4e-af4c-bb36511a56e0" name="Changes" comment="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/team/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/team/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/team/views.py" afterDir="false" />
+>>>>>>> develop
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +31,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="create_calendar" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="MIXED" />
   </component>
@@ -89,7 +102,28 @@
       <option name="project" value="LOCAL" />
       <updated>1705486798336</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
+      <created>1707031634477</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1707031634477</updated>
+    </task>
+    <task id="LOCAL-00003" summary="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
+      <created>1707033927700</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1707033927700</updated>
+    </task>
+    <task id="LOCAL-00004" summary="System check identified some issues:&#10;&#10;WARNINGS:&#10;team.Employee.tasks: (fields.W340) null has no effect on ManyToManyField.&#10;&#10;System check identified 1 issue (0 silenced).">
+      <created>1707035046121</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1707035046121</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

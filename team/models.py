@@ -61,11 +61,12 @@ class Company(models.Model):
 class Department(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=40, unique=True)
     supervisor = models.IntegerField()
 
     class Meta:
         ordering = ['company_id', 'title']
+        unique_together = ['company_id', 'title']
 
     def __str__(self):
         return self.title
@@ -83,6 +84,9 @@ class Positions(models.Model):
     title = models.CharField(max_length=40)
     weight = models.SmallIntegerField(choices=Weight.choices, default=Weight.PARTIAL_ACCESS)
     json_with_optional_info = models.JSONField(blank=True, default=dict)
+
+    class Meta:
+        unique_together = ['company_id', 'title']
 
 
 class Project(models.Model):

@@ -9,12 +9,15 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from . import forms, models, utils
 
+creator = 'team/main_functionality/includes/creator.html'
+
 
 class CreateCompany(LoginRequiredMixin, FormView):
-    template_name = 'team/main_functionality/create_company.html'
+    template_name = creator
     form_class = forms.CompanyCreationForm
     success_url = reverse_lazy('team:homepage')
     login_url = reverse_lazy('team:login')
+    extra_context = {'title': 'QuickHub: Company-create'}
 
     def form_valid(self, form):
         company = form.save(commit=False)
@@ -25,10 +28,11 @@ class CreateCompany(LoginRequiredMixin, FormView):
 
 
 class CreateProject(LoginRequiredMixin, utils.ModifiedFormView):
-    template_name = 'team/main_functionality/create_project.html'
+    template_name = creator
     success_url = reverse_lazy('team:homepage')
     login_url = reverse_lazy('team:login')
     form_class = forms.ProjectCreationForm
+    extra_context = {'title': 'QuickHub: Project-create'}
 
     def form_valid(self, form):
         project = form.save(commit=False)
@@ -40,9 +44,10 @@ class CreateProject(LoginRequiredMixin, utils.ModifiedFormView):
 
 class CreateTask(LoginRequiredMixin, utils.ModifiedFormView):
     login_url = reverse_lazy('team:login')
-    template_name = 'team/main_functionality/create_task.html'
+    template_name = creator
     success_url = reverse_lazy('team:homepage')
     form_class = forms.TaskCreationForm
+    extra_context = {'title': 'QuickHub: Task-create'}
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -79,9 +84,10 @@ class CreateTask(LoginRequiredMixin, utils.ModifiedFormView):
 
 class CreateSubtask(LoginRequiredMixin, utils.ModifiedFormView):
     login_url = reverse_lazy('team:login')
-    template_name = 'team/main_functionality/create_subtask.html'
+    template_name = creator
     success_url = reverse_lazy('team:homepage')
     form_class = forms.SubtaskCreationForm
+    extra_context = {'title': 'QuickHub: Subtask-create'}
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -124,7 +130,8 @@ class CreateCategory(LoginRequiredMixin, FormView):
     login_url = reverse_lazy('team:login')
     form_class = forms.CategoryCreationForm
     success_url = reverse_lazy('team:homepage')
-    template_name = 'team/main_functionality/create_category.html'
+    extra_context = {'title': 'QuickHub: Category-create'}
+    template_name = creator
 
     def form_valid(self, form):
         user_proj = form.save(commit=False)
@@ -135,11 +142,12 @@ class CreateCategory(LoginRequiredMixin, FormView):
         return super().form_valid(user_proj)
 
 
-class CreatePosition(LoginRequiredMixin, FormView):
+class CreatePosition(LoginRequiredMixin, utils.ModifiedFormView):
     login_url = reverse_lazy('team:login')
     success_url = reverse_lazy('team:homepage')
     form_class = forms.PositionCreationForm
-    template_name = 'team/main_functionality/create_position.html'
+    template_name = creator
+    extra_context = {'title': 'Position: Company-create'}
 
     def form_valid(self, form):
         position = form.save(commit=False)
@@ -216,13 +224,6 @@ def check_employee(request, company_id):
     return render(request, 'team/main_functionality/view_company_employees.html', context)
 
 
-def add_new_employee(company_id, employee_id):
-    company_id = models.Company.objects.get(id=company_id)
-    employee_id = models.Employee.objects.get(id=employee_id)
-    new_employee = models.EmployeeCompany(company_id=company_id, employee_id=employee_id)
-    new_employee.save()
-
-
 @login_required(login_url=reverse_lazy('team:login'))
 def create_taskboard(request):
     if request.method == "POST":
@@ -254,8 +255,11 @@ def create_taskboard(request):
     else:
         form = forms.TaskboardCreationForm(request.user.id)
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_taskboard.html', context)
+    context = {
+        'form': form,
+        'title': 'Taskboard-create'
+    }
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
@@ -312,8 +316,11 @@ def create_department(request, company_id):
     else:
         form = forms.DepartmentCreationForm(company_id)
 
-    context = {'form': form}
-    return render(request, 'team/main_functionality/create_department.html', context)
+    context = {
+        'form': form,
+        'title': 'QuickHub: Department-create'
+    }
+    return render(request, creator, context)
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))
@@ -330,16 +337,6 @@ def view_department(request, company_id, department_id):
         'supervisor': supervisor,
     }
     return render(request, 'team/main_functionality/view_department.html', context)
-
-
-def set_position(employee_id, company_id, position_id):
-    user = models.Employee.objects.get(id=employee_id)
-    position = models.Positions.objects.get(id=position_id)
-    company = models.Company.objects.get(id=company_id)
-
-    employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
-    employee.position_id = position
-    employee.save()
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))
