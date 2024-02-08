@@ -340,34 +340,6 @@ def view_department(request, company_id, department_id):
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))
-def create_position(request, company_id):
-    try:
-        company = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-
-    if request.method == 'POST':
-        form = forms.PositionCreationForm(request.POST)
-        if form.is_valid():
-            position = form.save(commit=False)
-            position.company_id = company
-            position.json_with_optional_info = {
-                'text': form.cleaned_data.get('text')
-            }
-            position.save()
-
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.PositionCreationForm()
-
-    context = {
-        'form': form,
-        'title': 'QuickHub: Position-create',
-    }
-    return render(request, creator, context)
-
-
-@login_required(login_url=reverse_lazy('team:homepage'))
 def view_positions(request, company_id):
     try:
         company = models.Company.objects.get(id=company_id)

@@ -2,7 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from . import utils
 
-
 class Employee(AbstractUser):
     name = models.CharField(max_length=40)
     email = models.EmailField(unique=True)

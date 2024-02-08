@@ -39,7 +39,6 @@ class MultipleFileField(forms.FileField):
 
 
 class ModifiedFormView(FormView):
-
     def dispatch(self, request, *args, **kwargs):
         try:
             if self.kwargs.get('company_id'):
