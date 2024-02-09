@@ -20,6 +20,7 @@ urlpatterns = [
     path('create/<int:company_id>/department', views.create_department, name='create_department'),
     path('create/taskboard', views.create_taskboard, name='create_taskboard'),
     path('create/<int:company_id>/position', views.CreatePosition.as_view(), name='create_position'),
+    path('create/<int:company_id>/company-event', views.CreateCompanyEvent.as_view(), name='create_company_event'),
     # отображение
     path('<int:company_id>/department/<int:department_id>', views.view_department, name='departments'),
     path('<int:company_id>/check-employee', views.check_employee, name='check_employee'),

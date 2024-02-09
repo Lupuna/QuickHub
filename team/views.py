@@ -157,6 +157,36 @@ class CreatePosition(LoginRequiredMixin, utils.ModifiedFormView):
         return super().form_valid(position)
 
 
+class CreateCompanyEvent(LoginRequiredMixin, utils.ModifiedFormView):
+    login_url = reverse_lazy('team:login')
+    success_url = reverse_lazy('team:homepage')
+    form_class = forms.CompanyEventCreationForm
+    template_name = creator
+    extra_context = {'title': 'QuickHub: Create-event'}
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company_id']
+        return kwargs
+
+    def form_valid(self, form):
+        company_event = models.CompanyEvent()
+        company_event.company = self.kwargs['company_id']
+        company_event.title = form.cleaned_data.get('title')
+        company_event.description = form.cleaned_data.get('description')
+        company_event.json_with_employee_info = {
+            'present_employees': [employee.email for employee in form.cleaned_data.get('present_employees')]
+        }
+        company_event.time_end = form.cleaned_data.get('time_end')
+        company_event.time_start = form.cleaned_data.get('time_start')
+        company_event.save()
+
+        for f in self.request.FILES.getlist('files'): models.CompanyEventFile.objects.create(file=f, company_event=company_event)
+        for i in self.request.FILES.getlist('images'): models.CompanyEventImage.objects.create(image=i, company_event=company_event)
+
+        return super().form_valid(form)
+
+
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)
