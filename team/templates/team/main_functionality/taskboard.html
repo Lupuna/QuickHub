@@ -48,6 +48,16 @@
                             {{ executor }}
                         {% endfor %}
                     </div>
+                    {% for subtask in task.subtasks.all %}
+                        <div class="subtask">
+                            <div class="title_svg">
+                                <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                                <div class="subtask__title">
+                                    {{ subtask.title|truncatewords:2 }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             {% endfor %}
             </div>    

@@ -65,7 +65,7 @@ class ChoiceEmployeeParametersForm(forms.Form):
 
 class CategoryCreationForm(forms.ModelForm):
     class Meta:
-        model = models.UserProject
+        model = models.Category
         fields = ('title', 'project_personal_notes')
 
 
@@ -77,7 +77,7 @@ class TaskboardCreationForm(forms.Form):
     def __init__(self, emp_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['category'].queryset = models.UserProject.objects.filter(employee_id=emp_id).all()
+        self.fields['category'].queryset = models.Category.objects.filter(employee_id=emp_id).all()
         self.fields['tasks'].queryset = models.Employee.objects.get(id=emp_id).tasks.all()
 
 

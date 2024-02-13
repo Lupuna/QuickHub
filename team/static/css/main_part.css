@@ -56,6 +56,7 @@
 	flex-direction: column;
 	flex: 1 0 auto; 
 	border-radius: 10px;
+	font-size: 18px;
 }
 
 .card__add, .category__add {
@@ -81,8 +82,10 @@
 }
 
 .task {
-	height: 80px;
+	height: auto;
+	max-height: 100%;
 	margin-top: 7px;
+	padding-bottom: 20px;
 	background-color: #FFF;
 	color: #000;
 	border-radius: 10px;
@@ -90,7 +93,7 @@
 	box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.task:hover {
+.task:hover, .subtask:hover {
 	box-shadow: 4px 8px 16px rgba(53, 4, 190, 0.192);	
 }
 
@@ -110,4 +113,21 @@
 	border-radius: 25px 7px 7px 7px;
 	background-color: #ff6633;
 	color: #fff;
+}
+
+.executors {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.subtask {
+	color: #FAFAFA;
+	height: auto;
+	background-color: #70c05b;
+	border-radius: 5px 0px 0px 5px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	padding-left: 10px;
+	margin-bottom: 10px;
+	font-size: 14px;
 }
