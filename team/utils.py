@@ -1,5 +1,6 @@
 from django import forms
 from django.views.generic.edit import FormView
+from django.views.generic import ListView
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -52,7 +53,26 @@ class ModifiedFormView(FormView):
             return redirect(reverse_lazy('team:homepage'))
 
         return super().dispatch(request, *args, **kwargs)
+    
 
+class ModifiedListView(ListView):
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if self.kwargs.get('company_id'):
+                self.kwargs['company_id'] = models.Company.objects.get(id=self.kwargs['company_id'])
+            if self.kwargs.get('project_id'):
+                self.kwargs['project_id'] = models.Project.objects.get(id=self.kwargs['project_id'])
+            if self.kwargs.get('task_id'):
+                self.kwargs['task_id'] = models.Task.objects.get(id=self.kwargs['task_id'])
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:homepage'))
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['company'] = self.kwargs['company_id']
+        return context
+    
 
 class CreatorMixin:
     def __init__(self, *args, **kwargs):

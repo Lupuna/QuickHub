@@ -1,6 +1,7 @@
 from typing import Any
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.query import QuerySet
 from django.forms.forms import BaseForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
@@ -309,6 +310,7 @@ class CheckEmployee(LoginRequiredMixin, ListView):
         # page_obj = paginator.get_page(page_number)
         return info_about_employees
 
+
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)
@@ -359,17 +361,28 @@ def view_department(request, company_id, department_id):
     return render(request, 'team/main_functionality/view_department.html', context)
 
 
-@login_required(login_url=reverse_lazy('team:homepage'))
-def view_positions(request, company_id):
-    try:
-        company = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
+class ProjectsView(LoginRequiredMixin, utils.ModifiedListView):
+    model = models.Project
+    template_name = 'team/main_functionality/projects.html'
+    context_object_name = 'projects'
 
-    positions = company.positions.all()
+    def get_queryset(self):
+        return self.kwargs['company_id'].projects.all()
 
-    context = {
-        'company': company,
-        'positions': positions,
-    }
-    return render(request, 'team/main_functionality/view_positions.html', context)
+
+class DepartmentsView(LoginRequiredMixin, utils.ModifiedListView):
+    model = models.Department
+    template_name = 'team/main_functionality/departments.html'
+    context_object_name = 'departments'
+
+    def get_queryset(self):
+        return self.kwargs['company_id'].departments.all()
+
+
+class PositionsView(LoginRequiredMixin, utils.ModifiedListView):
+    model = models.Positions
+    template_name = 'team/main_functionality/view_positions.html'
+    context_object_name = 'positions'
+    
+    def get_queryset(self):
+        return self.kwargs['company_id'].positions.all()
