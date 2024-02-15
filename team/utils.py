@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from . import models
 
+creator = 'team/main_functionality/includes/creator.html'
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -52,6 +53,14 @@ class ModifiedFormView(FormView):
             return redirect(reverse_lazy('team:homepage'))
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class CreatorMixin:
+    def __init__(self, *args, **kwargs):
+        self.template_name = creator
+        self.success_url = reverse_lazy('team:homepage')
+        self.login_url = reverse_lazy('team:login')
+        self.extra_context = {'title': f'QuickHub: {self.__class__.__name__.replace("Create", "")}-create'}
 
 
 def create_base_settings_json_to_employee():
