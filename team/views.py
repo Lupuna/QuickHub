@@ -5,6 +5,7 @@ from django.forms.forms import BaseForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.views.generic import ListView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
@@ -140,6 +141,34 @@ class CreatePosition(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormV
         return super().form_valid(position)
 
 
+class CreateCompanyEvent(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+    form_class = forms.CompanyEventCreationForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company_id']
+        return kwargs
+
+    def form_valid(self, form):
+        company_event = models.CompanyEvent()
+        company_event.company = self.kwargs['company_id']
+        company_event.title = form.cleaned_data.get('title')
+        company_event.description = form.cleaned_data.get('description')
+        company_event.json_with_employee_info = {
+            'present_employees': [employee.email for employee in form.cleaned_data.get('present_employees')]
+        }
+        company_event.time_end = form.cleaned_data.get('time_end')
+        company_event.time_start = form.cleaned_data.get('time_start')
+        company_event.save()
+
+        for f in self.request.FILES.getlist('files'): models.CompanyEventFile.objects.create(file=f,
+                                                                                             company_event=company_event)
+        for i in self.request.FILES.getlist('images'): models.CompanyEventImage.objects.create(image=i,
+                                                                                               company_event=company_event)
+
+        return super().form_valid(form)
+
+
 class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
     form_class = forms.DepartmentCreationForm
 
@@ -163,15 +192,17 @@ class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFor
                 employees += [department.supervisor]
 
             for employee in employees:
-                employee_company = models.EmployeeCompany.objects\
-                    .filter(employee_id=employee, 
+                employee_company = models.EmployeeCompany.objects \
+                    .filter(employee_id=employee,
                             company_id=self.kwargs['company_id'])
                 # т.к. on_delete=models.SET_NULL, то при удалении департамента может возникнуть много
-                # записей об одном работнике с пустыми полями отдела 
+                # записей об одном работнике с пустыми полями отдела
                 employee_without_department = employee_company.filter(department_id=None)
                 if employee_without_department:
-                    employee_without_department[0].department_id = department     # если есть запись о работнике с незаполненным полем отдела,
-                    employee_without_department[0].save()                         # тогда просто заполняется поле отдела в уже существующей записи
+                    employee_without_department[
+                        0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
+                    employee_without_department[
+                        0].save()  # тогда просто заполняется поле отдела в уже существующей записи
                 else:
                     employee_company = models.EmployeeCompany()
                     employee_company.company_id = self.kwargs['company_id']
@@ -182,14 +213,14 @@ class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFor
             self.extra_context.update({
                 'error': f'{department.title} уже существует'
             })
-            return redirect('team:create_department', 
+            return redirect('team:create_department',
                             company_id=self.kwargs['company_id'].id)
         return super().form_valid(department)
 
 
 class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
     form_class = forms.TaskboardCreationForm
-    
+
     def dispatch(self, request, *args, **kwargs):
         try:
             self.kwargs['user'] = models.Employee.objects.get(id=self.request.user.id)
@@ -203,24 +234,83 @@ class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedForm
         return kwargs
 
     def form_valid(self, form: Any) -> HttpResponse:
-        tasks = self.kwargs['user'].tasks\
+        tasks = self.kwargs['user'].tasks \
             .filter(id__in=form.cleaned_data.get('tasks'))
         category = form.cleaned_data.get('category')
-        
+
         for task in tasks:
             taskboard = models.Taskboard(category_id=category,
-                                        task_id=task,
-                                        title=category.title,
-                                        task_personal_notes={
-                                            'notes': form.cleaned_data.get('text'),
-                                            'task_notes': task.text
-                                        })
+                                         task_id=task,
+                                         title=category.title,
+                                         task_personal_notes={
+                                             'notes': form.cleaned_data.get('text'),
+                                             'task_notes': task.text
+                                         })
             subtasks = task.subtasks.all()
             for subtask in subtasks:
                 taskboard.json_with_subtask_and_subtask_personal_note[subtask.id] = subtask.text
             taskboard.save()
         return super().form_valid(form)
 
+
+class CheckEmployee(LoginRequiredMixin, ListView):
+    template_name = 'team/main_functionality/view_company_employees.html'
+    context_object_name = 'page_obj'
+    model = models.Employee
+    login_url = reverse_lazy('team:login')
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if self.kwargs.get('company_id'):
+                self.kwargs['company_id'] = models.Company.objects.get(id=self.kwargs['company_id'])
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:homepage'))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['company_id'] = self.kwargs['company_id'].id
+        return context
+
+    def get_queryset(self):
+        info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
+        employees = models.Employee.objects.filter(
+            id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
+
+        info_about_employees = []
+        for employee in employees:
+            info_about_employee = dict(
+                filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
+            for link in models.LinksResources.objects.filter(employee_id=employee.id):
+                if link.title in info_filter_about_employee:
+                    info_about_employee.update(link.get_info())
+
+            if 'position_title' in info_filter_about_employee:
+                position = models.Positions.objects.filter(
+                    id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id= self.kwargs['company_id'])))
+                if position:
+                    position = position[0].title
+                else:
+                    position = None
+                info_about_employee.update({'position_title': position})
+
+            if 'department' in info_filter_about_employee:
+                department = models.Department.objects.filter(
+                    id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id']))
+                )
+                if department:
+                    department = department[0].title
+                else:
+                    department = None
+                info_about_employee.update({'department': department})
+
+            info_about_employees.append(info_about_employee)
+
+        # paginator = Paginator(info_about_employees, 1)
+        # page_number = self.request.GET.get('page')
+        # page_obj = paginator.get_page(page_number)
+        return info_about_employees
 
 def sign_up(request):
     if request.method == 'POST':
@@ -318,7 +408,6 @@ def view_department(request, company_id, department_id):
         'supervisor': supervisor,
     }
     return render(request, 'team/main_functionality/view_department.html', context)
-
 
 
 @login_required(login_url=reverse_lazy('team:homepage'))

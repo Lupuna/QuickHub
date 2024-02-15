@@ -247,12 +247,11 @@ class CompanyEvent(models.Model):
     title = models.CharField(max_length=40)
     description = models.TextField(blank=True, null=True)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
-    date = models.DateField()
-    time_start = models.TimeField()
-    time_end = models.TimeField()
+    time_start = models.DateTimeField()
+    time_end = models.DateTimeField()
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-time_start']
 
 
 class CompanyEventImage(models.Model):
@@ -264,7 +263,7 @@ class CompanyEventImage(models.Model):
 
 
 class CompanyEventFile(models.Model):
-    image = models.FileField(upload_to='images/%Y/%m/%d/%H/')
+    file = models.FileField(upload_to='files/%Y/%m/%d/%H/')
     company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE)
 
     class Meta:

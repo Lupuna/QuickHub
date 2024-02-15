@@ -1,4 +1,6 @@
+import datetime
 from django import forms
+from django.core.exceptions import ValidationError
 from . import models
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from . import utils
@@ -97,7 +99,7 @@ class DepartmentCreationForm(forms.Form):
 
 class PositionCreationForm(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea, required=False)
-    
+
     class Meta:
         model = models.Positions
         fields = ('title', 'weight',)
@@ -108,12 +110,25 @@ class CompanyEventCreationForm(forms.Form):
     images = utils.MultipleImageField(required=False)
     files = utils.MultipleImageField(required=False)
     description = forms.CharField(widget=forms.Textarea, required=False)
-    date = forms.DateField()
-    time_start = forms.TimeField()
-    time_end = forms.TimeField()
-    present_employees = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple, required=False)
+    time_start = forms.DateTimeField(widget=forms.DateInput(attrs={
+        'class': 'form-control',
+        'type': 'datetime-local'
+    }))
+    time_end = forms.DateTimeField(widget=forms.DateInput(attrs={
+        'class': 'form-control',
+        'type': 'datetime-local'
+    }))
+    present_employees = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple,
+                                                       required=False)
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['present_employees'] = utils.create_employee_list(company_id=company_id)
+        self.fields['present_employees'].queryset = utils.create_employee_list(company_id=company_id)
 
+    # Валидатор кастомный
+    def clean_time_end(self):
+        time_start = self.cleaned_data['time_start']
+        time_end = self.cleaned_data['time_end']
+        if (time_end - time_start).total_seconds() <= 0:
+            raise ValidationError('Invalid start and end time', code='invalid')
+        return time_end

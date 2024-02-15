@@ -63,6 +63,6 @@ class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'parent_id', 'supervisor')
 
 
-# @admin.register(models.CompanyEventImage)
-# class CompanyEventImageAdmin(admin.ModelAdmin):
-#     list_display = ['id', 'title', 'description', 'date']
+@admin.register(models.CompanyEvent)
+class CompanyEventImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'time_start', 'time_end')
