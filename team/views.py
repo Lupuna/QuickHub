@@ -11,6 +11,7 @@ from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db import IntegrityError
 from . import forms, models, utils
 
 
@@ -182,39 +183,35 @@ class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFor
         try:
             department.title = form.cleaned_data.get('title')
             department.company_id = self.kwargs['company_id']
-
             department.parent_id = form.cleaned_data.get('parent')
             department.supervisor = form.cleaned_data.get('supervisor')
             department.save()
-
-            employees = list(form.cleaned_data.get('employees'))
-            if not department.supervisor in employees:
-                employees += [department.supervisor]
-
-            for employee in employees:
-                employee_company = models.EmployeeCompany.objects \
-                    .filter(employee_id=employee,
-                            company_id=self.kwargs['company_id'])
-                # т.к. on_delete=models.SET_NULL, то при удалении департамента может возникнуть много
-                # записей об одном работнике с пустыми полями отдела
-                employee_without_department = employee_company.filter(department_id=None)
-                if employee_without_department:
-                    employee_without_department[
-                        0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
-                    employee_without_department[
-                        0].save()  # тогда просто заполняется поле отдела в уже существующей записи
-                else:
-                    employee_company = models.EmployeeCompany()
-                    employee_company.company_id = self.kwargs['company_id']
-                    employee_company.employee_id = employee
-                    employee_company.department_id = department     # если же во всех записях работник уже прикреплён к отделу, 
-                    employee_company.save()                         # создаётся новая запись в таблице EmployeeCompany
-        except:
-            self.extra_context.update({
-                'error': f'{department.title} уже существует'
-            })
+        except IntegrityError:
             return redirect('team:create_department',
                             company_id=self.kwargs['company_id'].id)
+
+        employees = list(form.cleaned_data.get('employees'))
+        if not department.supervisor in employees:
+            employees += [department.supervisor]
+
+        for employee in employees:
+            employee_company = models.EmployeeCompany.objects \
+                .filter(employee_id=employee,
+                        company_id=self.kwargs['company_id'])
+            # т.к. on_delete=models.SET_NULL, то при удалении департамента может возникнуть много
+            # записей об одном работнике с пустыми полями отдела
+            employee_without_department = employee_company.filter(department_id=None)
+            if employee_without_department:
+                employee_without_department[
+                    0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
+                employee_without_department[
+                    0].save()  # тогда просто заполняется поле отдела в уже существующей записи
+            else:
+                employee_company = models.EmployeeCompany()
+                employee_company.company_id = self.kwargs['company_id']
+                employee_company.employee_id = employee
+                employee_company.department_id = department     # если же во всех записях работник уже прикреплён к отделу, 
+                employee_company.save()                         # создаётся новая запись в таблице EmployeeCompany
         return super().form_valid(department)
 
 
@@ -334,61 +331,13 @@ def homepage(request):
 
 
 @login_required(login_url=reverse_lazy('team:login'))
-def check_employee(request, company_id):
-    try:
-        company_id = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-
-    info_filter_about_employee = request.user.json_with_settings_info["settings_info_about_company_employee"]
-    employees = models.Employee.objects.filter(
-        id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
-
-    info_about_employees = []
-    for employee in employees:
-        info_about_employee = dict(
-            filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
-        for link in models.LinksResources.objects.filter(employee_id=employee.id):
-            if link.title in info_filter_about_employee:
-                info_about_employee.update(link.get_info())
-
-        if 'position_title' in info_filter_about_employee:
-            position = models.Positions.objects.filter(
-                id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id)))
-            if position:
-                position = position[0].title
-            else:
-                position = None
-            info_about_employee.update({'position_title': position})
-
-        if 'department' in info_filter_about_employee:
-            department = models.Department.objects.filter(
-                id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id))
-            )
-            if department:
-                department = department[0].title
-            else:
-                department = None
-            info_about_employee.update({'department': department})
-
-        info_about_employees.append(info_about_employee)
-
-    paginator = Paginator(info_about_employees, 1)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {'page_obj': page_obj, 'id': company_id.id}
-    return render(request, 'team/main_functionality/view_company_employees.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:login'))
 def taskboard(request):
-    categories = models.Category.objects.filter(employee_id=request.user.id)
-    emlpoyee = models.Employee.objects.get(id=request.user.id)
+    employee = models.Employee.objects.get(id=request.user.id)
+    categories = employee.categories.all()
     cats = {}
     for cat in categories:
-        taskboards = models.Taskboard.objects.filter(category_id=cat)
-        cats[cat] = emlpoyee.tasks.filter(id__in=taskboards.values('task_id'))
+        taskboards = cat.taskboards.all()
+        cats[cat] = employee.tasks.filter(id__in=taskboards.values('task_id'))
 
     context = {'cats': cats}
     return render(request, 'team/main_functionality/taskboard.html', context)
@@ -417,7 +366,7 @@ def view_positions(request, company_id):
     except ObjectDoesNotExist:
         return redirect(reverse_lazy('team:homepage'))
 
-    positions = models.Positions.objects.filter(company_id=company).all()
+    positions = company.positions.all()
 
     context = {
         'company': company,
