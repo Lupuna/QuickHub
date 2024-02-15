@@ -26,9 +26,17 @@ urlpatterns = [
     path('create/<int:company_id>/company-event', views.CreateCompanyEvent.as_view(), name='create_company_event'),
     # отображение
     path('<int:company_id>/check-employee', views.CheckEmployee.as_view(), name='check_employee'),
-    # path('<int:company_id>/check-employee', views.check_employee, name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters', views.ChoiceParameters.as_view(), name='choice_parameters'),
     path('<int:company_id>/positions', views.view_positions, name='positions'),
     path('<int:company_id>/department/<int:department_id>', views.view_department, name='department'),
     path('taskboard', views.taskboard, name='taskboard'),
+
+    # ещё неготово
+    path('projects/', views.homepage, name='projects'),
+    path('companies/', views.homepage, name='companies'),
+    path('settings/', views.homepage, name='settings'),
+    path('help/', views.homepage, name='help'),
+    path('me/', views.homepage, name='me'),
+    path('chat/', views.homepage, name='chat'),
+    path('notifications/', views.homepage, name='notifications'),
 ]

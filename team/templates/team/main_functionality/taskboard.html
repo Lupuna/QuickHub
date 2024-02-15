@@ -1,11 +1,12 @@
 {% extends 'team/base.html' %}
 {% load static %}
-{%block title%}QuickHub{%endblock%}
+{% block title %}QuickHub{% endblock %}
 
 <head>
-    <link href="{% static 'css/main_part.css' %}" rel="stylesheet" >
+    <link href="{% static 'css/main_part.css' %}" rel="stylesheet">
 </head>
-{%block content%}
+{% block content %}
+    <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
     <div class="add_pad">
         <a href="{% url 'team:create_category' %}">
             <button class="category__add">
@@ -64,4 +65,4 @@
         </div>
         {% endfor %}
     </div>
-{%endblock%}
+{% endblock %}
