@@ -9,7 +9,7 @@ class Employee(AbstractUser):
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
     json_with_settings_info = models.JSONField(blank=True, default=dict)
-    tasks = models.ManyToManyField('Task', blank=True)
+    tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
 
     def get_all_info(self):
@@ -61,7 +61,7 @@ class Department(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=40, unique=True)
-    supervisor = models.IntegerField()
+    supervisor = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['company_id', 'title']
@@ -158,6 +158,7 @@ class Task(models.Model):
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
+    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='category_tasks')
 
     class Meta:
         ordering = ['project_id', 'title']
@@ -183,7 +184,7 @@ class TaskFile(models.Model):
 
 
 class Subtasks(models.Model):
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='subtasks')
     title = models.CharField(max_length=40)
     text = models.TextField(blank=True, null=True)
     status_yes_no = models.BooleanField(default=False)
@@ -212,13 +213,14 @@ class SubtaskFile(models.Model):
         order_with_respect_to = 'subtask_id'
 
 
-class UserProject(models.Model):
+class Category(models.Model):
     title = models.CharField(max_length=40)
     employee_id = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE)
     project_personal_notes = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['title']
+        unique_together = ['title', 'employee_id']
 
     def __str__(self):
         return self.title
@@ -228,12 +230,12 @@ class UserProjectTime(models.Model):
     json_with_time_and_name_info = models.JSONField(blank=True, default=dict)
 
 
-class UserProjectTask(models.Model):
-    user_project_id = models.ForeignKey(UserProject, on_delete=models.CASCADE)
+class Taskboard(models.Model):
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
     task_personal_notes = models.JSONField(blank=True, default=dict)
-    json_with_subtask_and_subtask_personal_not = models.JSONField(blank=True, default=dict)
+    json_with_subtask_and_subtask_personal_note = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
