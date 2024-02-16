@@ -10,8 +10,12 @@ class Employee(AbstractUser):
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
     json_with_settings_info = models.JSONField(blank=True, default=dict)
-    tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
+    
+    tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
+    positions = models.ManyToManyField('Positions', through='EmployeeCompany', related_name='employees')
+    departments = models.ManyToManyField('Department', through='EmployeeCompany', related_name='employees')
+    companies = models.ManyToManyField('Company', through='EmployeeCompany', related_name='employees')
 
     def get_all_info(self):
         information = {
@@ -88,6 +92,9 @@ class Positions(models.Model):
     class Meta:
         unique_together = ['company_id', 'title']
 
+    def __str__(self):
+        return self.title
+
 
 class Project(models.Model):
     class DisplayTypes(models.IntegerChoices):
@@ -159,7 +166,7 @@ class Task(models.Model):
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
-    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='category_tasks')
+    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='tasks')
 
     class Meta:
         ordering = ['project_id', 'title']

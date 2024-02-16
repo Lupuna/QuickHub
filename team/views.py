@@ -6,14 +6,14 @@ from django.forms.forms import BaseForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
-from . import forms, models, utils
+from . import forms, models, utils, permissions
 
 
 class CreateCompany(utils.CreatorMixin, LoginRequiredMixin, FormView):
@@ -203,10 +203,8 @@ class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFor
             # записей об одном работнике с пустыми полями отдела
             employee_without_department = employee_company.filter(department_id=None)
             if employee_without_department:
-                employee_without_department[
-                    0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
-                employee_without_department[
-                    0].save()  # тогда просто заполняется поле отдела в уже существующей записи
+                employee_without_department[0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
+                employee_without_department[0].save()  # тогда просто заполняется поле отдела в уже существующей записи
             else:
                 employee_company = models.EmployeeCompany()
                 employee_company.company_id = self.kwargs['company_id']
@@ -250,21 +248,13 @@ class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedForm
             taskboard.save()
         return super().form_valid(form)
 
+'''Классы отображений'''
 
-class CheckEmployee(LoginRequiredMixin, ListView):
+class CheckEmployee(LoginRequiredMixin, utils.ModifiedListView):
     template_name = 'team/main_functionality/view_company_employees.html'
     context_object_name = 'page_obj'
     model = models.Employee
     login_url = reverse_lazy('team:login')
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            if self.kwargs.get('company_id'):
-                self.kwargs['company_id'] = models.Company.objects.get(id=self.kwargs['company_id'])
-        except ObjectDoesNotExist:
-            return redirect(reverse_lazy('team:homepage'))
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -273,20 +263,23 @@ class CheckEmployee(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
-        employees = models.Employee.objects.filter(
-            id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
+        # employees = models.Employee.objects.filter(
+        #     id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
+        company = self.kwargs['company_id']
+        employees = company.employees.all()
 
         info_about_employees = []
         for employee in employees:
             info_about_employee = dict(
                 filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
-            for link in models.LinksResources.objects.filter(employee_id=employee.id):
+            for link in employee.links.all():
                 if link.title in info_filter_about_employee:
                     info_about_employee.update(link.get_info())
 
             if 'position_title' in info_filter_about_employee:
-                position = models.Positions.objects.filter(
-                    id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id= self.kwargs['company_id'])))
+                # position = models.Positions.objects.filter(
+                #     id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id= self.kwargs['company_id'])))
+                position = employee.positions.filter(company_id=company)
                 if position:
                     position = position[0].title
                 else:
@@ -294,9 +287,10 @@ class CheckEmployee(LoginRequiredMixin, ListView):
                 info_about_employee.update({'position_title': position})
 
             if 'department' in info_filter_about_employee:
-                department = models.Department.objects.filter(
-                    id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id']))
-                )
+                # department = models.Department.objects.filter(
+                #     id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id']))
+                # )
+                department = employee.departments.filter(company_id=company)
                 if department:
                     department = department[0].title
                 else:
@@ -311,54 +305,19 @@ class CheckEmployee(LoginRequiredMixin, ListView):
         return info_about_employees
 
 
-def sign_up(request):
-    if request.method == 'POST':
-        form = forms.CustomUserCreationFrom(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.json_with_settings_info = utils.create_base_settings_json_to_employee()
-            user.save()
-            login(request, user)
-            return redirect(reverse_lazy('team:homepage'))
-    else:
-        form = forms.CustomUserCreationFrom()
-
-    context = {'form': form}
-    return render(request, 'registration/sign_up.html', context)
+class TaskboardView(LoginRequiredMixin, ListView):
+    model = models.Employee
+    template_name = 'team/main_functionality/taskboard.html'
 
 
-@login_required(login_url=reverse_lazy('team:login'))
-def homepage(request):
-    return render(request, 'team/main_functionality/homepage.html')
+class DepartmentDetailView(LoginRequiredMixin, DetailView):
+    model = models.Department
+    template_name = 'team/main_functionality/view_department.html'
+    context_object_name = 'department'
+    pk_url_kwarg = 'department_id'
 
-
-@login_required(login_url=reverse_lazy('team:login'))
-def taskboard(request):
-    employee = models.Employee.objects.get(id=request.user.id)
-    categories = employee.categories.all()
-    cats = {}
-    for cat in categories:
-        taskboards = cat.taskboards.all()
-        cats[cat] = employee.tasks.filter(id__in=taskboards.values('task_id'))
-
-    context = {'cats': cats}
-    return render(request, 'team/main_functionality/taskboard.html', context)
-
-
-@login_required(login_url=reverse_lazy('team:homepage'))
-def view_department(request, company_id, department_id):
-    department = models.Department.objects.get(id=department_id, company_id=company_id)
-    supervisor = models.Employee.objects.get(id=department.supervisor.id)
-    employees = models.Employee.objects \
-        .filter(id__in=models.EmployeeCompany.objects \
-                .filter(department_id=department_id, company_id=company_id).values('employee_id'))
-
-    context = {
-        'department': department,
-        'employees': employees,
-        'supervisor': supervisor,
-    }
-    return render(request, 'team/main_functionality/view_department.html', context)
+    def get_queryset(self):
+        return super().get_queryset().filter(company_id=self.kwargs['company_id'])
 
 
 class ProjectsView(LoginRequiredMixin, utils.ModifiedListView):
@@ -386,3 +345,24 @@ class PositionsView(LoginRequiredMixin, utils.ModifiedListView):
     
     def get_queryset(self):
         return self.kwargs['company_id'].positions.all()
+
+
+def sign_up(request):
+    if request.method == 'POST':
+        form = forms.CustomUserCreationFrom(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.json_with_settings_info = utils.create_base_settings_json_to_employee()
+            user.save()
+            login(request, user)
+            return redirect(reverse_lazy('team:homepage'))
+    else:
+        form = forms.CustomUserCreationFrom()
+
+    context = {'form': form}
+    return render(request, 'registration/sign_up.html', context)
+
+
+@login_required(login_url=reverse_lazy('team:login'))
+def homepage(request):
+    return render(request, 'team/main_functionality/homepage.html')

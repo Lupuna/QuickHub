@@ -27,11 +27,12 @@ urlpatterns = [
     # отображение
     path('<int:company_id>/check-employee', views.CheckEmployee.as_view(), name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters', views.ChoiceParameters.as_view(), name='choice_parameters'),
-    path('<int:company_id>/department/<int:department_id>', views.view_department, name='department'),
-    path('taskboard', views.taskboard, name='taskboard'),
+    path('<int:company_id>/department/<int:department_id>', views.DepartmentDetailView.as_view(), name='department'),
     path('<int:company_id>/projects/', views.ProjectsView.as_view(), name='projects_list'),
     path('<int:company_id>/positions/', views.PositionsView.as_view(), name='positions_list'),
     path('<int:company_id>/departments/', views.DepartmentsView.as_view(), name='departments_list'),
+    # path('taskboard', views.taskboard, name='taskboard'),
+    path('taskboard', views.TaskboardView.as_view(), name='taskboard'),
 
     # ещё не готово
     path('projects/', views.homepage, name='projects'),

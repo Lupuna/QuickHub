@@ -18,7 +18,7 @@
         </a>
     </div>
     <div class="cards">
-        {% for cat, tasks in cats.items %}
+        {% for cat in request.user.categories.all %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
@@ -36,7 +36,7 @@
             </button>
             <!-- Нижняя часть -->
             <div class="card__bottom">
-            {% for task in tasks %}
+            {% for task in cat.tasks.all %}
                 <div class="task">
                     <div class="title_svg">
                         <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <div class="executors">
-                        {% for executor in task.json_with_employee_info.executor %}
+                        {% for executor in task.executors.all %}
                             {{ executor }}
                         {% endfor %}
                     </div>
