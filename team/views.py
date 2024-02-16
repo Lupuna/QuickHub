@@ -27,7 +27,7 @@ class CreateCompany(utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(company)
 
 
-class CreateProject(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateProject(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.ProjectCreationForm
 
     def form_valid(self, form):
@@ -38,7 +38,7 @@ class CreateProject(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormVi
         return super().form_valid(form)
 
 
-class CreateTask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateTask(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.TaskCreationForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -74,7 +74,7 @@ class CreateTask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView)
         return super().form_valid(task)
 
 
-class CreateSubtask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateSubtask(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.SubtaskCreationForm
 
     def get_form_kwargs(self):
@@ -98,7 +98,7 @@ class CreateSubtask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormVi
         return super().form_valid(subtask)
 
 
-class ChoiceParameters(LoginRequiredMixin, FormView):
+class ChoiceParameters(permissions.CompanyAccess, FormView):
     login_url = reverse_lazy('team:login')
     template_name = 'team/main_functionality/choice_parameters.html'
     form_class = forms.ChoiceEmployeeParametersForm
@@ -125,14 +125,11 @@ class CreateCategory(utils.CreatorMixin, LoginRequiredMixin, FormView):
             category.project_personal_notes = form.cleaned_data.get('project_personal_notes')
             category.save()
         except:
-            self.extra_context.update({
-                'error': f'Категория {category.title} уже создана'
-            })
             return redirect(reverse_lazy('team:create_category'))
         return super().form_valid(category)
 
 
-class CreatePosition(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreatePosition(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.PositionCreationForm
 
     def form_valid(self, form):
@@ -143,7 +140,7 @@ class CreatePosition(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormV
         return super().form_valid(position)
 
 
-class CreateCompanyEvent(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateCompanyEvent(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.CompanyEventCreationForm
 
     def get_form_kwargs(self):
@@ -171,7 +168,7 @@ class CreateCompanyEvent(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedF
         return super().form_valid(form)
 
 
-class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateDepartment(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.DepartmentCreationForm
 
     def get_form_kwargs(self) -> dict[str, Any]:
@@ -250,7 +247,7 @@ class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedForm
 
 '''Классы отображений'''
 
-class CheckEmployee(LoginRequiredMixin, utils.ModifiedListView):
+class CheckEmployee(permissions.CompanyAccess, utils.ModifiedListView):
     template_name = 'team/main_functionality/view_company_employees.html'
     context_object_name = 'page_obj'
     model = models.Employee
@@ -310,7 +307,7 @@ class TaskboardView(LoginRequiredMixin, ListView):
     template_name = 'team/main_functionality/taskboard.html'
 
 
-class DepartmentDetailView(LoginRequiredMixin, DetailView):
+class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/view_department.html'
     context_object_name = 'department'
@@ -320,7 +317,7 @@ class DepartmentDetailView(LoginRequiredMixin, DetailView):
         return super().get_queryset().filter(company_id=self.kwargs['company_id'])
 
 
-class ProjectsView(LoginRequiredMixin, utils.ModifiedListView):
+class ProjectsView(permissions.CompanyAccess, utils.ModifiedListView):
     model = models.Project
     template_name = 'team/main_functionality/projects.html'
     context_object_name = 'projects'
@@ -329,7 +326,7 @@ class ProjectsView(LoginRequiredMixin, utils.ModifiedListView):
         return self.kwargs['company_id'].projects.all()
 
 
-class DepartmentsView(LoginRequiredMixin, utils.ModifiedListView):
+class DepartmentsView(permissions.CompanyAccess, utils.ModifiedListView):
     model = models.Department
     template_name = 'team/main_functionality/departments.html'
     context_object_name = 'departments'
@@ -338,7 +335,7 @@ class DepartmentsView(LoginRequiredMixin, utils.ModifiedListView):
         return self.kwargs['company_id'].departments.all()
 
 
-class PositionsView(LoginRequiredMixin, utils.ModifiedListView):
+class PositionsView(permissions.CompanyAccess, utils.ModifiedListView):
     model = models.Positions
     template_name = 'team/main_functionality/view_positions.html'
     context_object_name = 'positions'

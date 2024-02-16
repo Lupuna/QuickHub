@@ -38,7 +38,7 @@ class TaskCreationForm(forms.Form):
         self.employee_list = utils.create_employee_list(company_id=company_id)
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
-        self.fields['parent_id'].queryset = models.Project.objects.get(id=project_id).task_set.all()
+        self.fields['parent_id'].queryset = models.Project.objects.get(id=project_id).tasks.all()
 
 
 class SubtaskCreationForm(forms.Form):
