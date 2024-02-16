@@ -31,7 +31,8 @@ urlpatterns = [
     path('<int:company_id>/projects/', views.ProjectsView.as_view(), name='projects_list'),
     path('<int:company_id>/positions/', views.PositionsView.as_view(), name='positions_list'),
     path('<int:company_id>/departments/', views.DepartmentsView.as_view(), name='departments_list'),
-    # path('taskboard', views.taskboard, name='taskboard'),
+    path('<int:company_id>/<int:project_id>/<int:task_id>/', views.TaskView.as_view(), name='task'),
+    path('<int:company_id>/<int:project_id>/<int:task_id>/<int:subtask_id>', views.SubtaskView.as_view(), name='subtask'),
     path('taskboard', views.TaskboardView.as_view(), name='taskboard'),
 
     # ещё не готово

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 from . import utils
 
 
@@ -74,6 +75,10 @@ class Department(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('team:department', kwargs={'company_id': self.company_id.id,
+                                                  'department_id': self.id})
 
 
 class Positions(models.Model):
@@ -114,6 +119,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('team:project', kwargs={'company_id': self.company_id.id,
+                                               'project_id': self.id})
 
 
 class EmployeeCompany(models.Model):
@@ -173,6 +182,11 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
+                                            'project_id': self.project_id.id,
+                                            'task_id': self.id})
 
 
 class TaskImage(models.Model):
@@ -204,6 +218,11 @@ class Subtasks(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id.id,
+                                               'project_id': self.task_id.project_id.id,
+                                               'task_id': self.task_id.id,
+                                               'subtask_id': self.id})
 
 class SubtaskImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')

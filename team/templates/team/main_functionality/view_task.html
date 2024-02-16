@@ -1,0 +1,35 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <p>{{ task.title }}</p>
+    <p>
+        {% if task.parent_id %}
+            Родительская задача:    
+            {{ task.parent_id.title }}
+        {% endif %}
+    </p>
+    <p>
+        {{ task.text }}
+    </p>
+    <p>
+        Статус: {{ task.get_status_display }}
+    </p>
+    <p>
+        Сотрудники:
+        {% for employee in task.executors.all %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee.name}}
+        {% endfor %}
+    </p>
+    {% if task.subtasks.all %}
+        Подзадачи:
+        {% for subtask in task.subtasks.all %}
+            <p>
+                {{ subtask.title }}
+            </p>
+        {% endfor %}
+    {% endif %}
+{%endblock%}

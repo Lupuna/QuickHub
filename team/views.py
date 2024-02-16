@@ -344,6 +344,20 @@ class PositionsView(permissions.CompanyAccess, utils.ModifiedListView):
         return self.kwargs['company_id'].positions.all()
 
 
+class TaskView(permissions.CompanyAccess, DetailView):
+    model = models.Task
+    template_name = 'team/main_functionality/view_task.html'
+    context_object_name = 'task'
+    pk_url_kwarg = 'task_id'
+
+
+class SubtaskView(permissions.CompanyAccess, DetailView):
+    model = models.Subtasks
+    template_name = 'team/main_functionality/view_subtask.html'
+    context_object_name = 'subtask'
+    pk_url_kwarg = 'subtask_id'
+    
+
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)

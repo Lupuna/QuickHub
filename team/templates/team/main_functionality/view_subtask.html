@@ -1,0 +1,14 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <p>{{ subtask.title }}</p>
+    <p>
+        {{ subtask.text }}
+    </p>
+    <!-- <p>
+        Статус: {{ task.status_yes_no }}
+    </p> -->
+{%endblock%}

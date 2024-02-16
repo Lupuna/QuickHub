@@ -38,26 +38,30 @@
             <div class="card__bottom">
             {% for task in cat.tasks.all %}
                 <div class="task">
-                    <div class="title_svg">
-                        <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
-                        <div class="task__title">
-                            {{ task.title }}
-                        </div>
-                    </div>
-                    <div class="executors">
-                        {% for executor in task.executors.all %}
-                            {{ executor }}
-                        {% endfor %}
-                    </div>
-                    {% for subtask in task.subtasks.all %}
-                        <div class="subtask">
-                            <div class="title_svg">
-                                <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
-                                <div class="subtask__title">
-                                    {{ subtask.title|truncatewords:2 }}
-                                </div>
+                    <a href="{{ task.get_absolute_url }}">
+                        <div class="title_svg">
+                            <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                            <div class="task__title">
+                                {{ task.title }}
                             </div>
                         </div>
+                        <div class="executors">
+                            {% for executor in task.executors.all %}
+                                {{ executor }}
+                            {% endfor %}
+                        </div>
+                    </a>
+                    {% for subtask in task.subtasks.all %}
+                        <a href="{{ subtask.get_absolute_url }}">
+                            <div class="subtask">
+                                <div class="title_svg">
+                                    <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                                    <div class="subtask__title">
+                                        {{ subtask.title|truncatewords:2 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     {% endfor %}
                 </div>
             {% endfor %}
