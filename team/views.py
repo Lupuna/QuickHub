@@ -25,7 +25,7 @@ class CreateCompany(utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(company)
 
 
-class CreateProject(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateProject(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.ProjectCreationForm
 
     def form_valid(self, form):
@@ -36,7 +36,7 @@ class CreateProject(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormVi
         return super().form_valid(form)
 
 
-class CreateTask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.TaskCreationForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -72,7 +72,7 @@ class CreateTask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView)
         return super().form_valid(task)
 
 
-class CreateSubtask(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateSubtask(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.SubtaskCreationForm
 
     def get_form_kwargs(self):
@@ -115,6 +115,10 @@ class ChoiceParameters(LoginRequiredMixin, FormView):
 class CreateCategory(utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.CategoryCreationForm
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.success_url = reverse_lazy('team:taskboard')
+
     def form_valid(self, form):
         try:
             category = form.save(commit=False)
@@ -130,7 +134,7 @@ class CreateCategory(utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(category)
 
 
-class CreatePosition(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreatePosition(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.PositionCreationForm
 
     def form_valid(self, form):
@@ -141,7 +145,7 @@ class CreatePosition(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormV
         return super().form_valid(position)
 
 
-class CreateCompanyEvent(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateCompanyEvent(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.CompanyEventCreationForm
 
     def get_form_kwargs(self):
@@ -169,7 +173,7 @@ class CreateCompanyEvent(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedF
         return super().form_valid(form)
 
 
-class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.DepartmentCreationForm
 
     def get_form_kwargs(self) -> dict[str, Any]:
@@ -209,8 +213,7 @@ class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFor
                     employee_company.employee_id = employee
                     employee_company.department_id = department  # если же во всех записях работник уже прикреплён к отделу,
                     employee_company.save()  # создаётся новая запись в таблице EmployeeCompany
-        except Exception as ex:
-            print(ex)
+        except Exception:
             self.extra_context.update({
                 'error': f'{department.title} уже существует'
             })
@@ -219,7 +222,7 @@ class CreateDepartment(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFor
         return super().form_valid(department)
 
 
-class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedFormView):
+class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.TaskboardCreationForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -254,64 +257,55 @@ class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedForm
         return super().form_valid(form)
 
 
-# class CheckEmployee(LoginRequiredMixin, ListView):
-#     template_name = 'team/main_functionality/view_company_employees.html'
-#     context_object_name = 'page_obj'
-#     model = models.Employee
-#     login_url = reverse_lazy('team:login')
-#
-#     def dispatch(self, request, *args, **kwargs):
-#         try:
-#             if self.kwargs.get('company_id'):
-#                 self.kwargs['company_id'] = models.Company.objects.get(id=self.kwargs['company_id'])
-#         except ObjectDoesNotExist:
-#             return redirect(reverse_lazy('team:homepage'))
-#
-#         return super().dispatch(request, *args, **kwargs)
-#
-#     def get_context_data(self, *args, **kwargs):
-#         context = super().get_context_data(*args, **kwargs)
-#         context['company_id'] = self.kwargs['company_id'].id
-#
-#     def get_queryset(self):
-#         employees = super().get_queryset()
-#         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
-#         employees = employees.objects.filter(
-#             id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
-#
-#         info_about_employees = []
-#         for employee in employees:
-#             info_about_employee = dict(
-#                 filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
-#             for link in models.LinksResources.objects.filter(employee_id=employee.id):
-#                 if link.title in info_filter_about_employee:
-#                     info_about_employee.update(link.get_info())
-#
-#             if 'position_title' in info_filter_about_employee:
-#                 position = models.Positions.objects.filter(
-#                     id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id= self.kwargs['company_id'])))
-#                 if position:
-#                     position = position[0].title
-#                 else:
-#                     position = None
-#                 info_about_employee.update({'position_title': position})
-#
-#             if 'department' in info_filter_about_employee:
-#                 department = models.Department.objects.filter(
-#                     id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id']))
-#                 )
-#                 if department:
-#                     department = department[0].title
-#                 else:
-#                     department = None
-#                 info_about_employee.update({'department': department})
-#
-#             info_about_employees.append(info_about_employee)
-#
-#         # paginator = Paginator(info_about_employees, 1)
-#         # page_number = self.request.GET.get('page')
-#         # page_obj = paginator.get_page(page_number)
-#         return info_about_employees
+class CheckEmployee(utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+    template_name = 'team/main_functionality/view_company_employees.html'
+    model = models.Employee
+    paginate_by = 10
+    login_url = reverse_lazy('team:login')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['company_id'] = self.kwargs['company_id'].id
+        return context
+
+    def get_queryset(self):
+        info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
+        employees = models.Employee.objects.filter(
+            id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
+
+        info_about_employees = []
+        for employee in employees:
+            info_about_employee = dict(
+                filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
+            for link in models.LinksResources.objects.filter(employee_id=employee.id):
+                if link.title in info_filter_about_employee:
+                    info_about_employee.update(link.get_info())
+
+            if 'position_title' in info_filter_about_employee:
+                position = models.Positions.objects.filter(
+                    id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id'])))
+                if position:
+                    position = position[0].title
+                else:
+                    position = None
+                info_about_employee.update({'position_title': position})
+
+            if 'department' in info_filter_about_employee:
+                department = models.Department.objects.filter(
+                    id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id']))
+                )
+                if department:
+                    department = department[0].title
+                else:
+                    department = None
+                info_about_employee.update({'department': department})
+
+            info_about_employees.append(info_about_employee)
+        # paginator = Paginator(info_about_employees, 1)
+        # page_number = self.request.GET.get('page')
+        # page_obj = paginator.get_page(page_number)
+        return info_about_employees
+
 
 def sign_up(request):
     if request.method == 'POST':
@@ -332,54 +326,6 @@ def sign_up(request):
 @login_required(login_url=reverse_lazy('team:login'))
 def homepage(request):
     return render(request, 'team/main_functionality/homepage.html')
-
-
-@login_required(login_url=reverse_lazy('team:login'))
-def check_employee(request, company_id):
-    try:
-        company_id = models.Company.objects.get(id=company_id)
-    except ObjectDoesNotExist:
-        return redirect(reverse_lazy('team:homepage'))
-
-    info_filter_about_employee = request.user.json_with_settings_info["settings_info_about_company_employee"]
-    employees = models.Employee.objects.filter(
-        id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
-
-    info_about_employees = []
-    for employee in employees:
-        info_about_employee = dict(
-            filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
-        for link in models.LinksResources.objects.filter(employee_id=employee.id):
-            if link.title in info_filter_about_employee:
-                info_about_employee.update(link.get_info())
-
-        if 'position_title' in info_filter_about_employee:
-            position = models.Positions.objects.filter(
-                id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id)))
-            if position:
-                position = position[0].title
-            else:
-                position = None
-            info_about_employee.update({'position_title': position})
-
-        if 'department' in info_filter_about_employee:
-            department = models.Department.objects.filter(
-                id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=company_id))
-            )
-            if department:
-                department = department[0].title
-            else:
-                department = None
-            info_about_employee.update({'department': department})
-
-        info_about_employees.append(info_about_employee)
-
-    paginator = Paginator(info_about_employees, 1)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {'page_obj': page_obj, 'id': company_id.id}
-    return render(request, 'team/main_functionality/view_company_employees.html', context)
 
 
 @login_required(login_url=reverse_lazy('team:login'))
