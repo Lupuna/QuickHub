@@ -45,11 +45,11 @@ class ModifiedDispatch:
     def dispatch(self, request, *args, **kwargs):
         try:
             if self.kwargs.get('company_id'):
-                self.kwargs['company_id'] = models.Company.objects.get(id=self.kwargs['company_id'])
+                self.kwargs['company'] = models.Company.objects.get(id=self.kwargs['company_id'])
             if self.kwargs.get('project_id'):
-                self.kwargs['project_id'] = models.Project.objects.get(id=self.kwargs['project_id'])
+                self.kwargs['project'] = models.Project.objects.get(id=self.kwargs['project_id'])
             if self.kwargs.get('task_id'):
-                self.kwargs['task_id'] = models.Task.objects.get(id=self.kwargs['task_id'])
+                self.kwargs['task'] = models.Task.objects.get(id=self.kwargs['task_id'])
         except ObjectDoesNotExist:
             return redirect(reverse_lazy('team:homepage'))
 
@@ -57,7 +57,9 @@ class ModifiedDispatch:
     
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['company'] = self.kwargs.get('company_id', None)
+        context['company'] = self.kwargs.get('company')
+        context['project'] = self.kwargs.get('project')
+        context['task'] = self.kwargs.get('task')
         return context
     
 

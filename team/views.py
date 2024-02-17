@@ -30,7 +30,7 @@ class CreateProject(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Comp
     def form_valid(self, form):
         project = form.save(commit=False)
         project.project_creater = self.request.user.id
-        project.company_id = self.kwargs['company_id']
+        project.company_id = self.kwargs['company']
         form.save()
         return super().form_valid(form)
 
@@ -48,8 +48,8 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['company_id'] = self.kwargs['company_id']
-        kwargs['project_id'] = self.kwargs['project_id'].id
+        kwargs['company_id'] = self.kwargs['company']
+        kwargs['project_id'] = self.kwargs['project']
         return kwargs
 
     def form_valid(self, form):
@@ -59,7 +59,7 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
             'responsible': [i.email for i in form.cleaned_data.get('responsible')],
             'executor': [i.email for i in form.cleaned_data.get('executor')]
         }
-        task.project_id = self.kwargs['project_id']
+        task.project_id = self.kwargs['project']
         task.text = form.cleaned_data.get('text')
         task.title = form.cleaned_data.get('title')
         task.save()
@@ -76,7 +76,7 @@ class CreateSubtask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Comp
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['company_id'] = self.kwargs['company_id']
+        kwargs['company_id'] = self.kwargs['company']
         return kwargs
 
     def form_valid(self, form):
@@ -86,7 +86,7 @@ class CreateSubtask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Comp
             'responsible': [i.email for i in form.cleaned_data.get('responsible')],
             'executor': [i.email for i in form.cleaned_data.get('executor')]
         }
-        subtask.task_id_id = self.kwargs['task_id'].id
+        subtask.task_id_id = self.kwargs['task_id']
         subtask.text = form.cleaned_data.get('text')
         subtask.title = form.cleaned_data.get('title')
         subtask.save()
@@ -135,7 +135,7 @@ class CreatePosition(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Com
 
     def form_valid(self, form):
         position = form.save(commit=False)
-        position.company_id = self.kwargs['company_id']
+        position.company_id = self.kwargs['company']
         position.json_with_optional_info = {'text': form.cleaned_data.get('text')}
         position.save()
         return super().form_valid(position)
@@ -146,12 +146,12 @@ class CreateCompanyEvent(utils.ModifiedDispatch, utils.CreatorMixin, permissions
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['company_id'] = self.kwargs['company_id']
+        kwargs['company_id'] = self.kwargs['company']
         return kwargs
 
     def form_valid(self, form):
         company_event = models.CompanyEvent()
-        company_event.company = self.kwargs['company_id']
+        company_event.company = self.kwargs['company']
         company_event.title = form.cleaned_data.get('title')
         company_event.description = form.cleaned_data.get('description')
         company_event.json_with_employee_info = {
@@ -174,20 +174,20 @@ class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, permissions.C
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['company_id'] = self.kwargs['company_id']
+        kwargs['company_id'] = self.kwargs['company']
         return kwargs
 
     def form_valid(self, form):
         department = models.Department()
         try:
+            department.company_id = self.kwargs['company']
             department.title = form.cleaned_data.get('title')
-            department.company_id = self.kwargs['company_id']
             department.parent_id = form.cleaned_data.get('parent')
             department.supervisor = form.cleaned_data.get('supervisor')
             department.save()
         except IntegrityError:
             return redirect('team:create_department',
-                            company_id=self.kwargs['company_id'].id)
+                            company_id=self.kwargs['company_id'])
 
         employees = list(form.cleaned_data.get('employees'))
         if not department.supervisor in employees:
@@ -196,7 +196,7 @@ class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, permissions.C
         for employee in employees:
             employee_company = models.EmployeeCompany.objects \
                 .filter(employee_id=employee,
-                        company_id=self.kwargs['company_id'])
+                        company_id=self.kwargs['company'])
             # т.к. on_delete=models.SET_NULL, то при удалении департамента может возникнуть много
             # записей об одном работнике с пустыми полями отдела
             employee_without_department = employee_company.filter(department_id=None)
@@ -205,7 +205,7 @@ class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, permissions.C
                 employee_without_department[0].save()  # тогда просто заполняется поле отдела в уже существующей записи
             else:
                 employee_company = models.EmployeeCompany()
-                employee_company.company_id = self.kwargs['company_id']
+                employee_company.company_id = self.kwargs['company']
                 employee_company.employee_id = employee
                 employee_company.department_id = department     # если же во всех записях работник уже прикреплён к отделу, 
                 employee_company.save()                         # создаётся новая запись в таблице EmployeeCompany
@@ -258,7 +258,7 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         # employees = models.Employee.objects.filter(
         #     id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
-        company = self.kwargs['company_id']
+        company = self.kwargs['company']
         employees = company.employees.all()
 
         info_about_employees = []
@@ -308,7 +308,7 @@ class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListVi
     context_object_name = 'projects'
 
     def get_queryset(self):
-        return self.kwargs['company_id'].projects.all()
+        return self.kwargs['company'].projects.all()
 
 
 class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
@@ -317,7 +317,7 @@ class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedDispatch, Lis
     context_object_name = 'departments'
 
     def get_queryset(self):
-        return self.kwargs['company_id'].departments.all()
+        return self.kwargs['company'].departments.all()
 
 
 class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
@@ -326,7 +326,7 @@ class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListV
     context_object_name = 'positions'
     
     def get_queryset(self):
-        return self.kwargs['company_id'].positions.all()
+        return self.kwargs['company'].positions.all()
 
 
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
@@ -335,61 +335,26 @@ class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     context_object_name = 'department'
     pk_url_kwarg = 'department_id'
 
-    def get_queryset(self):
-        return super().get_queryset().filter(company_id=self.kwargs['company_id'])
 
-
-class TaskDetailView(permissions.CompanyAccess, DetailView):
+class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Task
     template_name = 'team/main_functionality/view_task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
-
-    def get(self, request, *args, **kwargs):
-        try:
-            return super(TaskDetailView, self).get(request, *args, **kwargs)
-        except ObjectDoesNotExist:
-            return redirect(reverse_lazy('team:taskboard'))
-
-    def get_object(self, queryset=None):
-        project = models.Project.objects.get(id=self.kwargs['project_id'], 
-                                            company_id=self.kwargs['company_id'])
-        return project.tasks.get(id=self.kwargs[self.pk_url_kwarg])
     
 
-class SubtaskDetailView(permissions.CompanyAccess, DetailView):
+class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Subtasks
     template_name = 'team/main_functionality/view_subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
 
-    def get(self, request, *args, **kwargs):
-        try:
-            return super(SubtaskDetailView, self).get(request, *args, **kwargs)
-        except ObjectDoesNotExist:
-            return redirect(reverse_lazy('team:taskboard'))
 
-    def get_object(self, queryset=None):
-        task = models.Task.objects.get(id=self.kwargs['task_id'],
-                                       project_id=self.kwargs['project_id'], 
-                                        project_id__company_id=self.kwargs['company_id'])
-        return task.subtasks.get(id=self.kwargs[self.pk_url_kwarg])
-
-
-class ProjectDetailView(permissions.CompanyAccess, DetailView):
+class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Project
     template_name = 'team/main_functionality/view_project.html'
     context_object_name = 'project'
     pk_url_kwarg = 'project_id'
-
-    def get(self, request, *args, **kwargs):
-        try:
-            return super(ProjectDetailView, self).get(request, *args, **kwargs)
-        except ObjectDoesNotExist:
-            return redirect(reverse_lazy('team:taskboard'))
-
-    def get_queryset(self):
-        return super().get_queryset().filter(company_id=self.kwargs['company_id'])
 
 
 def sign_up(request):

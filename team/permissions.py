@@ -11,8 +11,6 @@ class CompanyAccess(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         try:
             company = models.Company.objects.get(id=self.kwargs['company_id'])
-        except TypeError:
-            company = self.kwargs['company_id']
         except ObjectDoesNotExist:
             return redirect(reverse_lazy('team:homepage'))
 

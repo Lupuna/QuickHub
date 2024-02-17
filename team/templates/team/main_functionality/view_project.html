@@ -4,7 +4,8 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    Проекты / {{ project.title }}
+    <p> Компания / {{ company.title }}</p>
+    <p> Проекты / {{ project.title }}</p>
     {% for task in project.tasks.all %}
         <p>
             {{ task.title }}
