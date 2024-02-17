@@ -10,5 +10,13 @@
         <p>
             {{ project.title }}
         </p>
+        <!-- <p>
+            Автор проекта:
+            <img src="{% if project.creator.image %} {{ project.creator.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ project.creator }}
+        </p> -->
+        <p>
+            View counter: {{ project.get_view_counter_display }}
+        </p>
     {% endfor %}
 {%endblock%}

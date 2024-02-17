@@ -224,6 +224,7 @@ class Subtasks(models.Model):
                                                'task_id': self.task_id.id,
                                                'subtask_id': self.id})
 
+
 class SubtaskImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
     subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE, related_name='images')

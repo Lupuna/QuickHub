@@ -11,4 +11,41 @@
     <!-- <p>
         Статус: {{ task.status_yes_no }}
     </p> -->
+    <p>
+        Руководители:
+        {% for employee in subtask.json_with_employee_info.appoint %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </p>
+    <p>
+        Ответственные лица:
+        {% for employee in subtask.json_with_employee_info.responsible %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </p>
+    <p>
+        Исполнители:
+        {% for employee in subtask.json_with_employee_info.executor %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </p>
+    <p>
+        {% if subtask.images.all %}
+            Картинки:    
+            {% for img in task.images.all %}
+                <img src="{{ img.image.url }}" alt="picture">
+            {% endfor %}
+        {% endif %}
+    </p>
+    <p>
+        {% if subtask.files.all %}
+            Файлы:    
+            {% for f in task.files.all %}
+                {{ f.file }}
+            {% endfor %}
+        {% endif %}
+    </p>
 {%endblock%}

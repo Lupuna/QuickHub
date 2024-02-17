@@ -250,11 +250,6 @@ class CheckEmployee(permissions.CompanyAccess, utils.ModifiedListView):
     model = models.Employee
     login_url = reverse_lazy('team:login')
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context['company_id'] = self.kwargs['company_id'].id
-        return context
-
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         # employees = models.Employee.objects.filter(
