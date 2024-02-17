@@ -57,9 +57,9 @@ class SubtaskCreationForm(forms.Form):
 
 
 class ChoiceEmployeeParametersForm(forms.Form):
-    image = forms.BooleanField(required=False)
-    name = forms.BooleanField(required=False)
-    email = forms.BooleanField(required=False)
+    image = forms.BooleanField(required=False, initial=True)
+    name = forms.BooleanField(required=False, initial=True)
+    email = forms.BooleanField(required=False, initial=True)
     telephone = forms.BooleanField(required=False)
     position_title = forms.BooleanField(required=False)
     department = forms.BooleanField(required=False)

@@ -7,6 +7,7 @@ from . import models
 
 creator = 'team/main_functionality/includes/creator.html'
 
+
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
@@ -39,7 +40,7 @@ class MultipleFileField(forms.FileField):
         return result
 
 
-class ModifiedFormView(FormView):
+class ModifiedDispatch:
     def dispatch(self, request, *args, **kwargs):
         try:
             if self.kwargs.get('company_id'):
