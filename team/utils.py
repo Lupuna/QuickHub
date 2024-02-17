@@ -1,6 +1,6 @@
 from django import forms
 from django.views.generic.edit import FormView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist

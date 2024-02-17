@@ -27,13 +27,16 @@ urlpatterns = [
     # отображение
     path('<int:company_id>/check-employee', views.CheckEmployee.as_view(), name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters', views.ChoiceParameters.as_view(), name='choice_parameters'),
-    path('<int:company_id>/department/<int:department_id>', views.DepartmentDetailView.as_view(), name='department'),
-    path('<int:company_id>/projects/', views.ProjectsView.as_view(), name='projects_list'),
-    path('<int:company_id>/positions/', views.PositionsView.as_view(), name='positions_list'),
-    path('<int:company_id>/departments/', views.DepartmentsView.as_view(), name='departments_list'),
-    path('<int:company_id>/<int:project_id>/<int:task_id>/', views.TaskView.as_view(), name='task'),
-    path('<int:company_id>/<int:project_id>/<int:task_id>/<int:subtask_id>', views.SubtaskView.as_view(), name='subtask'),
-    path('taskboard', views.TaskboardView.as_view(), name='taskboard'),
+    # Детальные отображения
+    path('<int:company_id>/project/<int:project_id>/', views.ProjectDetailView.as_view(), name='project'),
+    path('<int:company_id>/department/<int:department_id>/', views.DepartmentDetailView.as_view(), name='department'),
+    path('<int:company_id>/<int:project_id>/<int:task_id>/', views.TaskDetailView.as_view(), name='task'),
+    path('<int:company_id>/<int:project_id>/<int:task_id>/<int:subtask_id>', views.SubtaskDetailView.as_view(), name='subtask'),
+    # Списки
+    path('<int:company_id>/projects/', views.ProjectsListView.as_view(), name='projects_list'),
+    path('<int:company_id>/positions/', views.PositionsListView.as_view(), name='positions_list'),
+    path('<int:company_id>/departments/', views.DepartmentsListView.as_view(), name='departments_list'),
+    path('taskboard', views.TaskboardListView.as_view(), name='taskboard'),
 
     # ещё не готово
     path('projects/', views.homepage, name='projects'),

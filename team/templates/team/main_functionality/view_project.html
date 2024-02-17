@@ -1,0 +1,14 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    Проекты / {{ project.title }}
+    {% for task in project.tasks.all %}
+        <p>
+            {{ task.title }}
+            {{ task.get_status_display }}
+        </p>
+    {% endfor %}
+{%endblock%}

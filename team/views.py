@@ -1,9 +1,6 @@
-from typing import Any
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models.query import QuerySet
-from django.forms.forms import BaseForm
-from django.http import HttpRequest, HttpResponse
+from django.db.models.base import Model as Model
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
@@ -171,7 +168,7 @@ class CreateCompanyEvent(utils.CreatorMixin, permissions.CompanyAccess, utils.Mo
 class CreateDepartment(utils.CreatorMixin, permissions.CompanyAccess, utils.ModifiedFormView):
     form_class = forms.DepartmentCreationForm
 
-    def get_form_kwargs(self) -> dict[str, Any]:
+    def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['company_id'] = self.kwargs['company_id']
         return kwargs
@@ -226,7 +223,7 @@ class CreateTaskboard(utils.CreatorMixin, LoginRequiredMixin, utils.ModifiedForm
         kwargs['emp_id'] = self.kwargs['user'].id
         return kwargs
 
-    def form_valid(self, form: Any) -> HttpResponse:
+    def form_valid(self, form):
         tasks = self.kwargs['user'].tasks \
             .filter(id__in=form.cleaned_data.get('tasks'))
         category = form.cleaned_data.get('category')
@@ -302,9 +299,36 @@ class CheckEmployee(permissions.CompanyAccess, utils.ModifiedListView):
         return info_about_employees
 
 
-class TaskboardView(LoginRequiredMixin, ListView):
+class TaskboardListView(LoginRequiredMixin, ListView):
     model = models.Employee
     template_name = 'team/main_functionality/taskboard.html'
+
+
+class ProjectsListView(permissions.CompanyAccess, utils.ModifiedListView):
+    model = models.Project
+    template_name = 'team/main_functionality/projects.html'
+    context_object_name = 'projects'
+
+    def get_queryset(self):
+        return self.kwargs['company_id'].projects.all()
+
+
+class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedListView):
+    model = models.Department
+    template_name = 'team/main_functionality/departments.html'
+    context_object_name = 'departments'
+
+    def get_queryset(self):
+        return self.kwargs['company_id'].departments.all()
+
+
+class PositionsListView(permissions.CompanyAccess, utils.ModifiedListView):
+    model = models.Positions
+    template_name = 'team/main_functionality/view_positions.html'
+    context_object_name = 'positions'
+    
+    def get_queryset(self):
+        return self.kwargs['company_id'].positions.all()
 
 
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
@@ -317,46 +341,58 @@ class DepartmentDetailView(permissions.CompanyAccess, DetailView):
         return super().get_queryset().filter(company_id=self.kwargs['company_id'])
 
 
-class ProjectsView(permissions.CompanyAccess, utils.ModifiedListView):
-    model = models.Project
-    template_name = 'team/main_functionality/projects.html'
-    context_object_name = 'projects'
-
-    def get_queryset(self):
-        return self.kwargs['company_id'].projects.all()
-
-
-class DepartmentsView(permissions.CompanyAccess, utils.ModifiedListView):
-    model = models.Department
-    template_name = 'team/main_functionality/departments.html'
-    context_object_name = 'departments'
-
-    def get_queryset(self):
-        return self.kwargs['company_id'].departments.all()
-
-
-class PositionsView(permissions.CompanyAccess, utils.ModifiedListView):
-    model = models.Positions
-    template_name = 'team/main_functionality/view_positions.html'
-    context_object_name = 'positions'
-    
-    def get_queryset(self):
-        return self.kwargs['company_id'].positions.all()
-
-
-class TaskView(permissions.CompanyAccess, DetailView):
+class TaskDetailView(permissions.CompanyAccess, DetailView):
     model = models.Task
     template_name = 'team/main_functionality/view_task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
 
+    def get(self, request, *args, **kwargs):
+        try:
+            return super(TaskDetailView, self).get(request, *args, **kwargs)
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:taskboard'))
 
-class SubtaskView(permissions.CompanyAccess, DetailView):
+    def get_object(self, queryset=None):
+        project = models.Project.objects.get(id=self.kwargs['project_id'], 
+                                            company_id=self.kwargs['company_id'])
+        return project.tasks.get(id=self.kwargs[self.pk_url_kwarg])
+    
+
+class SubtaskDetailView(permissions.CompanyAccess, DetailView):
     model = models.Subtasks
     template_name = 'team/main_functionality/view_subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
-    
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super(SubtaskDetailView, self).get(request, *args, **kwargs)
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:taskboard'))
+
+    def get_object(self, queryset=None):
+        task = models.Task.objects.get(id=self.kwargs['task_id'],
+                                       project_id=self.kwargs['project_id'], 
+                                        project_id__company_id=self.kwargs['company_id'])
+        return task.subtasks.get(id=self.kwargs[self.pk_url_kwarg])
+
+
+class ProjectDetailView(permissions.CompanyAccess, DetailView):
+    model = models.Project
+    template_name = 'team/main_functionality/view_project.html'
+    context_object_name = 'project'
+    pk_url_kwarg = 'project_id'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super(ProjectDetailView, self).get(request, *args, **kwargs)
+        except ObjectDoesNotExist:
+            return redirect(reverse_lazy('team:taskboard'))
+
+    def get_queryset(self):
+        return super().get_queryset().filter(company_id=self.kwargs['company_id'])
+
 
 def sign_up(request):
     if request.method == 'POST':
