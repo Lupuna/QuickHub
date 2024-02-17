@@ -7,10 +7,12 @@ from . import models
 
 
 class CompanyAccess(LoginRequiredMixin):
-    '''Проверка принадлежности пользователю запрашиваемой компании'''
+    '''Проверка принадлежности пользователя к запрашиваемой компании'''
     def dispatch(self, request, *args, **kwargs):
         try:
             company = models.Company.objects.get(id=self.kwargs['company_id'])
+        except TypeError:
+            company = self.kwargs['company_id']
         except ObjectDoesNotExist:
             return redirect(reverse_lazy('team:homepage'))
 

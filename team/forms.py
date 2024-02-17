@@ -35,7 +35,8 @@ class TaskCreationForm(forms.Form):
 
     def __init__(self, company_id, project_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.employee_list = utils.create_employee_list(company_id=company_id)
+        # self.employee_list = utils.create_employee_list(company_id=company_id)
+        self.employee_list = company_id.employees.all()
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
         self.fields['parent_id'].queryset = models.Project.objects.get(id=project_id).tasks.all()
@@ -57,9 +58,9 @@ class SubtaskCreationForm(forms.Form):
 
 
 class ChoiceEmployeeParametersForm(forms.Form):
-    image = forms.BooleanField(required=False)
-    name = forms.BooleanField(required=False)
-    email = forms.BooleanField(required=False)
+    image = forms.BooleanField(required=False, initial=True)
+    name = forms.BooleanField(required=False, initial=True)
+    email = forms.BooleanField(required=False, initial=True)
     telephone = forms.BooleanField(required=False)
     position_title = forms.BooleanField(required=False)
     department = forms.BooleanField(required=False)
