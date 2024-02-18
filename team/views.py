@@ -367,8 +367,6 @@ class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
     pk_url_kwarg = 'project_id'
 
 
-
-
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)
@@ -376,6 +374,8 @@ def sign_up(request):
             user = form.save()
             user.json_with_settings_info = utils.create_base_settings_json_to_employee()
             user.save()
+
+            models.Category.objects.create(title='Мои задачи', employee_id=user)
             login(request, user)
             return redirect(reverse_lazy('team:homepage'))
     else:
