@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
@@ -329,6 +330,15 @@ class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListV
         return self.kwargs['company'].positions.all()
 
 
+class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+    model = models.Company
+    template_name = 'team/main_functionality/user_companies.html'
+    context_object_name = 'companies'
+
+    def get_queryset(self):
+        return self.request.user.companies.distinct() 
+
+
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/view_department.html'
@@ -355,6 +365,8 @@ class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
     template_name = 'team/main_functionality/view_project.html'
     context_object_name = 'project'
     pk_url_kwarg = 'project_id'
+
+
 
 
 def sign_up(request):

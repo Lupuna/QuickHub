@@ -33,10 +33,10 @@ urlpatterns = [
     path('<int:company_id>/positions/', views.PositionsListView.as_view(), name='positions_list'),
     path('<int:company_id>/departments/', views.DepartmentsListView.as_view(), name='departments_list'),
     path('taskboard', views.TaskboardListView.as_view(), name='taskboard'),
+    path('companies/', views.UserCompaniesListView.as_view(), name='companies'),
 
     # ещё не готово
     path('projects/', views.homepage, name='projects'),
-    path('companies/', views.homepage, name='companies'),
     path('settings/', views.homepage, name='settings'),
     path('help/', views.homepage, name='help'),
     path('me/', views.homepage, name='me'),
