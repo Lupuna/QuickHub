@@ -259,13 +259,13 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
         # employees = models.Employee.objects.filter(
         #     id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
         company = self.kwargs['company']
-        employees = company.employees.all()
+        employees = company.employees.distinct()
 
         info_about_employees = []
         for employee in employees:
             info_about_employee = dict(
                 filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
-            for link in employee.links.all():
+            for link in employee.links.distinct():
                 if link.title in info_filter_about_employee:
                     info_about_employee.update(link.get_info())
 

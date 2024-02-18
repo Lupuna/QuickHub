@@ -36,7 +36,7 @@ class TaskCreationForm(forms.Form):
     def __init__(self, company_id, project_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.employee_list = utils.create_employee_list(company_id=company_id)
-        self.employee_list = company_id.employees.all()
+        self.employee_list = company_id.employees.distinct()
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
         self.fields['parent_id'].queryset = project_id.tasks.all()
@@ -52,7 +52,8 @@ class SubtaskCreationForm(forms.Form):
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.employee_list = utils.create_employee_list(company_id=company_id)
+        # self.employee_list = utils.create_employee_list(company_id=company_id)
+        self.employee_list = company_id.employees.distinct()
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
 
@@ -92,7 +93,7 @@ class DepartmentCreationForm(forms.Form):
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.employee_list = company_id.employees.all()
+        self.employee_list = company_id.employees.distinct()
         self.fields['parent'].queryset = models.Department.objects.filter(company_id=company_id)
         self.fields['supervisor'].queryset = self.employee_list
         self.fields['employees'].queryset = self.employee_list
@@ -124,7 +125,8 @@ class CompanyEventCreationForm(forms.Form):
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['present_employees'].queryset = utils.create_employee_list(company_id=company_id)
+        # self.fields['present_employees'].queryset = utils.create_employee_list(company_id=company_id)
+        self.fields['present_employees'].queryset = company_id.employees.distinct()
 
     # Валидатор кастомный
     def clean_time_end(self):
