@@ -21,7 +21,9 @@
 					</button>
 				</div>
 				<div class="logo_header_of_quickbub">
-					<img src="{% static 'img/header/logo.svg' %}" alt="">
+					<a href="{% url 'team:homepage' %}">
+						<img src="{% static 'img/header/logo.svg' %}" alt="">
+					</a>
 				</div>
 				<div class="name_header_of_quickhub">
 					QuickHub
@@ -38,33 +40,39 @@
 			</div>
 			<div class="header_2">
 				<div class="notifications_of_profile">
-					<button class="btn_notifications">
-						<img src="{% static 'img/header/notifications.svg' %}" alt="">
-					</button>
+					<a href="{% url 'team:notifications' %}">
+						<button class="btn_notifications">
+							<img src="{% static 'img/header/notifications.svg' %}" alt="">
+						</button>
+					</a>
 				</div>
 				<div class="messages_of_profile">
-					<button class="btn_messages">
-						<img src="{% static 'img/header/messages.svg' %}" alt="">
-					</button>
+					<a href="{% url 'team:chat' %}">
+						<button class="btn_messages">
+							<img src="{% static 'img/header/messages.svg' %}" alt="">
+						</button>
+					</a>
 				</div>
 				<div class="profile_options_donw">
-					<div class="body_of_options_profile">
-						<div class="icon_of_profile_header">
-							<img src="{% static 'img/header/icon_of_profile.svg' %}" alt="">
+					<a class="button" href="{% url 'team:login' %}">
+						<div class="body_of_options_profile">
+							<div class="icon_of_profile_header">
+								<img src="{% static 'img/header/icon_of_profile.svg' %}" alt="">
+							</div>
+							<div class="name_of_person">
+								{% block userbar %}
+									{% if request.user %}
+										{{ request.user.name }}
+									{%endif%}
+								{% endblock %}
+							</div>
+							<div class="button_options_down">
+								<button class="btn_down_options">
+									<img src="{% static 'img/header/arrow_down.svg' %}" alt="">
+								</button>
+							</div>
 						</div>
-						<div class="name_of_person">
-							{% block userbar %}
-								{% if request.user %}
-									{{ request.user.name }}
-								{%endif%}
-							{% endblock %}
-						</div>
-						<div class="button_options_down">
-							<button class="btn_down_options">
-								<img src="{% static 'img/header/arrow_down.svg' %}" alt="">
-							</button>
-						</div>
-					</div>
+					</a>
 				</div>
 			</div>
 		</div>
@@ -73,44 +81,54 @@
 				<nav class="sub_menu_left _w200">
 					<ul>
 						<li class="left_menu_item_body">
-							<button class="1">
-								<img src="{% static 'img/left_menu/my_tasks.svg' %}" alt="">
-								<span class="text_on_left_menu _show">
-									Мои задачи
-								</span>
-							</button>
+							<a class="button" href="{% url 'team:taskboard' %}">
+								<button class="1">
+									<img src="{% static 'img/left_menu/my_tasks.svg' %}" alt="">
+									<span class="text_on_left_menu _show">
+										Мои задачи
+									</span>
+								</button>
+							</a>
 						</li>
 						<li class="left_menu_item_body">
-							<button class="2">
-								<img src="{% static 'img/left_menu/projects.svg' %}" alt="">
-								<span class="text_on_left_menu _show">
-									Проекты
-								</span>
-							</button>
+							<a class="button" href="{% url 'team:projects' %}">
+								<button class="2">
+									<img src="{% static 'img/left_menu/projects.svg' %}" alt="">
+									<span class="text_on_left_menu _show">
+										Проекты
+									</span>
+								</button>
+							</a>
 						</li>
 						<li class="left_menu_item_body">
-							<button class="3">
-								<img src="{% static 'img/left_menu/companies.svg' %}" alt="">
-								<span class="text_on_left_menu _show">
-									Компании
-								</span>
-							</button>
+							<a class="button" href="{% url 'team:companies' %}">
+								<button class="3">
+									<img src="{% static 'img/left_menu/companies.svg' %}" alt="">
+									<span class="text_on_left_menu _show">
+										Компании
+									</span>
+								</button>
+							</a>
 						</li>
 						<li class="left_menu_item_body">
-							<button class="4">
-								<img src="{% static 'img/left_menu/settings.svg' %}" alt="">
-								<span class="text_on_left_menu _show">
-									Настройки
-								</span>
-							</button>
+							<a class="button" href="{% url 'team:settings' %}">
+								<button class="4">
+									<img src="{% static 'img/left_menu/settings.svg' %}" alt="">
+									<span class="text_on_left_menu _show">
+										Настройки
+									</span>
+								</button>
+							</a>
 						</li>
 						<li class="left_menu_item_body">
-							<button class="5">
-								<img src="{% static 'img/left_menu/support.svg' %}" alt="">
-								<span class="text_on_left_menu _show">
-									Поддержка
-								</span>
-							</button>
+							<a class="button" href="{% url 'team:help' %}">
+								<button class="5">
+									<img src="{% static 'img/left_menu/support.svg' %}" alt="">
+									<span class="text_on_left_menu _show">
+										Поддержка
+									</span>
+								</button>
+							</a>
 						</li>
 					</ul>
 				</nav>
