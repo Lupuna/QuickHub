@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 from . import utils
 
 
@@ -10,8 +11,12 @@ class Employee(AbstractUser):
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
     json_with_settings_info = models.JSONField(blank=True, default=dict)
-    tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
+    
+    tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
+    positions = models.ManyToManyField('Positions', through='EmployeeCompany', related_name='employees')
+    departments = models.ManyToManyField('Department', through='EmployeeCompany', related_name='employees')
+    companies = models.ManyToManyField('Company', through='EmployeeCompany', related_name='employees')
 
     def get_all_info(self):
         information = {
@@ -33,7 +38,7 @@ class Employee(AbstractUser):
 
 
 class LinksResources(models.Model):
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='links')
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=200)
 
@@ -59,9 +64,9 @@ class Company(models.Model):
 
 
 class Department(models.Model):
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
-    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
-    title = models.CharField(max_length=40, unique=True)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='departments')
+    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='childs')
+    title = models.CharField(max_length=40)
     supervisor = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     class Meta:
@@ -70,6 +75,10 @@ class Department(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('team:department', kwargs={'company_id': self.company_id.id,
+                                                  'department_id': self.id})
 
 
 class Positions(models.Model):
@@ -80,13 +89,16 @@ class Positions(models.Model):
         PARTIAL_ACCESS = 2, 'Partial access'
         OBSERVE = 3, 'Observer'
 
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='positions')
     title = models.CharField(max_length=40)
     weight = models.SmallIntegerField(choices=Weight.choices, default=Weight.PARTIAL_ACCESS)
     json_with_optional_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         unique_together = ['company_id', 'title']
+
+    def __str__(self):
+        return self.title
 
 
 class Project(models.Model):
@@ -96,7 +108,7 @@ class Project(models.Model):
         IN_PERCENTAGES = 3, 'In_percentages'
         NONE_DISPLAY = 4, 'None_display'
 
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='projects')
     title = models.CharField(max_length=40)
     project_creater = models.IntegerField()
     view_counter = models.IntegerField(choices=DisplayTypes.choices, default=DisplayTypes.NONE_DISPLAY)
@@ -107,6 +119,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('team:project', kwargs={'company_id': self.company_id.id,
+                                               'project_id': self.id})
 
 
 class EmployeeCompany(models.Model):
@@ -125,22 +141,22 @@ class EmployeeCompany(models.Model):
 
 class Chat(models.Model):
     title = models.CharField(max_length=250)
-    employees = models.ManyToManyField(Employee)
+    employees = models.ManyToManyField(Employee, related_name='chats')
 
     class Meta:
         ordering = ['title']
 
 
 class Message(models.Model):
-    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='messages')
     last_update = models.DateTimeField(auto_now=True)
     is_read = models.BooleanField(default=False)
     json_with_content = models.JSONField(blank=True, default=dict)
 
 
 class Customization(models.Model):
-    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
+    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True, related_name='customization')
     color_scheme = models.CharField(max_length=40, default='')
     font_size = models.CharField(max_length=40, default='')
     background = models.CharField(max_length=40, default='')
@@ -153,24 +169,29 @@ class Task(models.Model):
         INSPECTION = 3, 'Inspection'
         REVISION = 4, 'Revision'
 
-    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
     title = models.CharField(max_length=40)
     text = models.TextField(blank=True, null=True)
-    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
     status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
-    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='category_tasks')
+    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='tasks')
 
     class Meta:
         ordering = ['project_id', 'title']
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
+                                            'project_id': self.project_id.id,
+                                            'task_id': self.id})
 
 
 class TaskImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='images')
 
     class Meta:
         order_with_respect_to = 'task_id'
@@ -178,7 +199,7 @@ class TaskImage(models.Model):
 
 class TaskFile(models.Model):
     file = models.ImageField(upload_to='files/%Y/%m/%d/%H/')
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='files')
 
     class Meta:
         order_with_respect_to = 'task_id'
@@ -197,10 +218,16 @@ class Subtasks(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id.id,
+                                               'project_id': self.task_id.project_id.id,
+                                               'task_id': self.task_id.id,
+                                               'subtask_id': self.id})
+
 
 class SubtaskImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
-    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE)
+    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE, related_name='images')
 
     class Meta:
         order_with_respect_to = 'subtask_id'
@@ -208,7 +235,7 @@ class SubtaskImage(models.Model):
 
 class SubtaskFile(models.Model):
     file = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
-    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE)
+    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE, related_name='files')
 
     class Meta:
         order_with_respect_to = 'subtask_id'
@@ -216,7 +243,7 @@ class SubtaskFile(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=40)
-    employee_id = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE, related_name='categories')
     project_personal_notes = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -232,7 +259,7 @@ class UserProjectTime(models.Model):
 
 
 class Taskboard(models.Model):
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='taskboards')
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
     task_personal_notes = models.JSONField(blank=True, default=dict)
@@ -243,7 +270,7 @@ class Taskboard(models.Model):
 
 
 class CompanyEvent(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='events')
     title = models.CharField(max_length=40)
     description = models.TextField(blank=True, null=True)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
@@ -256,7 +283,7 @@ class CompanyEvent(models.Model):
 
 class CompanyEventImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
-    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE)
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='images')
 
     class Meta:
         order_with_respect_to = 'company_event'
@@ -264,7 +291,7 @@ class CompanyEventImage(models.Model):
 
 class CompanyEventFile(models.Model):
     file = models.FileField(upload_to='files/%Y/%m/%d/%H/')
-    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE)
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='files')
 
     class Meta:
         order_with_respect_to = 'company_event'

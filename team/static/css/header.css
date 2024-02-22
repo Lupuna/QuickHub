@@ -31,7 +31,7 @@ body{
 	width: 100%;
 	padding-left: 16px;
 	display: flex;
-	dlex-direction: row;
+	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 }
@@ -51,7 +51,7 @@ body{
 .header_1{
 	height: 100%;
 	display: flex;
-	dlex-direction: row;
+	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 }

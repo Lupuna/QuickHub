@@ -1,11 +1,9 @@
 {% extends 'team/base.html' %}
 {% load static %}
-{%block title%}QuickHub{%endblock%}
+{% block title %}QuickHub{% endblock %}
 
-<head>
-    <link href="{% static 'css/main_part.css' %}" rel="stylesheet" >
-</head>
-{%block content%}
+{% block content %}
+    <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
     <div class="add_pad">
         <a href="{% url 'team:create_category' %}">
             <button class="category__add">
@@ -17,7 +15,7 @@
         </a>
     </div>
     <div class="cards">
-        {% for cat, tasks in cats.items %}
+        {% for cat in request.user.categories.all %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
@@ -35,28 +33,32 @@
             </button>
             <!-- Нижняя часть -->
             <div class="card__bottom">
-            {% for task in tasks %}
+            {% for task in cat.tasks.all %}
                 <div class="task">
-                    <div class="title_svg">
-                        <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
-                        <div class="task__title">
-                            {{ task.title }}
-                        </div>
-                    </div>
-                    <div class="executors">
-                        {% for executor in task.json_with_employee_info.executor %}
-                            {{ executor }}
-                        {% endfor %}
-                    </div>
-                    {% for subtask in task.subtasks.all %}
-                        <div class="subtask">
-                            <div class="title_svg">
-                                <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
-                                <div class="subtask__title">
-                                    {{ subtask.title|truncatewords:2 }}
-                                </div>
+                    <a href="{{ task.get_absolute_url }}">
+                        <div class="title_svg">
+                            <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                            <div class="task__title">
+                                {{ task.title }}
                             </div>
                         </div>
+                        <div class="executors">
+                            {% for executor in task.executors.all %}
+                                {{ executor }}
+                            {% endfor %}
+                        </div>
+                    </a>
+                    {% for subtask in task.subtasks.all %}
+                        <a href="{{ subtask.get_absolute_url }}">
+                            <div class="subtask">
+                                <div class="title_svg">
+                                    <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                                    <div class="subtask__title">
+                                        {{ subtask.title|truncatewords:2 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     {% endfor %}
                 </div>
             {% endfor %}
@@ -64,4 +66,4 @@
         </div>
         {% endfor %}
     </div>
-{%endblock%}
+{% endblock %}

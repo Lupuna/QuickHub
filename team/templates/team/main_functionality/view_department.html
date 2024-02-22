@@ -14,13 +14,13 @@
     <p>
         Руководитель: 
         <img src="{% if department.supervisor.image %} {{ department.supervisor.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
-        {{ supervisor.name }}
+        {{ department.supervisor.name }}
     </p>
     <p>
         Сотрудники:
-    {% for employee in employees %}
-        <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
-        {{employee.name}}
-    {% endfor %}
+        {% for employee in department.employees.all %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee.name}}
+        {% endfor %}
     </p>
 {%endblock%}
