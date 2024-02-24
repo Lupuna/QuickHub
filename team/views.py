@@ -67,6 +67,10 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         task.save()
 
         self.kwargs['user'].tasks.add(task)
+        self.kwargs['user'].categories.get(title='Мои задачи').tasks.add(task)
+        for executor in form.cleaned_data.get('executor'):
+            executor.categories.get(title='Мои задачи').tasks.add(task)
+
 
         deadline = models.TaskDeadline(task_id=task)
         deadline.save()
