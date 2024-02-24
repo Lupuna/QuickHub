@@ -57,9 +57,12 @@ class ModifiedDispatch:
     
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['company'] = self.kwargs.get('company')
-        context['project'] = self.kwargs.get('project')
-        context['task'] = self.kwargs.get('task')
+        if self.kwargs.get('company'):
+            context['company'] = self.kwargs.get('company')
+        if self.kwargs.get('project'):
+            context['project'] = self.kwargs.get('project')
+        if self.kwargs.get('task'):
+            context['task'] = self.kwargs.get('task')
         return context
     
 
