@@ -34,6 +34,8 @@ urlpatterns = [
     path('<int:company_id>/departments/', views.DepartmentsListView.as_view(), name='departments_list'),
     path('taskboard', views.TaskboardListView.as_view(), name='taskboard'),
     path('companies/', views.UserCompaniesListView.as_view(), name='companies'),
+    # Редактирование
+    path('edit/<int:company_id>/<int:project_id>/<int:task_id>/', views.CreateTask.as_view(), name='set_deadline'),
 
     # ещё не готово
     path('projects/', views.homepage, name='projects'),

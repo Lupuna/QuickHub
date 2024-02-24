@@ -256,8 +256,8 @@ class Category(models.Model):
 
 class TaskDeadline(models.Model):
     task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
-    time_start = models.DateTimeField(blank=True)
-    time_end = models.DateTimeField(blank=True)
+    time_start = models.DateTimeField(null=True, blank=True)
+    time_end = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-time_start']

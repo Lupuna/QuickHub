@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, FormMixin
 from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -66,6 +67,9 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         task.save()
 
         self.kwargs['user'].tasks.add(task)
+
+        deadline = models.TaskDeadline(task_id=task)
+        deadline.save()
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -346,11 +350,40 @@ class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     pk_url_kwarg = 'department_id'
 
 
-class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
+class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixin, DetailView):
     model = models.Task
+    form_class = forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/view_task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
+
+    def get_success_url(self):
+        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+                                                 'project_id': self.kwargs['project_id'],
+                                                 'task_id': self.kwargs['task_id']})
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
+        context['form'] = forms.SetTaskDeadlineForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        try:
+            deadline = self.object.deadlines.get()
+        except:
+            deadline = models.TaskDeadline(task_id=self.object)
+        deadline.time_start = form.cleaned_data.get('time_start')
+        deadline.time_end = form.cleaned_data.get('time_end')
+        deadline.save()
+        return super(TaskDetailView, self).form_valid(form)
     
 
 class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
