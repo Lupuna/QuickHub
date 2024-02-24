@@ -254,8 +254,37 @@ class Category(models.Model):
         return self.title
 
 
-class UserProjectTime(models.Model):
-    json_with_time_and_name_info = models.JSONField(blank=True, default=dict)
+class TaskDeadline(models.Model):
+    task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
+    time_start = models.DateTimeField(blank=True)
+    time_end = models.DateTimeField(blank=True)
+
+    class Meta:
+        ordering = ['-time_start']
+
+    def __str__(self):
+        return self.task_id.title
+
+
+class UserDeadline(models.Model):
+    class Status(models.TextChoices):
+        OVERTIMED = 'Overtimed'
+        TOMORROW = 'Tomorrow'
+        WEEK = 'Week'
+        MONTH = 'Month'
+        NOT_SOON = 'Not soon'
+        PERMANENT = 'Permanent'
+
+    employee_id = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name='deadlines')
+    task_deadline_id = models.ForeignKey('TaskDeadline', on_delete=models.CASCADE, related_name='user_deadlines')
+    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
+
+    class Meta:
+        ordering = ['employee_id', 'status']
+        unique_together = ['employee_id', 'task_deadline_id']
+
+    def __str__(self):
+        return self.status
 
 
 class Taskboard(models.Model):
