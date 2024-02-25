@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
@@ -309,6 +309,15 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
 class TaskboardListView(LoginRequiredMixin, ListView):
     model = models.Employee
     template_name = 'team/main_functionality/taskboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        tasks = request.user.tasks.distinct()
+        for task in tasks:
+            deadline = task.deadlines.get()
+            deadline.status = utils.get_deadline_status(deadline)
+            deadline.save()
+
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
