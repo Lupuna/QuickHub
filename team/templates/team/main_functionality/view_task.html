@@ -64,4 +64,30 @@
             {% endfor %}
         {% endif %}
     </p>
+    <div>
+        {% with task.deadlines.get as deadline %}
+            {% if deadline.time_start %}
+                <p>
+                    Старт: {{ deadline.time_start }}
+                </p>
+            {% endif %}
+            {% if deadline.time_end %}
+                <p>
+                    Конец: {{ deadline.time_end }}
+                </p>
+            {% else %}
+                <form method="post" enctype="multipart/form-data">
+                    {%csrf_token%}
+                    {{form.as_p}}
+                    <button type="submit">
+                        {% if button %}
+                            {{ button }}
+                        {% else %}
+                            Установить сроки
+                        {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+        {% endwith %}
+    </div>
 {%endblock%}
