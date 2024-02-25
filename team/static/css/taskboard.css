@@ -1,7 +1,6 @@
 .cards {
 	display: flex;
 	width: 100%;
-	max-width: 1000px; 
 	justify-content: left;
 	justify-items: left; 
 	column-gap: 30px; 

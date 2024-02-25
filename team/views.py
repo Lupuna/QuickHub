@@ -255,6 +255,13 @@ class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredM
             taskboard.save()
         return super().form_valid(form)
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['category'] = self.kwargs.get('category')
+        initial['tasks'] = self.kwargs['category'].tasks.distinct()
+        return initial
+
+
 '''Классы отображений'''
 
 class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView):
@@ -316,7 +323,6 @@ class TaskboardListView(LoginRequiredMixin, ListView):
             deadline = task.deadlines.get()
             deadline.status = utils.get_deadline_status(deadline)
             deadline.save()
-
         return super().dispatch(request, *args, **kwargs)
 
 

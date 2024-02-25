@@ -51,6 +51,8 @@ class ModifiedDispatch:
                 self.kwargs['project'] = models.Project.objects.get(id=self.kwargs['project_id'])
             if self.kwargs.get('task_id'):
                 self.kwargs['task'] = models.Task.objects.get(id=self.kwargs['task_id'])
+            if self.kwargs.get('category_id'):
+                self.kwargs['category'] = models.Category.objects.get(id=self.kwargs['category_id'])
         except ObjectDoesNotExist:
             return redirect(reverse_lazy('team:homepage'))
 
@@ -64,6 +66,8 @@ class ModifiedDispatch:
             context['project'] = self.kwargs.get('project')
         if self.kwargs.get('task'):
             context['task'] = self.kwargs.get('task')
+        if self.kwargs.get('category'):
+            context['category'] = self.kwargs.get('category')
         return context
     
 
