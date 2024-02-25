@@ -81,12 +81,6 @@ def create_base_settings_json_to_employee():
     return js
 
 
-def create_employee_list(company_id: int) -> list:
-    # return models.Employee.objects.filter(
-    #     id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
-    return company_id.employees.distinct()
-
-
 def add_new_employee(company_id, employee_id):
     company_id = models.Company.objects.get(id=company_id)
     employee_id = models.Employee.objects.get(id=employee_id)
@@ -101,3 +95,5 @@ def set_position(employee_id, company_id, position_id):
     employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
     employee.position_id = position
     employee.save()
+
+

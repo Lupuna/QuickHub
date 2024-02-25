@@ -71,9 +71,14 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         for executor in form.cleaned_data.get('executor'):
             executor.categories.get(title='Мои задачи').tasks.add(task)
 
-
         deadline = models.TaskDeadline(task_id=task)
         deadline.save()
+
+        models.UserDeadline.objects.create(employee_id=self.kwargs['user'],
+                                           task_deadline_id=deadline)
+        for executor in form.cleaned_data.get('executor'):
+            models.UserDeadline.objects.create(employee_id=executor,
+                                                task_deadline_id=deadline)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
