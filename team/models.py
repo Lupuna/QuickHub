@@ -255,36 +255,25 @@ class Category(models.Model):
 
 
 class TaskDeadline(models.Model):
+    class Status(models.TextChoices):
+        OVERTIMED = 'Overtimed'
+        TODAY = 'Today'
+        TOMORROW = 'Tomorrow'
+        WEEK = 'Week'
+        MONTH = 'Month'
+        NOT_SOON = 'Not_soon'
+        PERMANENT = 'Permanent'
+
     task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
     time_start = models.DateTimeField(null=True, blank=True)
     time_end = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
 
     class Meta:
         ordering = ['-time_start']
 
     def __str__(self):
-        return self.task_id.title
-
-
-class UserDeadline(models.Model):
-    class Status(models.TextChoices):
-        OVERTIMED = 'Overtimed'
-        TOMORROW = 'Tomorrow'
-        WEEK = 'Week'
-        MONTH = 'Month'
-        NOT_SOON = 'Not soon'
-        PERMANENT = 'Permanent'
-
-    employee_id = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name='deadlines')
-    task_deadline_id = models.ForeignKey('TaskDeadline', on_delete=models.CASCADE, related_name='user_deadlines')
-    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
-
-    class Meta:
-        ordering = ['employee_id', 'status']
-        unique_together = ['employee_id', 'task_deadline_id']
-
-    def __str__(self):
-        return self.status
+        return f'{self.task_id.title} : {self.status}'
 
 
 class Taskboard(models.Model):

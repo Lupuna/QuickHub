@@ -42,8 +42,20 @@
                                 {{ task.title }}
                             </div>
                         </div>
+                        <div class="deadline">
+                            {% with task.deadlines.get as deadline %}
+                            <div class="deadline_row" id="{{ deadline.status }}">
+                                {% if deadline.time_end %}
+                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
+                                {% else %}
+                                    Бессрочный
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        </div>
                         <div class="executors">
-                            {% for executor in task.executors.all %}
+                            {% for executor in task.executors.distinct %}
+                                <img src="{% if executor.images %} {{ executor.images.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
                                 {{ executor }}
                             {% endfor %}
                         </div>

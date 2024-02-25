@@ -1,5 +1,5 @@
 .cards {
-	display: grid;
+	display: flex;
 	grid-template-columns: repeat(auto-fill, 225px);
 	width: 100%;
 	max-width: 1000px; 
@@ -115,3 +115,44 @@
 	margin-bottom: 10px;
 	font-size: 14px;
 }
+
+.deadline {
+	width: 50%;
+	margin-top: 5px;
+}
+
+.deadline_row {
+	padding: 5px;
+	margin-left: 35px;
+	border-radius: 20px;
+	align-content: center;
+}
+
+#Overtimed {
+	background-color: crimson;
+}
+
+#Today {
+	background-color: rgb(220, 77, 20);
+}
+
+#Tomorrow {
+	background-color: rgb(228, 144, 19);
+}
+
+#Week {
+	background-color: rgb(220, 190, 20);
+}
+
+#Month {
+	background-color: rgb(135, 199, 75);
+}
+
+#Not_soon {
+	background-color: #70c05b;
+}
+
+#Permanent {
+	background-color: #1c9dd8;
+}
+

@@ -69,16 +69,11 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         self.kwargs['user'].tasks.add(task)
         self.kwargs['user'].categories.get(title='Мои задачи').tasks.add(task)
         for executor in form.cleaned_data.get('executor'):
+            executor.tasks.add(task)
             executor.categories.get(title='Мои задачи').tasks.add(task)
 
         deadline = models.TaskDeadline(task_id=task)
         deadline.save()
-
-        models.UserDeadline.objects.create(employee_id=self.kwargs['user'],
-                                           task_deadline_id=deadline)
-        for executor in form.cleaned_data.get('executor'):
-            models.UserDeadline.objects.create(employee_id=executor,
-                                                task_deadline_id=deadline)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -391,7 +386,9 @@ class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixi
             deadline = models.TaskDeadline(task_id=self.object)
         deadline.time_start = form.cleaned_data.get('time_start')
         deadline.time_end = form.cleaned_data.get('time_end')
+        deadline.status = utils.get_deadline_status(deadline)
         deadline.save()
+
         return super(TaskDetailView, self).form_valid(form)
     
 

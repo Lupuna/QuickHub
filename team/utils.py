@@ -2,6 +2,7 @@ from django import forms
 from django.views.generic.edit import FormView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from . import models
@@ -97,3 +98,24 @@ def set_position(employee_id, company_id, position_id):
     employee.save()
 
 
+def get_deadline_status(deadline):
+    time_end = deadline.time_end
+    now = timezone.now()
+    if time_end is None:
+        return 'Permanent'
+
+    time_interval = (time_end - now).total_seconds()
+    day = 86400     # sec
+
+    if time_interval < 0:
+        return 'Overtimed'
+    elif time_interval <= day:
+        return 'Today'
+    elif time_interval <= 2 * day:
+        return 'Tomorrow'
+    elif time_interval <= 7 * day:
+        return 'Week'
+    elif time_interval <= 30 * day:
+        return 'Month'
+    else:
+        return 'Not_soon'
