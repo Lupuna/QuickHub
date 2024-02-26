@@ -10,9 +10,10 @@ class Employee(AbstractUser):
     city = models.CharField(max_length=40, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
+    online_status = models.BooleanField(default=False)
     json_with_settings_info = models.JSONField(blank=True, default=dict)
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
-    
+
     tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
     positions = models.ManyToManyField('Positions', through='EmployeeCompany', related_name='employees')
     departments = models.ManyToManyField('Department', through='EmployeeCompany', related_name='employees')
@@ -26,6 +27,7 @@ class Employee(AbstractUser):
             'city': self.city,
             'birthday': self.birthday,
             'telephone': self.telephone,
+            'online': self.online_status,
         }
         return information
 
@@ -53,8 +55,6 @@ class Company(models.Model):
     title = models.CharField(max_length=250)
     owner_id = models.IntegerField(
         help_text='Тут будет храниться id создателя компании(т. е. того человека, который будет платить)')
-    # json_with_department_info = models.JSONField(blank=True, default=dict)
-    # json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
@@ -75,7 +75,7 @@ class Department(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse('team:department', kwargs={'company_id': self.company_id.id,
                                                   'department_id': self.id})
@@ -113,16 +113,38 @@ class Project(models.Model):
     project_creater = models.IntegerField()
     view_counter = models.IntegerField(choices=DisplayTypes.choices, default=DisplayTypes.NONE_DISPLAY)
     json_info_with_access_level = models.JSONField(blank=True, default=dict)
+    task_status = models.JSONField(default=utils.get_task_status)
 
     class Meta:
         ordering = ['title']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._default_task_status = 'Work'
+
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse('team:project', kwargs={'company_id': self.company_id.id,
                                                'project_id': self.id})
+
+    @property
+    def get_default_task_status(self):
+        return self._default_task_status
+
+    @get_default_task_status.setter
+    def get_default_task_status(self, new_status):
+        if new_status in self.task_status['status']:
+            self._default_task_status = new_status
+
+    def update_task_status(self, new_satus: list):
+        if new_satus[-1] not in self.task_status['status'].values():
+            self.task_status['status'][new_satus[0]] = new_satus[-1]
+
+    def delete_task_status(self, to_delete: str):
+        if to_delete in self.task_status['status'].keys():
+            del self.task_status['status'][to_delete]
 
 
 class EmployeeCompany(models.Model):
@@ -131,7 +153,6 @@ class EmployeeCompany(models.Model):
     # возможно models.SET_NULL не лучшая идея
     position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
     department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-    # json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         indexes = [
@@ -156,24 +177,18 @@ class Message(models.Model):
 
 
 class Customization(models.Model):
-    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True, related_name='customization')
+    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True,
+                                            related_name='customization')
     color_scheme = models.CharField(max_length=40, default='')
     font_size = models.CharField(max_length=40, default='')
     background = models.CharField(max_length=40, default='')
 
 
 class Task(models.Model):
-    class StatusType(models.IntegerChoices):
-        ACCEPTED = 1, 'Accepted'
-        WORK = 2, 'Work'
-        INSPECTION = 3, 'Inspection'
-        REVISION = 4, 'Revision'
-
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
     title = models.CharField(max_length=40)
     text = models.TextField(blank=True, null=True)
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
-    status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
     json_with_employee_info = models.JSONField(blank=True, default=dict)
     user_category = models.ManyToManyField('Category', through='Taskboard', related_name='tasks')
 
@@ -182,7 +197,7 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
                                             'project_id': self.project_id.id,
@@ -295,4 +310,3 @@ class CompanyEventFile(models.Model):
 
     class Meta:
         order_with_respect_to = 'company_event'
-

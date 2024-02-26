@@ -79,8 +79,6 @@ def create_base_settings_json_to_employee():
 
 
 def create_employee_list(company_id: int) -> list:
-    # return models.Employee.objects.filter(
-    #     id__in=models.EmployeeCompany.objects.filter(company_id=company_id).values('employee_id'))
     return company_id.employees.distinct()
 
 
@@ -98,3 +96,7 @@ def set_position(employee_id, company_id, position_id):
     employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
     employee.position_id = position
     employee.save()
+
+
+def get_task_status():
+    return {'status': {'Accepted': 1, 'Work': 2, 'Inspection': 3, 'Revision': 4}}
