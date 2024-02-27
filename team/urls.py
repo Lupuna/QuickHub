@@ -23,7 +23,6 @@ urlpatterns = [
     # отображение
     path('<int:company_id>/check-employee', views.CheckEmployee.as_view(), name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters', views.ChoiceParameters.as_view(), name='choice_parameters'),
-    path('profile', views.user_profile, name='user_profile'),
     # Детальные отображения
     path('<int:company_id>/project/<int:project_id>/', views.ProjectDetailView.as_view(), name='project'),
     path('<int:company_id>/department/<int:department_id>/', views.DepartmentDetailView.as_view(), name='department'),
