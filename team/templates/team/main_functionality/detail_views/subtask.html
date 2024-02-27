@@ -4,51 +4,57 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    <p> Компания / {{ company.title }}</p>
-    <p> Проект / {{ project.title }}</p>
-    <p> Задача / {{ task.title }}</p>
-    <p> Подзадача / {{ subtask.title }}</p>
-    <p>
+    <a class="button" href="{{ company.get_absolute_url }}">
+        <div> Компания / {{ company.title }}</div>
+    </a>
+    <a class="button" href="{{ project.get_absolute_url }}">
+        <div> Проект / {{ project.title }}</div>
+    </a>
+    <a class="button" href="{{ task.get_absolute_url }}">
+        <div> Задача / {{ task.title }}</div>
+    </a>
+    <div> Подзадача / {{ subtask.title }}</div>
+    <div>
         {{ subtask.text }}
-    </p>
-    <!-- <p>
+    </div>
+    <!-- <div>
         Статус: {{ task.status_yes_no }}
-    </p> -->
-    <p>
+    </div> -->
+    <div>
         Руководители:
         {% for employee in subtask.json_with_employee_info.appoint %}
             <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
             {{ employee }}
         {% endfor %}
-    </p>
-    <p>
+    </div>
+    <div>
         Ответственные лица:
         {% for employee in subtask.json_with_employee_info.responsible %}
             <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
             {{ employee }}
         {% endfor %}
-    </p>
-    <p>
+    </div>
+    <div>
         Исполнители:
         {% for employee in subtask.json_with_employee_info.executor %}
             <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
             {{ employee }}
         {% endfor %}
-    </p>
-    <p>
+    </div>
+    <div>
         {% if subtask.images.all %}
             Картинки:    
             {% for img in task.images.all %}
                 <img src="{{ img.image.url }}" alt="picture">
             {% endfor %}
         {% endif %}
-    </p>
-    <p>
+    </div>
+    <div>
         {% if subtask.files.all %}
             Файлы:    
             {% for f in task.files.all %}
                 {{ f.file }}
             {% endfor %}
         {% endif %}
-    </p>
+    </div>
 {%endblock%}

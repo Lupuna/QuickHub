@@ -6,9 +6,11 @@
 {%block content%}
     <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
     {% for company in companies %}
-        <div class="company">
-            {{ company.title }}
-        </div>
+        <a class="button" href="{{ company.get_absolute_url }}">
+            <div class="company">
+                {{ company.title }}
+            </div>
+        </a>
     {% endfor %}
     <div class="add_pad">
         <a href="{% url 'team:create_company' %}">

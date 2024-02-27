@@ -1,0 +1,21 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <a class="button" href="{{ company.get_absolute_url }}">
+        <div> Компания / {{ company.title }}</div>
+    </a>
+    <a class="button" href="{{ project.get_absolute_url }}">
+        <div> Проекты / {{ project.title }}</div>
+    </a>
+    {% for task in project.tasks.all %}
+        <a class="button" href="{{ task.get_absolute_url }}">
+        <div>
+            {{ task.title }}
+            {{ task.get_status_display }}
+        </div>
+        </a>
+    {% endfor %}
+{%endblock%}

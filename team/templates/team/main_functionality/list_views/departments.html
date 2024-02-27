@@ -4,11 +4,11 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    <p>{{ company.title }}</p>
+    <div>{{ company.title }}</div>
 
     {% for department in departments %}
-        <p>
+        <div>
             {{ department.title }}
-        </p>
+        </div>
     {% endfor %}
 {%endblock%}

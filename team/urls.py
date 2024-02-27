@@ -24,6 +24,7 @@ urlpatterns = [
     path('<int:company_id>/check-employee', views.CheckEmployee.as_view(), name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters', views.ChoiceParameters.as_view(), name='choice_parameters'),
     # Детальные отображения
+    path('company/<int:company_id>/', views.CompanyDetailView.as_view(), name='company'),
     path('<int:company_id>/project/<int:project_id>/', views.ProjectDetailView.as_view(), name='project'),
     path('<int:company_id>/department/<int:department_id>/', views.DepartmentDetailView.as_view(), name='department'),
     path('<int:company_id>/<int:project_id>/<int:task_id>/', views.TaskDetailView.as_view(), name='task'),

@@ -4,23 +4,23 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    <p>{{ department.title }}</p>
-    <p>
+    <div>{{ department.title }}</div>
+    <div>
         {% if department.parent_id %}
             Вышестоящий отдел:    
             {{ department.parent_id.title }}
         {% endif %}
-    </p>
-    <p>
+    </div>
+    <div>
         Руководитель: 
         <img src="{% if department.supervisor.image %} {{ department.supervisor.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
         {{ department.supervisor.name }}
-    </p>
-    <p>
+    </div>
+    <div>
         Сотрудники:
         {% for employee in department.employees.all %}
             <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
             {{ employee.name}}
         {% endfor %}
-    </p>
+    </div>
 {%endblock%}
