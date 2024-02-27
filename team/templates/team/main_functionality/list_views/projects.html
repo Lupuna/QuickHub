@@ -4,19 +4,17 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    <p>{{ company.title }}</p>
-
+    <a class="button" href="{{ company.get_absolute_url }}">
+        <div>{{ company.title }}</div>
+    </a>
     {% for project in projects %}
-        <p>
+    <a class="button" href="{{ project.get_absolute_url }}">
+        <div>
             {{ project.title }}
-        </p>
-        <!-- <p>
-            Автор проекта:
-            <img src="{% if project.creator.image %} {{ project.creator.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
-            {{ project.creator }}
-        </p> -->
-        <p>
-            View counter: {{ project.get_view_counter_display }}
-        </p>
+        </div>
+    </a>
+    <div>
+        View counter: {{ project.get_view_counter_display }}
+    </div>
     {% endfor %}
 {%endblock%}

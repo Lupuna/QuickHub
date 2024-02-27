@@ -15,7 +15,7 @@
             {% elif key == 'department' %}
                 {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Отдел не указан' %}
             {%else%}
-                <p>{{value}}</p>
+                <div>{{value}}</div>
             {%endif%}
         {% endfor %}
     {% endfor %}

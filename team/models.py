@@ -61,6 +61,9 @@ class Company(models.Model):
 
     def __str__(self):
         return f'{self.owner_id}, {self.title}'
+    
+    def get_absolute_url(self):
+        return reverse('team:company', kwargs={'company_id': self.id})
 
 
 class Department(models.Model):
@@ -99,6 +102,10 @@ class Positions(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('team:position', kwargs={'company_id': self.company_id.id,
+                                                'position_id': self.id})
 
 
 class Project(models.Model):
