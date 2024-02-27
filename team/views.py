@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView, FormMixin
 from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.db import IntegrityError
 from . import forms, models, utils, permissions
 
@@ -360,6 +360,33 @@ class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView
 
     def get_queryset(self):
         return self.request.user.companies.distinct() 
+
+
+class UserProjectsListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+    model = models.Project
+    template_name = 'team/main_functionality/list_views/user_projects.html'
+    context_object_name = 'projects'
+
+    def get_queryset(self):
+        tasks = self.request.user.tasks.all()
+        projects = []
+        for task in tasks:
+            project = task.project_id
+            if project not in projects:
+                projects.append(project)
+        return projects
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        projects = self.get_queryset()
+        progress = {}
+        for project in projects:
+            ready = project.tasks.filter(status=models.Task.StatusType.ACCEPTED).count()
+            total = project.tasks.count()
+            progress[project] = {'ready': ready, 'total': total}
+        print(progress)
+        context['progress'] = progress
+        return context
 
 
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
