@@ -367,6 +367,13 @@ class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
     pk_url_kwarg = 'project_id'
 
 
+class UserProfile(permissions.CompanyAccess, DetailView):
+    model = models.Employee
+    context_object_name = 'employee'
+
+
+
+
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)

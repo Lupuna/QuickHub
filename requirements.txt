@@ -11,6 +11,7 @@ constantly==23.10.4
 cryptography==42.0.5
 daphne==4.1.0
 Django==4.2.6
+django-debug-toolbar==4.3.0
 hyperlink==21.0.0
 idna==3.6
 incremental==22.10.0
