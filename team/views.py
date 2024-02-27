@@ -265,7 +265,7 @@ class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredM
 '''Классы отображений'''
 
 class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView):
-    template_name = 'team/main_functionality/view_company_employees.html'
+    template_name = 'team/main_functionality/list_views/company_employees.html'
     model = models.Employee
     paginate_by = 10
     login_url = reverse_lazy('team:login')
@@ -328,7 +328,7 @@ class TaskboardListView(LoginRequiredMixin, ListView):
 
 class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
     model = models.Project
-    template_name = 'team/main_functionality/projects.html'
+    template_name = 'team/main_functionality/list_views/projects.html'
     context_object_name = 'projects'
 
     def get_queryset(self):
@@ -337,7 +337,7 @@ class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListVi
 
 class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
     model = models.Department
-    template_name = 'team/main_functionality/departments.html'
+    template_name = 'team/main_functionality/list_views/departments.html'
     context_object_name = 'departments'
 
     def get_queryset(self):
@@ -346,7 +346,7 @@ class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedDispatch, Lis
 
 class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
     model = models.Positions
-    template_name = 'team/main_functionality/view_positions.html'
+    template_name = 'team/main_functionality/list_views/positions.html'
     context_object_name = 'positions'
     
     def get_queryset(self):
@@ -355,7 +355,7 @@ class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListV
 
 class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     model = models.Company
-    template_name = 'team/main_functionality/user_companies.html'
+    template_name = 'team/main_functionality/list_views/user_companies.html'
     context_object_name = 'companies'
 
     def get_queryset(self):
@@ -364,7 +364,7 @@ class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView
 
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     model = models.Department
-    template_name = 'team/main_functionality/view_department.html'
+    template_name = 'team/main_functionality/detial_views/department.html'
     context_object_name = 'department'
     pk_url_kwarg = 'department_id'
 
@@ -372,7 +372,7 @@ class DepartmentDetailView(permissions.CompanyAccess, DetailView):
 class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixin, DetailView):
     model = models.Task
     form_class = forms.SetTaskDeadlineForm
-    template_name = 'team/main_functionality/view_task.html'
+    template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
 
@@ -409,16 +409,23 @@ class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixi
 
 class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Subtasks
-    template_name = 'team/main_functionality/view_subtask.html'
+    template_name = 'team/main_functionality/detail_views/subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
 
 
 class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Project
-    template_name = 'team/main_functionality/view_project.html'
+    template_name = 'team/main_functionality/detail_views/project.html'
     context_object_name = 'project'
     pk_url_kwarg = 'project_id'
+
+
+class CompanyDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
+    model = models.Company
+    template_name = 'team/main_functionality/detail_views/company.html'
+    context_object_name = 'company'
+    pk_url_kwarg = 'company_id'
 
 
 def sign_up(request):
