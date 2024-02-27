@@ -1,0 +1,16 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <link href="{% static 'css/structure.css' %}" rel="stylesheet">
+    <div class="title">{{ company.title }}</div>
+    <div class="structure">
+        <ul class="tree">
+            {% for department in roots %}
+                {% include 'team/main_functionality/includes/tree_view_template.html' with node=department company=company %}
+            {% endfor %}
+        </ul>
+    </div>
+{%endblock%}

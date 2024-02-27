@@ -364,7 +364,7 @@ class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView
 
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     model = models.Department
-    template_name = 'team/main_functionality/detial_views/department.html'
+    template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'
     pk_url_kwarg = 'department_id'
 
@@ -426,6 +426,14 @@ class CompanyDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
     template_name = 'team/main_functionality/detail_views/company.html'
     context_object_name = 'company'
     pk_url_kwarg = 'company_id'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        company = self.get_object()
+        roots = company.departments.filter(parent_id=None)
+        context['roots'] = roots
+        print(roots)
+        return context
 
 
 def sign_up(request):
