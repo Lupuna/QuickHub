@@ -98,3 +98,7 @@ def set_position(employee_id, company_id, position_id):
     employee = models.EmployeeCompany.objects.get(employee_id=user, company_id=company)
     employee.position_id = position
     employee.save()
+
+
+def get_task_status():
+    return {'status': {'Accepted': 1, 'Work': 2, 'Inspection': 3, 'Revision': 4}}
