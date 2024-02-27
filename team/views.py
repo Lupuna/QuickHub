@@ -1,11 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
 from . import forms, models, utils, permissions
@@ -199,15 +202,14 @@ class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, permissions.C
             # записей об одном работнике с пустыми полями отдела
             employee_without_department = employee_company.filter(department_id=None)
             if employee_without_department:
-                employee_without_department[
-                    0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
+                employee_without_department[0].department_id = department  # если есть запись о работнике с незаполненным полем отдела,
                 employee_without_department[0].save()  # тогда просто заполняется поле отдела в уже существующей записи
             else:
                 employee_company = models.EmployeeCompany()
                 employee_company.company_id = self.kwargs['company']
                 employee_company.employee_id = employee
-                employee_company.department_id = department  # если же во всех записях работник уже прикреплён к отделу,
-                employee_company.save()  # создаётся новая запись в таблице EmployeeCompany
+                employee_company.department_id = department     # если же во всех записях работник уже прикреплён к отделу, 
+                employee_company.save()                         # создаётся новая запись в таблице EmployeeCompany
         return super().form_valid(department)
 
 
@@ -245,9 +247,7 @@ class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredM
             taskboard.save()
         return super().form_valid(form)
 
-
 '''Классы отображений'''
-
 
 class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView):
     template_name = 'team/main_functionality/view_company_employees.html'
@@ -325,7 +325,7 @@ class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListV
     model = models.Positions
     template_name = 'team/main_functionality/view_positions.html'
     context_object_name = 'positions'
-
+    
     def get_queryset(self):
         return self.kwargs['company'].positions.all()
 
@@ -336,7 +336,7 @@ class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView
     context_object_name = 'companies'
 
     def get_queryset(self):
-        return self.request.user.companies.distinct()
+        return self.request.user.companies.distinct() 
 
 
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
@@ -351,7 +351,7 @@ class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailVi
     template_name = 'team/main_functionality/view_task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
-
+    
 
 class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Subtasks

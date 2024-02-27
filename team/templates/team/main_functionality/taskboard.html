@@ -25,15 +25,17 @@
                 </div>
                 <img src="{% static 'img/tasks/tripple-dot.svg'%}">
             </div>
-            <button class="card__add">
-                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
-                <div class="button-text">
-                    Добавить задачу
-                </div>
-            </button>
+            <a href="{% url 'team:add_task' category_id=cat.id %}">
+                <button class="card__add">
+                    <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
+                    <div class="button-text">
+                        Добавить задачу
+                    </div>
+                </button>
+            </a>
             <!-- Нижняя часть -->
             <div class="card__bottom">
-            {% for task in cat.tasks.all %}
+            {% for task in cat.tasks.distinct %}
                 <div class="task">
                     <a href="{{ task.get_absolute_url }}">
                         <div class="title_svg">
@@ -42,8 +44,20 @@
                                 {{ task.title }}
                             </div>
                         </div>
+                        <div class="deadline">
+                            {% with task.deadlines.get as deadline %}
+                            <div class="deadline_row" id="{{ deadline.status }}">
+                                {% if deadline.time_end %}
+                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
+                                {% else %}
+                                    Бессрочный
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        </div>
                         <div class="executors">
-                            {% for executor in task.executors.all %}
+                            {% for executor in task.executors.distinct %}
+                                <img src="{% if executor.images %} {{ executor.images.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
                                 {{ executor }}
                             {% endfor %}
                         </div>
