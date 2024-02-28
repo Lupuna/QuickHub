@@ -148,11 +148,11 @@ class Project(models.Model):
 
 
 class EmployeeCompany(models.Model):
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company')
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee')
     # возможно models.SET_NULL не лучшая идея
-    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
-    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
+    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True, related_name='position')
+    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='department')
 
     class Meta:
         indexes = [

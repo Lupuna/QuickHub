@@ -1,0 +1,29 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <div>
+        <img src="{% if user.image %} {{ user.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+        <p>Твоё имя: {% include "team/main_functionality/includes/if_else.html" with value=user.name value_1=user.name|title value_2=' '%}</p>
+        <p>Телефон: {% include "team/main_functionality/includes/if_else.html" with value=user.telephone value_1=user.telephone value_2=' '%}</p>
+        <p>Твоя почта: {% include "team/main_functionality/includes/if_else.html" with value=user.email value_1=user.email value_2=' '%}</p>
+        <p>Город: {% include "team/main_functionality/includes/if_else.html" with value=user.city value_1=user.city|title value_2=' '%}</p>
+        <p>День рождения: {% include "team/main_functionality/includes/if_else.html" with value=user.birthday value_1=user.birthday value_2=' '%}</p>
+
+
+        <div>
+            <h2>Компании в которых ты работаешь</h2>
+            {%for company in companies%}
+                <p><a href="{%url 'team:check_employee' company.id%}">{{company.title}}</a></p>
+            {%endfor%}
+        </div>
+
+        <div>
+            <p><a href="{% url 'team:update_user_profile' user.pk %}">Изменить</a></p>
+            <p>Изменить пароль</p>
+        </div>
+    </div>
+
+{%endblock%}

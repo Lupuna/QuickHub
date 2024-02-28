@@ -1,14 +1,13 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models.base import Model as Model
-from django.db.models.query import QuerySet
+from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView
-from django.urls import reverse_lazy, reverse
+from django.views.generic.edit import FormView, UpdateView
+from django.urls import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
 from . import forms, models, utils, permissions
@@ -247,7 +246,9 @@ class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredM
             taskboard.save()
         return super().form_valid(form)
 
+
 '''Классы отображений'''
+
 
 class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView):
     template_name = 'team/main_functionality/view_company_employees.html'
@@ -292,9 +293,6 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
                 info_about_employee.update({'department': department})
 
             info_about_employees.append(info_about_employee)
-        # paginator = Paginator(info_about_employees, 1)
-        # page_number = self.request.GET.get('page')
-        # page_obj = paginator.get_page(page_number)
         return info_about_employees
 
 
@@ -367,12 +365,42 @@ class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
     pk_url_kwarg = 'project_id'
 
 
-class UserProfile(permissions.CompanyAccess, DetailView):
+class UserProfileListView(LoginRequiredMixin, ListView):
+    model = models.Company
+    template_name = 'team/main_functionality/user_profile.html'
+    context_object_name = 'companies'
+    login_url = reverse_lazy('team:login')
+
+    def get_queryset(self):
+        # Это стрём. Поднять вопрос о переписи на код ревью нужно попытаться переписать через JOIN
+        to_return = models.Company.objects.filter(id__in=(
+            models.EmployeeCompany.objects.filter(employee_id=self.request.user.id).values('company_id')
+        ))
+        return to_return
+
+
+class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    login_url = reverse_lazy('team:login')
+    success_url = reverse_lazy('team:user_profile')
     model = models.Employee
-    context_object_name = 'employee'
+    template_name = utils.creator
+    fields = ['name', 'telephone', 'email', 'city', 'birthday']
+    extra_context = {'button': 'update'}
+    success_message = 'Параметры успешно изменены!'
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.kwargs['pk'] != self.request.user.pk:
+            return redirect(reverse_lazy('team:user_profile'))
+        return super().dispatch(request, *args, **kwargs)
 
 
-
+class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+    form_class = forms.SetPasswordForm
+    template_name = utils.creator
+    login_url = reverse_lazy('team:login')
+    extra_context = {'button': 'update'}
+    success_url = reverse_lazy('team:user_profile')
+    success_message = 'Ваш пароль был успешно изменен!'
 
 def sign_up(request):
     if request.method == 'POST':
