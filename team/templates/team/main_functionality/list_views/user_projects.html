@@ -1,0 +1,48 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+    <div class="header_workplace">
+        <div id="settings">
+            <img src="{% static 'img/projects/settings.svg' %}">
+        </div>
+        <div id="project_title">Название</div>
+        <div id="project_progress">Прогресс</div>
+        <div id="project_activity">Активность</div>
+        <div id="project_priority">Приоритет</div>
+        <div id="project_created">Дата создания</div>
+        <div id="project_department">Подразделение</div>
+        <div id="project_employees">Участники</div>
+    </div>
+    {% for project, prog in progress.items %}
+        <a class="button" href="{{ project.get_absolute_url }}">
+            <div class="project">
+                <div id="project_title">{{ project.title }}</div>
+                <div id="project_progress">
+                {% with ready=prog.ready total=prog.total %}
+                    <progress id="project" max="{{ total }}" value="{{ ready }}"></progress>
+                    <label for="project">{{ ready }}/{{ total }}</label>
+                {% endwith %}
+                </div>
+                <div id="project_activity">27.02.2024</div>
+                <div id="project_prority">Высокий</div>
+                <div id="project_created">12.02.2024</div>
+                <div id="project_department">Отдел</div>
+                <div id="project_employees">Работники</div>
+            </div>
+        </a>
+    {% endfor %}
+    <!-- <div class="add_pad">
+        <a href="{% url 'team:create_company' %}">
+            <button class="category__add">
+                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
+                <div class="button-text">
+                    Создать компанию
+                </div>
+            </button>
+        </a>
+    </div> -->
+{%endblock%}
