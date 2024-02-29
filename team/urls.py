@@ -23,6 +23,7 @@ urlpatterns = [
     # отображение
     path('<int:company_id>/check-employee', views.CheckEmployee.as_view(), name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters', views.ChoiceParameters.as_view(), name='choice_parameters'),
+    path('profile', views.UserProfileListView.as_view(), name='user_profile'),
     # Детальные отображения
     path('company/<int:company_id>/', views.CompanyDetailView.as_view(), name='company'),
     path('<int:company_id>/project/<int:project_id>/', views.ProjectDetailView.as_view(), name='project'),
@@ -38,6 +39,9 @@ urlpatterns = [
     # Редактирование
     path('edit/<int:company_id>/<int:project_id>/<int:task_id>/', views.CreateTask.as_view(), name='set_deadline'),
     path('edit/taskboard/<int:category_id>/', views.CreateTaskboard.as_view(), name='add_task'),
+    # Изменение
+    path('profile/<int:pk>/update', views.UpdateUserProfile.as_view(), name='update_user_profile'),
+    path('profile/password', views.UserPasswordChangeView.as_view(), name='change_password'),
 
     # ещё не готово
     path('projects/', views.homepage, name='projects'),

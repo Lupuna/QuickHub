@@ -1,15 +1,13 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models.base import Model as Model
-from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, FormMixin
-from django.urls import reverse_lazy, reverse
+from django.views.generic.edit import FormView, UpdateView
+from django.urls import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
 from . import forms, models, utils, permissions
@@ -67,13 +65,6 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         task.save()
 
         self.kwargs['user'].tasks.add(task)
-        self.kwargs['user'].categories.get(title='Мои задачи').tasks.add(task)
-        for executor in form.cleaned_data.get('executor'):
-            executor.tasks.add(task)
-            executor.categories.get(title='Мои задачи').tasks.add(task)
-
-        deadline = models.TaskDeadline(task_id=task)
-        deadline.save()
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -255,14 +246,9 @@ class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredM
             taskboard.save()
         return super().form_valid(form)
 
-    def get_initial(self):
-        initial = super().get_initial()
-        initial['category'] = self.kwargs.get('category')
-        initial['tasks'] = self.kwargs['category'].tasks.distinct()
-        return initial
-
 
 '''Классы отображений'''
+
 
 class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView):
     template_name = 'team/main_functionality/list_views/company_employees.html'
@@ -307,23 +293,12 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
                 info_about_employee.update({'department': department})
 
             info_about_employees.append(info_about_employee)
-        # paginator = Paginator(info_about_employees, 1)
-        # page_number = self.request.GET.get('page')
-        # page_obj = paginator.get_page(page_number)
         return info_about_employees
 
 
 class TaskboardListView(LoginRequiredMixin, ListView):
     model = models.Employee
     template_name = 'team/main_functionality/taskboard.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        tasks = request.user.tasks.distinct()
-        for task in tasks:
-            deadline = task.deadlines.get()
-            deadline.status = utils.get_deadline_status(deadline)
-            deadline.save()
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
@@ -369,42 +344,12 @@ class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     pk_url_kwarg = 'department_id'
 
 
-class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixin, DetailView):
+class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Task
     form_class = forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
-
-    def get_success_url(self):
-        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-                                                 'project_id': self.kwargs['project_id'],
-                                                 'task_id': self.kwargs['task_id']})
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
-        context['form'] = forms.SetTaskDeadlineForm()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form):
-        self.object = self.get_object()
-        try:
-            deadline = self.object.deadlines.get()
-        except:
-            deadline = models.TaskDeadline(task_id=self.object)
-        deadline.time_start = form.cleaned_data.get('time_start')
-        deadline.time_end = form.cleaned_data.get('time_end')
-        deadline.status = utils.get_deadline_status(deadline)
-        deadline.save()
-
-        return super(TaskDetailView, self).form_valid(form)
     
 
 class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
@@ -434,6 +379,45 @@ class CompanyDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
         context['roots'] = roots
         print(roots)
         return context
+
+
+class UserProfileListView(LoginRequiredMixin, ListView):
+    model = models.Company
+    template_name = 'team/main_functionality/user_profile.html'
+    context_object_name = 'companies'
+    login_url = reverse_lazy('team:login')
+
+    def get_queryset(self):
+        # Это стрём. Поднять вопрос о переписи на код ревью нужно попытаться переписать через JOIN
+        to_return = models.Company.objects.filter(id__in=(
+            models.EmployeeCompany.objects.filter(employee_id=self.request.user.id).values('company_id')
+        ))
+        return to_return
+
+
+class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    login_url = reverse_lazy('team:login')
+    success_url = reverse_lazy('team:user_profile')
+    model = models.Employee
+    template_name = utils.creator
+    fields = ['name', 'telephone', 'email', 'city', 'birthday']
+    extra_context = {'button': 'update'}
+    success_message = 'Параметры успешно изменены!'
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.kwargs['pk'] != self.request.user.pk:
+            return redirect(reverse_lazy('team:user_profile'))
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+    form_class = forms.SetPasswordForm
+    template_name = utils.creator
+    login_url = reverse_lazy('team:login')
+    extra_context = {'button': 'update'}
+    success_url = reverse_lazy('team:user_profile')
+    success_message = 'Ваш пароль был успешно изменен!'
+
 
 
 def sign_up(request):
