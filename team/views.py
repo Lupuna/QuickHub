@@ -402,6 +402,7 @@ class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordCh
     success_url = reverse_lazy('team:user_profile')
     success_message = 'Ваш пароль был успешно изменен!'
 
+
 def sign_up(request):
     if request.method == 'POST':
         form = forms.CustomUserCreationFrom(request.POST)
