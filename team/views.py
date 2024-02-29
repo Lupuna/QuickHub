@@ -57,11 +57,12 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         task.json_with_employee_info = {
             'appoint': [self.kwargs['user'].email],
             'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-            'executor': [i.email for i in form.cleaned_data.get('executor')]
+            'executor': [i.email for i in form.cleaned_data.get('executor')],
         }
         task.project_id = self.kwargs['project']
         task.text = form.cleaned_data.get('text')
         task.title = form.cleaned_data.get('title')
+        task.task_status = models.Project.objects.get(id=self.kwargs['project'].id).get_default_task_status
         task.save()
 
         self.kwargs['user'].tasks.add(task)
@@ -258,8 +259,6 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
-        # employees = models.Employee.objects.filter(
-        #     id__in=models.EmployeeCompany.objects.filter(company_id=self.kwargs['company_id']).values('employee_id'))
         company = self.kwargs['company']
         employees = company.employees.distinct()
 
@@ -272,8 +271,6 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
                     info_about_employee.update(link.get_info())
 
             if 'position_title' in info_filter_about_employee:
-                # position = models.Positions.objects.filter(
-                #     id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id= self.kwargs['company_id'])))
                 position = employee.positions.filter(company_id=company)
                 if position:
                     position = position[0].title
@@ -282,9 +279,6 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
                 info_about_employee.update({'position_title': position})
 
             if 'department' in info_filter_about_employee:
-                # department = models.Department.objects.filter(
-                #     id__in=models.EmployeeCompany.objects.filter(Q(employee_id=employee.id) & Q(company_id=self.kwargs['company_id']))
-                # )
                 department = employee.departments.filter(company_id=company)
                 if department:
                     department = department[0].title
@@ -388,11 +382,7 @@ class UserProfileListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy('team:login')
 
     def get_queryset(self):
-        # Это стрём. Поднять вопрос о переписи на код ревью нужно попытаться переписать через JOIN
-        to_return = models.Company.objects.filter(id__in=(
-            models.EmployeeCompany.objects.filter(employee_id=self.request.user.id).values('company_id')
-        ))
-        return to_return
+        return self.request.user.companies.distinct()
 
 
 class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -417,7 +407,6 @@ class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordCh
     extra_context = {'button': 'update'}
     success_url = reverse_lazy('team:user_profile')
     success_message = 'Ваш пароль был успешно изменен!'
-
 
 
 def sign_up(request):

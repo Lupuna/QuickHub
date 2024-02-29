@@ -198,6 +198,7 @@ class Task(models.Model):
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
     json_with_employee_info = models.JSONField(blank=True, default=dict)
     user_category = models.ManyToManyField('Category', through='Taskboard', related_name='tasks')
+    task_status = models.CharField(max_length=40)
 
     class Meta:
         ordering = ['project_id', 'title']
