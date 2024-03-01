@@ -257,6 +257,7 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
     paginate_by = 10
     login_url = reverse_lazy('team:login')
 
+
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         company = self.kwargs['company']
