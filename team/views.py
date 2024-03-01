@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -57,15 +57,21 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         task.json_with_employee_info = {
             'appoint': [self.kwargs['user'].email],
             'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-            'executor': [i.email for i in form.cleaned_data.get('executor')],
+            'executor': [i.email for i in form.cleaned_data.get('executor')]
         }
         task.project_id = self.kwargs['project']
         task.text = form.cleaned_data.get('text')
         task.title = form.cleaned_data.get('title')
-        task.task_status = models.Project.objects.get(id=self.kwargs['project'].id).get_default_task_status
         task.save()
 
         self.kwargs['user'].tasks.add(task)
+        self.kwargs['user'].categories.get(title='Мои задачи').tasks.add(task)
+        for executor in form.cleaned_data.get('executor'):
+            executor.tasks.add(task)
+            executor.categories.get(title='Мои задачи').tasks.add(task)
+
+        deadline = models.TaskDeadline(task_id=task)
+        deadline.save()
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -295,6 +301,14 @@ class TaskboardListView(LoginRequiredMixin, ListView):
     model = models.Employee
     template_name = 'team/main_functionality/taskboard.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        tasks = request.user.tasks.distinct()
+        for task in tasks:
+            deadline = task.deadlines.get()
+            deadline.status = utils.get_deadline_status(deadline)
+            deadline.save()
+        return super().dispatch(request, *args, **kwargs)
+
 
 class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
     model = models.Project
@@ -332,6 +346,33 @@ class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView
         return self.request.user.companies.distinct() 
 
 
+class UserProjectsListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+    model = models.Project
+    template_name = 'team/main_functionality/list_views/user_projects.html'
+    context_object_name = 'projects'
+
+    def get_queryset(self):
+        tasks = self.request.user.tasks.all()
+        projects = []
+        for task in tasks:
+            project = task.project_id
+            if project not in projects:
+                projects.append(project)
+        return projects
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        projects = self.get_queryset()
+        progress = {}
+        for project in projects:
+            # ready = project.tasks.filter(status=models.Task.StatusType.ACCEPTED).count()
+            # total = project.tasks.count()
+            # progress[project] = {'ready': ready, 'total': total}
+            progress[project] = {'ready': 3, 'total': 5}
+        context['progress'] = progress
+        return context
+
+
 class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/detail_views/department.html'
@@ -339,12 +380,43 @@ class DepartmentDetailView(permissions.CompanyAccess, DetailView):
     pk_url_kwarg = 'department_id'
 
 
-class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
+class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixin, DetailView):
     model = models.Task
     form_class = forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
+
+    def get_success_url(self):
+        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+                                                 'project_id': self.kwargs['project_id'],
+                                                 'task_id': self.kwargs['task_id']})
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
+        context['form'] = forms.SetTaskDeadlineForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        try:
+            deadline = self.object.deadlines.get()
+        except:
+            deadline = models.TaskDeadline(task_id=self.object)
+        deadline.time_start = form.cleaned_data.get('time_start')
+        deadline.time_end = form.cleaned_data.get('time_end')
+        deadline.status = utils.get_deadline_status(deadline)
+        deadline.save()
+
+        return super(TaskDetailView, self).form_valid(form)
+    
     
 
 class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
@@ -372,7 +444,6 @@ class CompanyDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, Detai
         company = self.get_object()
         roots = company.departments.filter(parent_id=None)
         context['roots'] = roots
-        print(roots)
         return context
 
 

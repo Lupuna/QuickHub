@@ -36,6 +36,7 @@ urlpatterns = [
     path('<int:company_id>/departments/', views.DepartmentsListView.as_view(), name='departments_list'),
     path('taskboard', views.TaskboardListView.as_view(), name='taskboard'),
     path('companies/', views.UserCompaniesListView.as_view(), name='companies'),
+    path('projects/', views.UserProjectsListView.as_view(), name='projects'),
     # Редактирование
     path('edit/<int:company_id>/<int:project_id>/<int:task_id>/', views.CreateTask.as_view(), name='set_deadline'),
     path('edit/taskboard/<int:category_id>/', views.CreateTaskboard.as_view(), name='add_task'),
@@ -44,7 +45,6 @@ urlpatterns = [
     path('profile/password', views.UserPasswordChangeView.as_view(), name='change_password'),
 
     # ещё не готово
-    path('projects/', views.homepage, name='projects'),
     path('settings/', views.homepage, name='settings'),
     path('help/', views.homepage, name='help'),
     path('me/', views.homepage, name='me'),
