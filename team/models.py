@@ -128,6 +128,7 @@ class Project(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._default_task_status = 'Work'
+        self._default_hand_over_task_status = 'Inspection'
 
     def __str__(self):
         return self.title
@@ -144,6 +145,15 @@ class Project(models.Model):
     def get_default_task_status(self, new_status):
         if new_status in self.task_status['status']:
             self._default_task_status = new_status
+
+    @property
+    def get_default_hand_over_task_status(self):
+        return self._default_hand_over_task_status
+
+    @get_default_hand_over_task_status.setter
+    def get_default_hand_over_task_status(self, new_status):
+        if new_status in self.task_status['status']:
+            self._default_hand_over_task_status = new_status
 
     def update_task_status(self, new_satus: list):
         if new_satus[-1] not in self.task_status['status'].values():

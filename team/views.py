@@ -263,7 +263,6 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
     paginate_by = 10
     login_url = reverse_lazy('team:login')
 
-
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         company = self.kwargs['company']
@@ -417,7 +416,6 @@ class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixi
 
         return super(TaskDetailView, self).form_valid(form)
     
-    
 
 class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
     model = models.Subtasks
@@ -462,7 +460,7 @@ class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('team:user_profile')
     model = models.Employee
     template_name = utils.creator
-    fields = ['name', 'telephone', 'email', 'city', 'birthday']
+    fields = ['image', 'name', 'telephone', 'email', 'city', 'birthday']
     extra_context = {'button': 'update'}
     success_message = 'Параметры успешно изменены!'
 
