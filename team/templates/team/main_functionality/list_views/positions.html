@@ -1,0 +1,14 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <div>{{ company.title }}</div>
+
+    {% for position in positions %}
+        <div>
+            {{ position.title }}
+        </div>
+    {% endfor %}
+{%endblock%}

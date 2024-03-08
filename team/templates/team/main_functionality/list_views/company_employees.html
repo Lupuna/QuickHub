@@ -1,0 +1,24 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    {% for employee in page_obj %}
+        {% for key, value in employee.items %}
+            {% if key == 'image' %}
+                <img src="{% if value %} {{ value.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo" style="max-height:150px">
+            {% elif key == 'telephone' %}
+                {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Телефон не указан' %}
+            {% elif key == 'position_title' %}
+                {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Должность не указана' %}
+            {% elif key == 'department' %}
+                {% include "team/main_functionality/includes/if_else.html" with value=value value_1=value value_2='Отдел не указан' %}
+            {%else%}
+                <div>{{value}}</div>
+            {%endif%}
+        {% endfor %}
+    {% endfor %}
+    {% include "team/main_functionality/includes/pagination.html" with page=page_obj %}
+    <a href="{% url 'team:choice_parameters' company_id=company.id %}" type="button">Settings</a>
+{%endblock%}

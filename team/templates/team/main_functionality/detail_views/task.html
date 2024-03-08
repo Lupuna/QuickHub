@@ -1,0 +1,105 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <a class="button" href="{{ company.get_absolute_url }}">
+        <div class="company">
+            Компания / {{ company.title }}
+        </div>
+    </a>
+    <a class="button" href="{{ project.get_absolute_url }}">
+        <div class="project">
+            Проект / {{ project.title }}
+        </div> 
+    </a>
+    <div> Задача / {{ task.title }}</div>
+    {% if task.parent_id %}
+    <div>
+        Родительская задача:    
+        <a class="button" href="{{ task.get_absolute_url }}">
+            {{ task.parent_id.title }}
+        </a>
+    </div>
+    {% endif %}
+    <div>
+        {{ task.text }}
+    </div>
+    <div>
+        Статус: {{ task.get_status_display }}
+    </div>
+    <div>
+        Руководители:
+        {% for employee in task.json_with_employee_info.appoint %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </div>
+    <div>
+        Ответственные лица:
+        {% for employee in task.json_with_employee_info.responsible %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </div>
+    <div>
+        Исполнители:
+        {% for employee in task.json_with_employee_info.executor %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </div>
+    {% if task.subtasks.first %}
+        Подзадачи:
+        {% for subtask in task.subtasks.all %}
+        <a href="{{ subtask.get_absolute_url }}">
+            <div>
+                {{ subtask.title }}
+            </div>
+        </a>
+        {% endfor %}
+    {% endif %}
+    <div>
+        {% if task.images.first %}
+            Картинки:    
+            {% for img in task.images.all %}
+                <img src="{{ img.image.url }}" alt="picture">
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        {% if task.files.fisrt %}
+            Файлы:    
+            {% for f in task.files.all %}
+                {{ f.file }}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        {% with task.deadlines.get as deadline %}
+            {% if deadline.time_start %}
+                <div>
+                    Старт: {{ deadline.time_start }}
+                </div>
+            {% endif %}
+            {% if deadline.time_end %}
+                <div>
+                    Конец: {{ deadline.time_end }}
+                </div>
+            {% else %}
+                <form method="post" enctype="multipart/form-data">
+                    {%csrf_token%}
+                    {{form.as_p}}
+                    <button type="submit">
+                        {% if button %}
+                            {{ button }}
+                        {% else %}
+                            Установить сроки
+                        {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+        {% endwith %}
+    </div>
+{%endblock%}

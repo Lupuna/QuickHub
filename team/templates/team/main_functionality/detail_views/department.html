@@ -1,0 +1,26 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <div>{{ department.title }}</div>
+    <div>
+        {% if department.parent_id %}
+            Вышестоящий отдел:    
+            {{ department.parent_id.title }}
+        {% endif %}
+    </div>
+    <div>
+        Руководитель: 
+        <img src="{% if department.supervisor.image %} {{ department.supervisor.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+        {{ department.supervisor.name }}
+    </div>
+    <div>
+        Сотрудники:
+        {% for employee in department.employees.all %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee.name}}
+        {% endfor %}
+    </div>
+{%endblock%}

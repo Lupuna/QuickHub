@@ -1,0 +1,60 @@
+{% extends 'team/base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <a class="button" href="{{ company.get_absolute_url }}">
+        <div> Компания / {{ company.title }}</div>
+    </a>
+    <a class="button" href="{{ project.get_absolute_url }}">
+        <div> Проект / {{ project.title }}</div>
+    </a>
+    <a class="button" href="{{ task.get_absolute_url }}">
+        <div> Задача / {{ task.title }}</div>
+    </a>
+    <div> Подзадача / {{ subtask.title }}</div>
+    <div>
+        {{ subtask.text }}
+    </div>
+    <!-- <div>
+        Статус: {{ task.status_yes_no }}
+    </div> -->
+    <div>
+        Руководители:
+        {% for employee in subtask.json_with_employee_info.appoint %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </div>
+    <div>
+        Ответственные лица:
+        {% for employee in subtask.json_with_employee_info.responsible %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </div>
+    <div>
+        Исполнители:
+        {% for employee in subtask.json_with_employee_info.executor %}
+            <img src="{% if employee.image %} {{ employee.image.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+            {{ employee }}
+        {% endfor %}
+    </div>
+    <div>
+        {% if subtask.images.all %}
+            Картинки:    
+            {% for img in task.images.all %}
+                <img src="{{ img.image.url }}" alt="picture">
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        {% if subtask.files.all %}
+            Файлы:    
+            {% for f in task.files.all %}
+                {{ f.file }}
+            {% endfor %}
+        {% endif %}
+    </div>
+{%endblock%}

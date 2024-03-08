@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
+from . import utils
 
 
 class Employee(AbstractUser):
@@ -8,7 +10,26 @@ class Employee(AbstractUser):
     city = models.CharField(max_length=40, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     telephone = models.CharField(max_length=40, blank=True, null=True)
-    json_with_settings_info = models.JSONField(blank=True, default=dict)
+    online_status = models.BooleanField(default=False)
+    json_with_settings_info = models.JSONField(blank=True, default=utils.create_base_settings_json_to_employee)
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/', blank=True)
+
+    tasks = models.ManyToManyField('Task', blank=True, related_name='executors')
+    positions = models.ManyToManyField('Positions', through='EmployeeCompany', related_name='employees')
+    departments = models.ManyToManyField('Department', through='EmployeeCompany', related_name='employees')
+    companies = models.ManyToManyField('Company', through='EmployeeCompany', related_name='employees')
+
+    def get_all_info(self):
+        information = {
+            'image': self.image,
+            'name': self.name,
+            'email': self.email,
+            'city': self.city,
+            'birthday': self.birthday,
+            'telephone': self.telephone,
+            'online': self.online_status,
+        }
+        return information
 
     class Meta:
         ordering = ['username']
@@ -19,8 +40,12 @@ class Employee(AbstractUser):
 
 
 class LinksResources(models.Model):
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='links')
+    title = models.CharField(max_length=200)
     link = models.URLField(max_length=200)
+
+    def get_info(self):
+        return {self.title: self.link}
 
     class Meta:
         order_with_respect_to = 'employee_id'
@@ -30,24 +55,33 @@ class Company(models.Model):
     title = models.CharField(max_length=250)
     owner_id = models.IntegerField(
         help_text='Тут будет храниться id создателя компании(т. е. того человека, который будет платить)')
-    # json_with_department_info = models.JSONField(blank=True, default=dict)
-    # json_with_settings_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
 
     def __str__(self):
         return f'{self.owner_id}, {self.title}'
+    
+    def get_absolute_url(self):
+        return reverse('team:company', kwargs={'company_id': self.id})
 
 
 class Department(models.Model):
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
-    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='departments')
+    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='childs')
     title = models.CharField(max_length=40)
-    supervisor = models.IntegerField()
+    supervisor = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['company_id', 'title']
+        unique_together = ['company_id', 'title']
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('team:department', kwargs={'company_id': self.company_id.id,
+                                                  'department_id': self.id})
 
 
 class Positions(models.Model):
@@ -58,10 +92,20 @@ class Positions(models.Model):
         PARTIAL_ACCESS = 2, 'Partial access'
         OBSERVE = 3, 'Observer'
 
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='positions')
     title = models.CharField(max_length=40)
     weight = models.SmallIntegerField(choices=Weight.choices, default=Weight.PARTIAL_ACCESS)
     json_with_optional_info = models.JSONField(blank=True, default=dict)
+
+    class Meta:
+        unique_together = ['company_id', 'title']
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('team:position', kwargs={'company_id': self.company_id.id,
+                                                'position_id': self.id})
 
 
 class Project(models.Model):
@@ -71,23 +115,61 @@ class Project(models.Model):
         IN_PERCENTAGES = 3, 'In_percentages'
         NONE_DISPLAY = 4, 'None_display'
 
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='projects')
     title = models.CharField(max_length=40)
     project_creater = models.IntegerField()
     view_counter = models.IntegerField(choices=DisplayTypes.choices, default=DisplayTypes.NONE_DISPLAY)
     json_info_with_access_level = models.JSONField(blank=True, default=dict)
+    task_status = models.JSONField(default=utils.get_task_status)
 
     class Meta:
         ordering = ['title']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._default_task_status = 'Work'
+        self._default_hand_over_task_status = 'Inspection'
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('team:project', kwargs={'company_id': self.company_id.id,
+                                               'project_id': self.id})
+
+    @property
+    def get_default_task_status(self):
+        return self._default_task_status
+
+    @get_default_task_status.setter
+    def get_default_task_status(self, new_status):
+        if new_status in self.task_status['status']:
+            self._default_task_status = new_status
+
+    @property
+    def get_default_hand_over_task_status(self):
+        return self._default_hand_over_task_status
+
+    @get_default_hand_over_task_status.setter
+    def get_default_hand_over_task_status(self, new_status):
+        if new_status in self.task_status['status']:
+            self._default_hand_over_task_status = new_status
+
+    def update_task_status(self, new_satus: list):
+        if new_satus[-1] not in self.task_status['status'].values():
+            self.task_status['status'][new_satus[0]] = new_satus[-1]
+
+    def delete_task_status(self, to_delete: str):
+        if to_delete in self.task_status['status'].keys():
+            del self.task_status['status'][to_delete]
+
 
 class EmployeeCompany(models.Model):
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company')
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee')
     # возможно models.SET_NULL не лучшая идея
-    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
-    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-    # json_with_employee_info = models.JSONField(blank=True, default=dict)
+    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True, related_name='position')
+    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='department')
 
     class Meta:
         indexes = [
@@ -97,40 +179,36 @@ class EmployeeCompany(models.Model):
 
 class Chat(models.Model):
     title = models.CharField(max_length=250)
-    employees = models.ManyToManyField(Employee)
+    employees = models.ManyToManyField(Employee, related_name='chats')
 
     class Meta:
         ordering = ['title']
 
 
 class Message(models.Model):
-    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='messages')
     last_update = models.DateTimeField(auto_now=True)
     is_read = models.BooleanField(default=False)
     json_with_content = models.JSONField(blank=True, default=dict)
 
 
 class Customization(models.Model):
-    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
+    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True,
+                                            related_name='customization')
     color_scheme = models.CharField(max_length=40, default='')
     font_size = models.CharField(max_length=40, default='')
     background = models.CharField(max_length=40, default='')
 
 
 class Task(models.Model):
-    class StatusType(models.IntegerChoices):
-        ACCEPTED = 1, 'Accepted'
-        WORK = 2, 'Work'
-        INSPECTION = 3, 'Inspection'
-        REVISION = 4, 'Revision'
-
-    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
     title = models.CharField(max_length=40)
     text = models.TextField(blank=True, null=True)
-    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
-    status = models.IntegerField(choices=StatusType.choices, default=StatusType.WORK)
+    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
     json_with_employee_info = models.JSONField(blank=True, default=dict)
+    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='tasks')
+    task_status = models.CharField(max_length=40)
 
     class Meta:
         ordering = ['project_id', 'title']
@@ -138,10 +216,15 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
+                                            'project_id': self.project_id.id,
+                                            'task_id': self.id})
+
 
 class TaskImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='images')
 
     class Meta:
         order_with_respect_to = 'task_id'
@@ -149,41 +232,117 @@ class TaskImage(models.Model):
 
 class TaskFile(models.Model):
     file = models.ImageField(upload_to='files/%Y/%m/%d/%H/')
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='files')
 
     class Meta:
         order_with_respect_to = 'task_id'
 
 
 class Subtasks(models.Model):
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='subtasks')
     title = models.CharField(max_length=40)
     text = models.TextField(blank=True, null=True)
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     status_yes_no = models.BooleanField(default=False)
-    json_with_subtask_info = models.JSONField(blank=True, default=dict)  # изначально значения веса приватности будут распределяться по умолчанию на при желании для проекта эти веса можно будет изменить
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['task_id', 'title']
 
+    def __str__(self):
+        return self.title
 
-class UserProject(models.Model):
-    title = models.IntegerField()
-    project_personal_notes = models.TextField(blank=True)
+    def get_absolute_url(self):
+        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id.id,
+                                               'project_id': self.task_id.project_id.id,
+                                               'task_id': self.task_id.id,
+                                               'subtask_id': self.id})
+
+
+class SubtaskImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE, related_name='images')
+
+    class Meta:
+        order_with_respect_to = 'subtask_id'
+
+
+class SubtaskFile(models.Model):
+    file = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    subtask_id = models.ForeignKey(Subtasks, on_delete=models.CASCADE, related_name='files')
+
+    class Meta:
+        order_with_respect_to = 'subtask_id'
+
+
+class Category(models.Model):
+    title = models.CharField(max_length=40)
+    employee_id = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE, related_name='categories')
+    project_personal_notes = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['title']
+        unique_together = ['title', 'employee_id']
+
+    def __str__(self):
+        return self.title
 
 
-class UserProjectTime(models.Model):
-    json_with_time_and_name_info = models.JSONField(blank=True, default=dict)
+class TaskDeadline(models.Model):
+    class Status(models.TextChoices):
+        OVERTIMED = 'Overtimed'
+        TODAY = 'Today'
+        TOMORROW = 'Tomorrow'
+        WEEK = 'Week'
+        MONTH = 'Month'
+        NOT_SOON = 'Not_soon'
+        PERMANENT = 'Permanent'
+
+    task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
+    time_start = models.DateTimeField(null=True, blank=True)
+    time_end = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
+
+    class Meta:
+        ordering = ['-time_start']
+
+    def __str__(self):
+        return f'{self.task_id.title} : {self.status}'
 
 
-class UserProjectTask(models.Model):
-    user_project_id = models.ForeignKey(UserProject, on_delete=models.CASCADE)
+class Taskboard(models.Model):
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='taskboards')
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     title = models.CharField(max_length=40)
     task_personal_notes = models.JSONField(blank=True, default=dict)
-    json_with_subtask_and_subtask_personal_not = models.JSONField(blank=True, default=dict)
+    json_with_subtask_and_subtask_personal_note = models.JSONField(blank=True, default=dict)
 
     class Meta:
         ordering = ['title']
+
+
+class CompanyEvent(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='events')
+    title = models.CharField(max_length=40)
+    description = models.TextField(blank=True, null=True)
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    time_start = models.DateTimeField()
+    time_end = models.DateTimeField()
+
+    class Meta:
+        ordering = ['-time_start']
+
+
+class CompanyEventImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='images')
+
+    class Meta:
+        order_with_respect_to = 'company_event'
+
+
+class CompanyEventFile(models.Model):
+    file = models.FileField(upload_to='files/%Y/%m/%d/%H/')
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='files')
+
+    class Meta:
+        order_with_respect_to = 'company_event'
