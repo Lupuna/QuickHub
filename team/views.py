@@ -403,7 +403,8 @@ class TaskDetailView(utils.ModifiedDispatch, FormMixin, DetailView):
         deadline.save()
 
         return super(TaskDetailView, self).form_valid(form)
-    
+
+
 
 class SubtaskDetailView(utils.ModifiedDispatch, DetailView):
     model = models.Subtasks
