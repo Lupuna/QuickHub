@@ -192,6 +192,7 @@ class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
         if not department.supervisor in employees:
             employees += [department.supervisor]
 
+
         for employee in employees:
             employee_company = models.EmployeeCompany.objects \
                 .filter(employee_id=employee,
