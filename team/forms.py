@@ -35,7 +35,6 @@ class TaskCreationForm(forms.Form):
 
     def __init__(self, company_id, project_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.employee_list = utils.create_employee_list(company_id=company_id)
         self.employee_list = company_id.employees.distinct()
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list
@@ -52,7 +51,6 @@ class SubtaskCreationForm(forms.Form):
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.employee_list = utils.create_employee_list(company_id=company_id)
         self.employee_list = company_id.employees.distinct()
         self.fields['responsible'].queryset = self.employee_list
         self.fields['executor'].queryset = self.employee_list

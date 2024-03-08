@@ -45,12 +45,15 @@ class MultipleFileField(forms.FileField):
 class ModifiedDispatch:
     def dispatch(self, request, *args, **kwargs):
         try:
-            if self.kwargs.get('company_id'):
+            if self.kwargs.get('company_id') and self.kwargs.get('project_id') and self.kwargs.get('task_id'):
+                self.kwargs['project'] = models.Project.objects.select_related('company_id').get(id=self.kwargs['project_id'])
+                self.kwargs['company'] = self.kwargs['project'].company_id
+                self.kwargs['task'] = self.kwargs['project'].tasks.get(id=self.kwargs['task_id'])
+            elif self.kwargs.get('company_id') and self.kwargs.get('project_id'):
+                self.kwargs['project'] = models.Project.objects.select_related('company_id').get(id=self.kwargs['project_id'])
+                self.kwargs['company'] = self.kwargs['project'].company_id
+            elif self.kwargs.get('company_id'):
                 self.kwargs['company'] = models.Company.objects.get(id=self.kwargs['company_id'])
-            if self.kwargs.get('project_id'):
-                self.kwargs['project'] = models.Project.objects.get(id=self.kwargs['project_id'])
-            if self.kwargs.get('task_id'):
-                self.kwargs['task'] = models.Task.objects.get(id=self.kwargs['task_id'])
         except ObjectDoesNotExist:
             return redirect(reverse_lazy('team:homepage'))
 

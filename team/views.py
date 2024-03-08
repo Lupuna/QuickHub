@@ -24,7 +24,7 @@ class CreateCompany(utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(company)
 
 
-class CreateProject(utils.ModifiedDispatch, utils.CreatorMixin, permissions.CompanyAccess, FormView):
+class CreateProject(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
     form_class = forms.ProjectCreationForm
 
     def form_valid(self, form):
@@ -35,16 +35,8 @@ class CreateProject(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Comp
         return super().form_valid(form)
 
 
-class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.CompanyAccess, FormView):
+class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
     form_class = forms.TaskCreationForm
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            self.kwargs['user'] = models.Employee.objects.get(id=self.request.user.id)
-        except ObjectDoesNotExist:
-            return redirect(reverse_lazy('team:homepage'))
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -55,7 +47,7 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
     def form_valid(self, form):
         task = models.Task()
         task.json_with_employee_info = {
-            'appoint': [self.kwargs['user'].email],
+            'appoint': [self.request.user.email],
             'responsible': [i.email for i in form.cleaned_data.get('responsible')],
             'executor': [i.email for i in form.cleaned_data.get('executor')]
         }
@@ -64,8 +56,8 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         task.title = form.cleaned_data.get('title')
         task.save()
 
-        self.kwargs['user'].tasks.add(task)
-        self.kwargs['user'].categories.get(title='Мои задачи').tasks.add(task)
+        self.request.user.tasks.add(task)
+        self.request.user.categories.get(title='Мои задачи').tasks.add(task)
         for executor in form.cleaned_data.get('executor'):
             executor.tasks.add(task)
             executor.categories.get(title='Мои задачи').tasks.add(task)
@@ -78,7 +70,7 @@ class CreateTask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Company
         return super().form_valid(task)
 
 
-class CreateSubtask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.CompanyAccess, FormView):
+class CreateSubtask(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
     form_class = forms.SubtaskCreationForm
 
     def get_form_kwargs(self):
@@ -102,7 +94,7 @@ class CreateSubtask(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Comp
         return super().form_valid(subtask)
 
 
-class ChoiceParameters(permissions.CompanyAccess, FormView):
+class ChoiceParameters(FormView):
     login_url = reverse_lazy('team:login')
     template_name = 'team/main_functionality/choice_parameters.html'
     form_class = forms.ChoiceEmployeeParametersForm
@@ -137,7 +129,7 @@ class CreateCategory(utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(category)
 
 
-class CreatePosition(utils.ModifiedDispatch, utils.CreatorMixin, permissions.CompanyAccess, FormView):
+class CreatePosition(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
     form_class = forms.PositionCreationForm
 
     def form_valid(self, form):
@@ -148,7 +140,7 @@ class CreatePosition(utils.ModifiedDispatch, utils.CreatorMixin, permissions.Com
         return super().form_valid(position)
 
 
-class CreateCompanyEvent(utils.ModifiedDispatch, utils.CreatorMixin, permissions.CompanyAccess, FormView):
+class CreateCompanyEvent(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
     form_class = forms.CompanyEventCreationForm
 
     def get_form_kwargs(self):
@@ -176,7 +168,7 @@ class CreateCompanyEvent(utils.ModifiedDispatch, utils.CreatorMixin, permissions
         return super().form_valid(form)
 
 
-class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, permissions.CompanyAccess, FormView):
+class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, FormView):
     form_class = forms.DepartmentCreationForm
 
     def get_form_kwargs(self):
@@ -219,7 +211,7 @@ class CreateDepartment(utils.ModifiedDispatch, utils.CreatorMixin, permissions.C
         return super().form_valid(department)
 
 
-class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredMixin, FormView):
+class CreateTaskboard(utils.ModifiedDispatch, LoginRequiredMixin, FormView):
     form_class = forms.TaskboardCreationForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -257,7 +249,7 @@ class CreateTaskboard(utils.ModifiedDispatch, utils.CreatorMixin, LoginRequiredM
 '''Классы отображений'''
 
 
-class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView):
+class CheckEmployee(utils.ModifiedDispatch, ListView):
     template_name = 'team/main_functionality/list_views/company_employees.html'
     model = models.Employee
     paginate_by = 10
@@ -266,13 +258,13 @@ class CheckEmployee(utils.ModifiedDispatch, permissions.CompanyAccess, ListView)
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         company = self.kwargs['company']
-        employees = company.employees.distinct()
-
+        # prefetch_related('links', 'positions', 'departments')
+        employees = company.employees.prefetch_related('links').all()
         info_about_employees = []
         for employee in employees:
             info_about_employee = dict(
                 filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
-            for link in employee.links.distinct():
+            for link in employee.links.all():
                 if link.title in info_filter_about_employee:
                     info_about_employee.update(link.get_info())
 
@@ -309,7 +301,7 @@ class TaskboardListView(LoginRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
+class ProjectsListView(utils.ModifiedDispatch, ListView):
     model = models.Project
     template_name = 'team/main_functionality/list_views/projects.html'
     context_object_name = 'projects'
@@ -318,7 +310,7 @@ class ProjectsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListVi
         return self.kwargs['company'].projects.all()
 
 
-class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
+class DepartmentsListView(utils.ModifiedDispatch, ListView):
     model = models.Department
     template_name = 'team/main_functionality/list_views/departments.html'
     context_object_name = 'departments'
@@ -327,7 +319,7 @@ class DepartmentsListView(permissions.CompanyAccess, utils.ModifiedDispatch, Lis
         return self.kwargs['company'].departments.all()
 
 
-class PositionsListView(permissions.CompanyAccess, utils.ModifiedDispatch, ListView):
+class PositionsListView(utils.ModifiedDispatch, ListView):
     model = models.Positions
     template_name = 'team/main_functionality/list_views/positions.html'
     context_object_name = 'positions'
@@ -345,41 +337,37 @@ class UserCompaniesListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView
         return self.request.user.companies.distinct() 
 
 
-class UserProjectsListView(utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+class UserProjectsListView(LoginRequiredMixin, ListView):
     model = models.Project
     template_name = 'team/main_functionality/list_views/user_projects.html'
     context_object_name = 'projects'
 
     def get_queryset(self):
-        tasks = self.request.user.tasks.all()
+        tasks = self.request.user.tasks.select_related('project_id').all()
         projects = []
         for task in tasks:
             project = task.project_id
             if project not in projects:
                 projects.append(project)
         return projects
-    
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        projects = self.get_queryset()
         progress = {}
-        for project in projects:
-            # ready = project.tasks.filter(status=models.Task.StatusType.ACCEPTED).count()
-            # total = project.tasks.count()
-            # progress[project] = {'ready': ready, 'total': total}
+        for project in self.object_list:
             progress[project] = {'ready': 3, 'total': 5}
         context['progress'] = progress
         return context
 
 
-class DepartmentDetailView(permissions.CompanyAccess, DetailView):
+class DepartmentDetailView(DetailView):
     model = models.Department
     template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'
     pk_url_kwarg = 'department_id'
 
 
-class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixin, DetailView):
+class TaskDetailView(utils.ModifiedDispatch, FormMixin, DetailView):
     model = models.Task
     form_class = forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/detail_views/task.html'
@@ -417,21 +405,21 @@ class TaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, FormMixi
         return super(TaskDetailView, self).form_valid(form)
     
 
-class SubtaskDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
+class SubtaskDetailView(utils.ModifiedDispatch, DetailView):
     model = models.Subtasks
     template_name = 'team/main_functionality/detail_views/subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
 
 
-class ProjectDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
+class ProjectDetailView(utils.ModifiedDispatch, DetailView):
     model = models.Project
     template_name = 'team/main_functionality/detail_views/project.html'
     context_object_name = 'project'
     pk_url_kwarg = 'project_id'
 
 
-class CompanyDetailView(utils.ModifiedDispatch, permissions.CompanyAccess, DetailView):
+class CompanyDetailView(utils.ModifiedDispatch, DetailView):
     model = models.Company
     template_name = 'team/main_functionality/detail_views/company.html'
     context_object_name = 'company'
