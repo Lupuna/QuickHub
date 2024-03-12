@@ -1,11 +1,11 @@
-{% extends 'team/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% block title %}QuickHub{% endblock %}
 
 {% block content %}
     <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
     <div class="add_pad">
-        <a href="{% url 'team:create_category' %}">
+        <a href="{% url 'user_project:create_category' %}">
             <button class="category__add">
                 <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
                 <div class="button-text">
@@ -25,7 +25,7 @@
                 </div>
                 <img src="{% static 'img/tasks/tripple-dot.svg'%}">
             </div>
-            <a href="{% url 'team:add_task' category_id=cat.id %}">
+            <a href="{% url 'user_project:add_task' category_id=cat.id %}">
                 <button class="card__add">
                     <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
                     <div class="button-text">
