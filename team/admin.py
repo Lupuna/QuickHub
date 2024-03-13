@@ -38,24 +38,9 @@ class SubtasksAdmin(admin.ModelAdmin):
     list_display = ('id', 'task_id', 'title')
 
 
-@admin.register(models.Chat)
-class ChatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-
-
-@admin.register(models.Message)
-class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'chat_id', 'employee_id')
-
-
 @admin.register(models.EmployeeCompany)
 class EmployeeCompanyAdmin(admin.ModelAdmin):
     list_display = ('company_id', 'employee_id', 'position_id', 'department_id')
-
-
-@admin.register(models.Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'employee_id')
 
 
 @admin.register(models.Department)

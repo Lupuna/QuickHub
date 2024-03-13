@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}QuickHub{% endblock %}
+
+{% block content %}
+    <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
+    <div class="add_pad">
+        <a href="{% url 'user_project:create_category' %}">
+            <button class="category__add">
+                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
+                <div class="button-text">
+                    Добавить категорию
+                </div>
+            </button>
+        </a>
+    </div>
+    <div class="cards">
+        {% for cat in request.user.categories.all %}
+        <!-- Карточка -->
+        <div class="card">
+            <!-- Верхняя часть -->
+            <div class="card__top">
+                <div class="category_title">
+                    {{ cat.title }}
+                </div>
+                <img src="{% static 'img/tasks/tripple-dot.svg'%}">
+            </div>
+            <a href="{% url 'user_project:add_task' category_id=cat.id %}">
+                <button class="card__add">
+                    <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
+                    <div class="button-text">
+                        Добавить задачу
+                    </div>
+                </button>
+            </a>
+            <!-- Нижняя часть -->
+            <div class="card__bottom">
+            {% for task in cat.tasks.distinct %}
+                <div class="task">
+                    <a href="{{ task.get_absolute_url }}">
+                        <div class="title_svg">
+                            <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                            <div class="task__title">
+                                {{ task.title }}
+                            </div>
+                        </div>
+                        <div class="deadline">
+                            {% with task.deadlines.get as deadline %}
+                            <div class="deadline_row" id="{{ deadline.status }}">
+                                {% if deadline.time_end %}
+                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
+                                {% else %}
+                                    Бессрочный
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        </div>
+                        <div class="executors">
+                            {% for executor in task.executors.distinct %}
+                                <img src="{% if executor.images %} {{ executor.images.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+                                {{ executor }}
+                            {% endfor %}
+                        </div>
+                    </a>
+                    {% for subtask in task.subtasks.all %}
+                        <a href="{{ subtask.get_absolute_url }}">
+                            <div class="subtask">
+                                <div class="title_svg">
+                                    <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                                    <div class="subtask__title">
+                                        {{ subtask.title|truncatewords:2 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            </div>    
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
