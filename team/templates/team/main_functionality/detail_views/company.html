@@ -6,6 +6,9 @@
 {%block content%}
     <link href="{% static 'css/structure.css' %}" rel="stylesheet">
     <div class="title">{{ company.title }}</div>
+    <div class="add_department">
+        <a href="{% url 'team:create_department' company_id=company.id %}" type="button">Создать отдел</a>
+    </div>
     <div class="structure">
         <ul class="tree">
             {% for department in roots %}

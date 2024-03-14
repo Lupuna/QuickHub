@@ -46,7 +46,7 @@ class ModifiedDispatch:
                 self.kwargs['task'] = self.kwargs['project'].tasks.get(id=self.kwargs['task_id'])
             elif self.kwargs.get('company_id') and self.kwargs.get('project_id'):
                 self.kwargs['project'] = team_models.Project.objects.select_related('company_id').get(id=self.kwargs['project_id'])
-                self.kwargs['company'] = self.kwargs['project'].company_id
+                self.kwargs['company'] = self.kwargs['project'].company_id            
             elif self.kwargs.get('company_id'):
                 self.kwargs['company'] = team_models.Company.objects.get(id=self.kwargs['company_id'])
         except ObjectDoesNotExist:

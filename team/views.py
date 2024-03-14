@@ -238,10 +238,16 @@ class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     context_object_name = 'company'
     pk_url_kwarg = 'company_id'
 
+    def get_object(self):
+        return self.kwargs['company']
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         company = self.get_object()
-        roots = company.departments.filter(parent_id=None)
+        roots = company.departments.all()\
+                .select_related('supervisor')\
+                .prefetch_related('childs')\
+                .filter(parent_id=None)
         context['roots'] = roots
         return context
 
@@ -260,6 +266,11 @@ class DepartmentDetailView(DetailView):
     template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'
     pk_url_kwarg = 'department_id'
+
+    def get_object(self):
+        return models.Department.objects\
+            .select_related('supervisor')\
+            .get(id=self.kwargs[self.pk_url_kwarg])
 
 
 class DepartmentsListView(quickhub_utils.ModifiedDispatch, ListView):

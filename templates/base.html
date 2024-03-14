@@ -61,7 +61,7 @@
 							</div>
 							<div class="name_of_person">
 								{% block userbar %}
-									{% if request.user %}
+									{% if request.user.is_authenticated %}
 										{{ request.user.name }}
 									{%endif%}
 								{% endblock %}
