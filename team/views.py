@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
 from django.db import IntegrityError
-from . import forms, models, utils
+from . import forms, models, utils, permissions
 from QuickHub import utils as quickhub_utils
 
 
@@ -244,8 +244,7 @@ class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         company = self.get_object()
-        roots = company.departments.all()\
-                .select_related('supervisor')\
+        roots = company.departments.select_related('supervisor')\
                 .prefetch_related('childs')\
                 .filter(parent_id=None)
         context['roots'] = roots
@@ -381,6 +380,9 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
 
+    def get_object(self):
+        return self.kwargs['task']
+
     def get_success_url(self):
         return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
                                                  'project_id': self.kwargs['project_id'],
@@ -395,11 +397,10 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+        return self.form_invalid(form)
 
     def form_valid(self, form):
-        self.object = self.get_object()
+        self.object = self.kwargs['task']
         try:
             deadline = self.object.deadlines.get()
         except:
@@ -410,6 +411,10 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
         deadline.save()
 
         return super(TaskDetailView, self).form_valid(form)
+    
+    def form_invalid(self, form):
+        self.object = self.kwargs['task']
+        return super(TaskDetailView, self).form_invalid(form)
 
 
 class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
