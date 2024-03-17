@@ -2,16 +2,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-
-from . import models
+from django.contrib import messages
 
 
 class CompanyAccess(LoginRequiredMixin):
     '''Проверка принадлежности пользователя к запрашиваемой компании'''
     def dispatch(self, request, *args, **kwargs):
         try:
-            company = models.Company.objects.get(id=self.kwargs['company_id'])
+            company = self.kwargs['company']
         except ObjectDoesNotExist:
+            messages.error(request, 'Access denied')
             return redirect(reverse_lazy('team:homepage'))
 
         if company not in request.user.companies.all():

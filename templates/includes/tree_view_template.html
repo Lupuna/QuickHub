@@ -12,14 +12,16 @@
                 </div>
             </a>
         </summary>
-        {% if node.childs %}
-        <ul>
-         {% for ch in node.childs.distinct %}
-              {% with node=ch template_name='team\main_functionality\includes\tree_view_template.html'  %}
-                   {% include template_name %}
-              {% endwith %}
-         {% endfor %}
-         </ul>
-        {% endif %}
+        {% with childs=node.childs %}
+            {% if childs %}
+            <ul>
+            {% for ch in childs.all %}
+                {% with node=ch template_name='includes/tree_view_template.html'  %}
+                    {% include template_name %}
+                {% endwith %}
+            {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
     </details>
 </li>

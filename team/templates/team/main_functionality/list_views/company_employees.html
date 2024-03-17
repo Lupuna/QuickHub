@@ -19,6 +19,6 @@
             {%endif%}
         {% endfor %}
     {% endfor %}
-    {% include "team/main_functionality/includes/pagination.html" with page=page_obj %}
+    {% include "includes/pagination.html" with page=page_obj %}
     <a href="{% url 'team:choice_parameters' company_id=company.id %}" type="button">Settings</a>
 {%endblock%}
