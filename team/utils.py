@@ -32,26 +32,3 @@ def set_position(employee_id, company_id, position_id):
 
 def get_task_status():
     return {'status': {'Accepted': 1, 'Work': 2, 'Inspection': 3, 'Revision': 4}}
-
-
-# def get_deadline_status(deadline):
-#     time_end = deadline.time_end
-#     now = timezone.now()
-#     if time_end is None:
-#         return upt_models.UserTimeCategory.Status.PERMANENT
-
-#     time_interval = (time_end - now).total_seconds()
-#     day = 86400     # sec
-
-#     if time_interval < 0:
-#         return upt_models.UserTimeCategory.Status.OVERTIMED
-#     elif time_interval <= day:
-#         return upt_models.UserTimeCategory.Status.TODAY
-#     elif time_interval <= 2 * day:
-#         return upt_models.UserTimeCategory.Status.TOMORROW
-#     elif time_interval <= 7 * day:
-#         return upt_models.UserTimeCategory.Status.WEEK
-#     elif time_interval <= 30 * day:
-#         return upt_models.UserTimeCategory.Status.MONTH
-#     else:
-#         return upt_models.UserTimeCategory.Status.NOT_SOON

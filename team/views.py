@@ -7,7 +7,12 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
 from django.db import IntegrityError
+
 from . import forms, models, utils, permissions
+from user_project_time import (
+    models as upt_models,
+    forms as upt_forms
+    )
 from QuickHub import utils as quickhub_utils
 
 
@@ -341,7 +346,7 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
             executor.tasks.add(task)
             executor.categories.get(title='Мои задачи').tasks.add(task)
 
-        deadline = models.TaskDeadline(task_id=task)
+        deadline = upt_models.TaskDeadline(task_id=task)
         deadline.save()
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
@@ -375,7 +380,7 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
 
 class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
     model = models.Task
-    form_class = forms.SetTaskDeadlineForm
+    form_class = upt_forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
