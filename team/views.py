@@ -411,14 +411,15 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
 
     def form_valid(self, form):
         self.object = self.kwargs['task']
-        try:
-            deadline = self.object.deadline.get()
-        except:
-            deadline = upt_models.TaskDeadline(task=self.object)
-        deadline.time_start = form.cleaned_data.get('time_start')
-        deadline.time_end = form.cleaned_data.get('time_end')
-        # deadline.status = utils.get_deadline_status(deadline)
-        deadline.save()
+
+        time_start = form.cleaned_data.get('time_start')
+        time_end = form.cleaned_data.get('time_end')
+        upt_services.update_deadline(
+            user=self.request.user,
+            task=self.object,
+            start=time_start,
+            end=time_end
+        )
 
         return super(TaskDetailView, self).form_valid(form)
     

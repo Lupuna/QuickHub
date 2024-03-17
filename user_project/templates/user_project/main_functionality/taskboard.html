@@ -47,8 +47,8 @@
                         <div class="deadline">
                             {% with time_category=task.time_categories.first %}
                             <div class="deadline_row" id="{{ time_category.status }}">
-                                {% if task.deadline.time_end %}
-                                    {{ task.deadline.time_start|date:"d-M" }} - {{ task.deadline.time_end|date:"d-M" }}
+                                {% if task.deadline.first %}
+                                    {{ task.deadline.first.time_start|date:"d-M" }} - {{ task.deadline.first.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}

@@ -36,13 +36,15 @@ class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['emp_id'] = self.request.user.id
+        kwargs['employee'] = self.request.user
         return kwargs
 
     def get_initial(self):
         if not self.kwargs.get('category_id'):
             return {}
-        category = user_project_models.Category.objects.get(id=self.kwargs['category_id'])
+        category = user_project_models.Category.objects\
+            .prefetch_related('tasks')\
+            .get(id=self.kwargs['category_id'])
         initial = {
                 'category': category, 
                 'tasks': category.tasks.all()
