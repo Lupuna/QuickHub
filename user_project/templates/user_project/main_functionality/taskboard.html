@@ -15,7 +15,7 @@
         </a>
     </div>
     <div class="cards">
-        {% for cat in request.user.categories.all %}
+        {% for cat, tasks in objects.items %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
@@ -35,7 +35,7 @@
             </a>
             <!-- Нижняя часть -->
             <div class="card__bottom">
-            {% for task in cat.tasks.distinct %}
+            {% for task in tasks %}
                 <div class="task">
                     <a href="{{ task.get_absolute_url }}">
                         <div class="title_svg">
@@ -45,10 +45,10 @@
                             </div>
                         </div>
                         <div class="deadline">
-                            {% with task.deadlines.get as deadline %}
-                            <div class="deadline_row" id="{{ deadline.status }}">
-                                {% if deadline.time_end %}
-                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
+                            {% with time_category=task.time_categories.first %}
+                            <div class="deadline_row" id="{{ time_category.status }}">
+                                {% if task.deadline.time_end %}
+                                    {{ task.deadline.time_start|date:"d-M" }} - {{ task.deadline.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}
@@ -56,7 +56,7 @@
                             {% endwith %}
                         </div>
                         <div class="executors">
-                            {% for executor in task.executors.distinct %}
+                            {% for executor in task.executors.all %}
                                 <img src="{% if executor.images %} {{ executor.images.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
                                 {{ executor }}
                             {% endfor %}

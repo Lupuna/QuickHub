@@ -6,7 +6,9 @@ from django.views.generic import FormView, ListView
 from . import forms as user_project_forms
 from team import models as team_models
 from . import models as user_project_models
+
 from team import utils as team_utils
+from user_project_time import utils as upt_utils 
 from QuickHub import utils as quickhub_utils
 
 
@@ -29,23 +31,26 @@ class CreateCategory(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(category)
 
 
-class CreateTaskboard(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, FormView):
+class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = user_project_forms.TaskboardCreationForm
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            self.kwargs['user'] = team_models.Employee.objects.get(id=self.request.user.id)
-        except ObjectDoesNotExist:
-            return redirect(reverse_lazy('team:homepage'))
-        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['emp_id'] = self.kwargs['user'].id
+        kwargs['emp_id'] = self.request.user.id
         return kwargs
 
+    def get_initial(self):
+        if not self.kwargs.get('category_id'):
+            return {}
+        category = user_project_models.Category.objects.get(id=self.kwargs['category_id'])
+        initial = {
+                'category': category, 
+                'tasks': category.tasks.all()
+            }
+        return initial
+
     def form_valid(self, form):
-        tasks = self.kwargs['user'].tasks \
+        tasks = self.request.user.tasks.prefetch_related('subtasks')\
             .filter(id__in=form.cleaned_data.get('tasks'))
         category = form.cleaned_data.get('category')
 
@@ -70,10 +75,27 @@ class TaskboardListView(LoginRequiredMixin, ListView):
     model = team_models.Employee
     template_name = 'user_project/main_functionality/taskboard.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        tasks = request.user.tasks.distinct()
-        for task in tasks:
-            deadline = task.deadlines.get()
-            deadline.status = team_utils.get_deadline_status(deadline)
-            deadline.save()
-        return super().dispatch(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categories = self.request.user.categories.prefetch_related(
+            'tasks__executors',
+            'tasks__subtasks',
+            'tasks__project_id__company_id',
+            # 'tasks__deadline__time_category',
+        )
+                                                
+        objects = {}
+        for cat in categories:
+            objects[cat] = cat.tasks.all()
+        context['objects'] = objects
+        return context
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     tasks = request.user.tasks\
+    #         .prefetch_related('deadline')\
+    #         .distinct()
+    #     for task in tasks:
+    #         deadline = task.deadline.get(time_category__employee=request.user)
+    #         # status = upt_utils.get_deadline_status(deadline)
+            
+    #     return super().dispatch(request, *args, **kwargs)

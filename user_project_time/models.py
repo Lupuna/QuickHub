@@ -55,5 +55,3 @@ class UserTimeCategory(models.Model):
     def __str__(self):
         return f'{self.employee.email} : {self.status}'
     
-    class Meta:
-        unique_together = ['employee', 'status']

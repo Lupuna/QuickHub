@@ -11,7 +11,9 @@ from django.db import IntegrityError
 from . import forms, models, utils, permissions
 from user_project_time import (
     models as upt_models,
-    forms as upt_forms
+    forms as upt_forms,
+    utils as upt_utils,
+    services as upt_services
     )
 from QuickHub import utils as quickhub_utils
 
@@ -342,12 +344,15 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
 
         self.request.user.tasks.add(task)
         self.request.user.categories.get(title='Мои задачи').tasks.add(task)
+        
+        upt_services.create_TaskDeadline(user=self.request.user, task=task)
+        
         for executor in form.cleaned_data.get('executor'):
+            if executor == self.request.user:
+                continue
             executor.tasks.add(task)
             executor.categories.get(title='Мои задачи').tasks.add(task)
-
-        deadline = upt_models.TaskDeadline(task_id=task)
-        deadline.save()
+            upt_services.create_TaskDeadline(user=executor, task=task)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -395,7 +400,7 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
-        context['form'] = forms.SetTaskDeadlineForm()
+        context['form'] = upt_forms.SetTaskDeadlineForm()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -407,12 +412,12 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
     def form_valid(self, form):
         self.object = self.kwargs['task']
         try:
-            deadline = self.object.deadlines.get()
+            deadline = self.object.deadline.get()
         except:
-            deadline = models.TaskDeadline(task_id=self.object)
+            deadline = upt_models.TaskDeadline(task=self.object)
         deadline.time_start = form.cleaned_data.get('time_start')
         deadline.time_end = form.cleaned_data.get('time_end')
-        deadline.status = utils.get_deadline_status(deadline)
+        # deadline.status = utils.get_deadline_status(deadline)
         deadline.save()
 
         return super(TaskDetailView, self).form_valid(form)
