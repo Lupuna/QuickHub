@@ -85,6 +85,7 @@ class TaskboardListView(LoginRequiredMixin, ListView):
             'tasks__subtasks',
             'tasks__project_id__company_id',
             'tasks__deadline__time_category',
+            # 'tasks__time_categories',
         )
                                                 
         objects = {}

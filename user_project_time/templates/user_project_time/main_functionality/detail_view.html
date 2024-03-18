@@ -1,25 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}QuickHub{% endblock %}
+{% block title %}Deadline{% endblock %}
 
 {% block content %}
     <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
     <div class="cards">
-        {% for cat, tasks in objects.items %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
-            <a href="{{ cat.get_absolute_url }}">
-                <div class="card__top">
-                    <div class="category_title">
-                        {{ cat.status }}
-                    </div>
-                    <img src="{% static 'img/tasks/tripple-dot.svg'%}">
+            <div class="card__top">
+                <div class="category_title">
+                    {{ category.status }}
                 </div>
-            </a>
+                <img src="{% static 'img/tasks/tripple-dot.svg'%}">
+            </div>
             <!-- Нижняя часть -->
             <div class="card__bottom">
-            {% for task in tasks %}
+            {% for task in category.tasks.all %}
                 <div class="task">
                     <a href="{{ task.get_absolute_url }}">
                         <div class="title_svg">
@@ -29,15 +26,15 @@
                             </div>
                         </div>
                         <div class="deadline">
-                            <div class="deadline_row" id="{{ cat.status }}">
+                            <div class="deadline_row" id="{{ category.status }}">
                                 {% with deadline=task.deadline.first %}
                                 {% if deadline.time_end %}
                                     {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}
-                                {% endwith %}
                             </div>
+                            {% endwith %}
                         </div>
                         <div class="executors">
                             {% for executor in task.executors.all %}
@@ -62,6 +59,5 @@
             {% endfor %}
             </div>    
         </div>
-        {% endfor %}
     </div>
 {% endblock %}

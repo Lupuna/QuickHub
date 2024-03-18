@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 
@@ -55,3 +56,7 @@ class UserTimeCategory(models.Model):
     def __str__(self):
         return self.status
     
+    def get_absolute_url(self):
+        return reverse('user_project_time:deadline_detail', kwargs={
+            'status': self.status
+        })
