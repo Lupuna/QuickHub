@@ -13,7 +13,7 @@ from . import forms as user_project_forms
 from . import models as user_project_models
 from . import services as user_project_services 
 
-from user_project_time import utils as upt_utils 
+from user_project_time import utils as user_project_time_utils 
 from QuickHub import utils as quickhub_utils
 
 
@@ -92,13 +92,3 @@ class TaskboardListView(LoginRequiredMixin, ListView):
             objects[cat] = cat.tasks.all()
         context['objects'] = objects
         return context
-
-    # def dispatch(self, request, *args, **kwargs):
-    #     tasks = request.user.tasks\
-    #         .prefetch_related('deadline')\
-    #         .distinct()
-    #     for task in tasks:
-    #         deadline = task.deadline.get(time_category__employee=request.user)
-    #         # status = upt_utils.get_deadline_status(deadline)
-            
-    #     return super().dispatch(request, *args, **kwargs)

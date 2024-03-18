@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}QuickHub{% endblock %}
+
+{% block content %}
+    <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
+    <div class="cards">
+        {% for cat, tasks in objects.items %}
+        <!-- Карточка -->
+        <div class="card">
+            <!-- Верхняя часть -->
+            <div class="card__top">
+                <div class="category_title">
+                    {{ cat.status }}
+                </div>
+                <img src="{% static 'img/tasks/tripple-dot.svg'%}">
+            </div>
+            <!-- Нижняя часть -->
+            <div class="card__bottom">
+            {% for task in tasks %}
+                <div class="task">
+                    <a href="{{ task.get_absolute_url }}">
+                        <div class="title_svg">
+                            <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                            <div class="task__title">
+                                {{ task.title }}
+                            </div>
+                        </div>
+                        <div class="deadline">
+                            <div class="deadline_row" id="{{ cat.status }}">
+                                {% with deadline=task.deadline.first %}
+                                {% if deadline.time_end %}
+                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
+                                {% else %}
+                                    Бессрочный
+                                {% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <div class="executors">
+                            {% for executor in task.executors.all %}
+                                <img src="{% if executor.images %} {{ executor.images.url }} {%else%} {% static 'img/header/icon_of_profile.svg' %} {% endif %}" alt="photo">
+                                {{ executor }}
+                            {% endfor %}
+                        </div>
+                    </a>
+                    {% for subtask in task.subtasks.all %}
+                        <a href="{{ subtask.get_absolute_url }}">
+                            <div class="subtask">
+                                <div class="title_svg">
+                                    <img src="{% static 'img/tasks/galka.svg' %}" style="margin-right: 17px;">
+                                    <div class="subtask__title">
+                                        {{ subtask.title|truncatewords:2 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            </div>    
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
