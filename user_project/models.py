@@ -25,3 +25,4 @@ class Taskboard(models.Model):
 
     class Meta:
         ordering = ['title']
+        unique_together = ['category_id', 'task_id']

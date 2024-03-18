@@ -2,7 +2,7 @@ from . import models, utils
 
 
 
-def update_time_category_decorator(func: callable):
+def update_time_category_decorator(func: callable) -> callable:
     '''Обновление статуса срока задачи. Задача помещается в другую категорию для пользователя user
     пользователя в зависимости от срока
     '''

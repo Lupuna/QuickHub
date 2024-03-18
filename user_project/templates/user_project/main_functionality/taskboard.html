@@ -47,11 +47,13 @@
                         <div class="deadline">
                             {% with time_category=task.time_categories.first %}
                             <div class="deadline_row" id="{{ time_category.status }}">
-                                {% if task.deadline.first %}
-                                    {{ task.deadline.first.time_start|date:"d-M" }} - {{ task.deadline.first.time_end|date:"d-M" }}
+                                {% with deadline=task.deadline.first %}
+                                {% if deadline.time_end %}
+                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}
+                                {% endwith %}
                             </div>
                             {% endwith %}
                         </div>
