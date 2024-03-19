@@ -194,7 +194,7 @@ class Project(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:project', kwargs={'company_id': self.company_id.id,
+        return reverse('team:project', kwargs={'company_id': self.company_id_id,
                                                'project_id': self.id})
 
     @property
@@ -242,8 +242,8 @@ class Task(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
-                                            'project_id': self.project_id.id,
+        return reverse('team:task', kwargs={'company_id': self.project_id.company_id_id,
+                                            'project_id': self.project_id_id,
                                             'task_id': self.id})
 
 
@@ -277,9 +277,9 @@ class Subtasks(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id.id,
-                                               'project_id': self.task_id.project_id.id,
-                                               'task_id': self.task_id.id,
+        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id_id,
+                                               'project_id': self.task_id.project_id_id,
+                                               'task_id': self.task_id_id,
                                                'subtask_id': self.id})
 
 

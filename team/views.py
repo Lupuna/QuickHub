@@ -7,6 +7,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
 from django.db import IntegrityError
+from django.db.models import Count, Q, QuerySet
 
 from . import forms, models, utils, permissions
 from user_project_time import (
@@ -51,22 +52,17 @@ class UserProjectsListView(LoginRequiredMixin, ListView):
     template_name = 'team/main_functionality/list_views/user_projects.html'
     context_object_name = 'projects'
 
-    def get_queryset(self):
-        tasks = self.request.user.tasks.select_related('project_id').all()
-        projects = []
-        for task in tasks:
-            project = task.project_id
-            if project not in projects:
-                projects.append(project)
-        return projects
+    def get_queryset(self) -> QuerySet[models.Project]:
+        tasks = self.request.user.tasks.select_related('project_id')
+        projects_ids = tasks.values_list('project_id', flat=True)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        progress = {}
-        for project in self.object_list:
-            progress[project] = {'ready': 3, 'total': 5}
-        context['progress'] = progress
-        return context
+        projects = models.Project.objects\
+            .filter(id__in=projects_ids)\
+            .annotate(
+                tasks_count=Count('tasks'),
+                ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
+            )
+        return projects
 
 
 class UserProfileListView(LoginRequiredMixin, ListView):
