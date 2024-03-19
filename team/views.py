@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
+from django.utils import timezone 
 from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
 
@@ -385,6 +386,11 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
+
+    def get_initial(self):
+        return {
+            'time_start': self.kwargs['task'].deadline.first().time_start
+        }
 
     def get_object(self):
         return self.kwargs['task']

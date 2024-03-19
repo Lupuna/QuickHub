@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class UserTimeCategory(models.Model):
@@ -72,4 +73,33 @@ class TaskDeadline(models.Model):
 
     class Meta:
         ordering = ['-time_start']
-    
+
+    @property
+    def get_status(self):
+        '''
+        Получение статуса срока задачи на текущий момент времени
+        '''
+        time_end = self.time_end
+        now = timezone.now()
+        
+        if time_end is None:
+            return UserTimeCategory.Status.PERMANENT
+
+        time_interval = (time_end - now).days
+
+        if time_interval < 0:
+            return UserTimeCategory.Status.OVERTIMED
+        elif time_interval <= 1:
+            return UserTimeCategory.Status.TODAY
+        elif time_interval < 2:
+            return UserTimeCategory.Status.TOMORROW
+        elif time_interval < 7:
+            return UserTimeCategory.Status.WEEK
+        elif time_interval < 31:
+            return UserTimeCategory.Status.MONTH
+        else:
+            return UserTimeCategory.Status.NOT_SOON
+        
+    @get_status.setter
+    def set_status(self, status):
+        self.status = status

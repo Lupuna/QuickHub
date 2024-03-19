@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db.models import QuerySet
 
 from team import models as team_models
@@ -15,9 +16,9 @@ def update_time_category_decorator(func: callable) -> callable:
                 start=None, 
                 end=None, *args, **kwargs):
         deadline = func(user, task, start, end, *args, **kwargs)
-        status = user_project_time_utils.get_deadline_status(deadline)
+        status = deadline.get_status
         time_category = user.time_categories.get(status=status)
-        deadline.status = status
+        deadline.set_status = status
         deadline.time_category = time_category
         deadline.save(*args, **kwargs)
         return deadline
@@ -42,11 +43,14 @@ def create_time_category(user: team_models.Employee, **kwargs) -> user_project_t
 @update_time_category_decorator
 def update_deadline(user: team_models.Employee, 
                     task: team_models.Task, 
-                    start, 
-                    end, *args, **kwargs):
+                    start=None, 
+                    end=None, *args, **kwargs):
     '''Обновление сроков дедлайна и смена категории'''
     deadline = user_project_time_models.TaskDeadline.objects.get(time_category__employee=user, task=task)
-    deadline.time_start = start
+    if start:
+        deadline.time_start = start
+    else:
+        deadline.time_start = timezone.now()
     deadline.time_end = end
     deadline.save(*args, **kwargs)
     return deadline
