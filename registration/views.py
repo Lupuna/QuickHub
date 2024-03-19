@@ -22,7 +22,7 @@ def sign_up(request):
             up.create_category(user, title='Мои задачи')
 
             for status in upt_models.UserTimeCategory.Status:
-                upt_services.create_TimeCategory(user, status=status)
+                upt_services.create_time_category(user, status=status)
 
             login(request, user)
             return redirect(reverse_lazy('team:homepage'))

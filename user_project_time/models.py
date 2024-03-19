@@ -2,31 +2,6 @@ from django.db import models
 from django.urls import reverse
 
 
-
-class TaskDeadline(models.Model):
-    task = models.ForeignKey(
-        to='team.Task', 
-        on_delete=models.CASCADE, 
-        related_name='deadline'
-    )
-    time_category = models.ForeignKey(
-        to='UserTimeCategory',
-        on_delete=models.CASCADE,
-        related_name='deadlines',
-    )
-    time_start = models.DateTimeField(
-        null=True, 
-        blank=True
-    )
-    time_end = models.DateTimeField(
-        null=True, 
-        blank=True
-    )
-
-    class Meta:
-        ordering = ['-time_start']
-    
-
 class UserTimeCategory(models.Model):
     class Status(models.TextChoices):
         OVERTIMED = 'Overtimed'
@@ -38,16 +13,19 @@ class UserTimeCategory(models.Model):
         PERMANENT = 'Permanent'
 
     employee = models.ForeignKey(
+        verbose_name='Работник',
         to='team.Employee', 
         on_delete=models.CASCADE, 
         related_name='time_categories'
     )
     tasks = models.ManyToManyField(
+        verbose_name='Задачи',
         to='team.Task',
         through='TaskDeadline',
         related_name='time_categories'
     )
     status = models.CharField(
+        'Статус',
         max_length=9, 
         choices=Status.choices,
         default=Status.PERMANENT
@@ -60,3 +38,38 @@ class UserTimeCategory(models.Model):
         return reverse('user_project_time:deadline_detail', kwargs={
             'status': self.status
         })
+
+
+class TaskDeadline(models.Model):
+    task = models.ForeignKey(
+        verbose_name='Задачи',
+        to='team.Task', 
+        on_delete=models.CASCADE, 
+        related_name='deadline'
+    )
+    time_category = models.ForeignKey(
+        verbose_name='Категория срочности',
+        to='UserTimeCategory',
+        on_delete=models.CASCADE,
+        related_name='deadlines',
+    )
+    time_start = models.DateTimeField(
+        'Начало задачи',
+        null=True, 
+        blank=True
+    )
+    time_end = models.DateTimeField(
+        'Конец срока',
+        null=True, 
+        blank=True
+    )
+    status = models.CharField(
+        'Статус',
+        max_length=9, 
+        choices=UserTimeCategory.Status.choices,
+        default=UserTimeCategory.Status.PERMANENT
+    )
+
+    class Meta:
+        ordering = ['-time_start']
+    

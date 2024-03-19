@@ -345,14 +345,14 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
         self.request.user.tasks.add(task)
         self.request.user.categories.get(title='Мои задачи').tasks.add(task)
         
-        upt_services.create_TaskDeadline(user=self.request.user, task=task)
+        upt_services.create_task_deadline(user=self.request.user, task=task)
         
         for executor in form.cleaned_data.get('executor'):
             if executor == self.request.user:
                 continue
             executor.tasks.add(task)
             executor.categories.get(title='Мои задачи').tasks.add(task)
-            upt_services.create_TaskDeadline(user=executor, task=task)
+            upt_services.create_task_deadline(user=executor, task=task)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)

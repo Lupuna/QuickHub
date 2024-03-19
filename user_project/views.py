@@ -39,6 +39,10 @@ class CreateCategory(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
 class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = user_project_forms.TaskboardCreationForm
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.success_url = reverse_lazy('user_project:taskboard')
+        
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['employee'] = self.request.user
@@ -75,21 +79,13 @@ class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView)
 
 
 class TaskboardListView(LoginRequiredMixin, ListView):
-    model = team_models.Employee
     template_name = 'user_project/main_functionality/taskboard.html'
+    context_object_name = 'categories'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        categories = self.request.user.categories.prefetch_related(
-            'tasks__executors',
-            'tasks__subtasks',
-            'tasks__project_id__company_id',
-            'tasks__deadline__time_category',
-            # 'tasks__time_categories',
-        )
+    def get_queryset(self) -> dict[user_project_models.Category, team_models.Task]:
+        categories = user_project_services.get_user_categories(user=self.request.user)
                                                 
         objects = {}
         for cat in categories:
             objects[cat] = cat.tasks.all()
-        context['objects'] = objects
-        return context
+        return objects

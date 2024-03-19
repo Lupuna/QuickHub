@@ -5,12 +5,12 @@
 {% block content %}
     <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
     <div class="cards">
-        {% for cat, tasks in objects.items %}
+        {% for cat, tasks in time_categories.items %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
             <a href="{{ cat.get_absolute_url }}">
-                <div class="card__top">
+                <div class="card__top" id="{{ cat.status }}">
                     <div class="category_title">
                         {{ cat.status }}
                     </div>

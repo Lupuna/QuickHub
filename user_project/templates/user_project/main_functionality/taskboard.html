@@ -15,7 +15,7 @@
         </a>
     </div>
     <div class="cards">
-        {% for cat, tasks in objects.items %}
+        {% for cat, tasks in categories.items %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
@@ -25,6 +25,7 @@
                 </div>
                 <img src="{% static 'img/tasks/tripple-dot.svg'%}">
             </div>
+            {% if cat.title != 'Мои задачи' %}
             <a href="{% url 'user_project:add_task' category_id=cat.id %}">
                 <button class="card__add">
                     <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
@@ -33,6 +34,7 @@
                     </div>
                 </button>
             </a>
+            {% endif %}
             <!-- Нижняя часть -->
             <div class="card__bottom">
             {% for task in tasks %}
@@ -45,15 +47,13 @@
                             </div>
                         </div>
                         <div class="deadline">
-                            {% with time_category=task.time_categories.first %}
-                            <div class="deadline_row" id="{{ time_category.status }}">
-                                {% with deadline=task.deadline.first %}
+                            {% with deadline=task.deadline.first %}
+                            <div class="deadline_row" id="{{ deadline.status }}">
                                 {% if deadline.time_end %}
                                     {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}
-                                {% endwith %}
                             </div>
                             {% endwith %}
                         </div>
