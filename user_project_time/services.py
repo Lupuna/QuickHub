@@ -29,7 +29,8 @@ def update_time_category_decorator(func: callable) -> callable:
 
 @update_time_category_decorator
 def create_task_deadline(user: team_models.Employee,
-                        task: team_models.Task , *args, **kwargs) -> user_project_time_models.TaskDeadline:
+                        task: team_models.Task , 
+                        *args, **kwargs) -> user_project_time_models.TaskDeadline:
     '''Создание записи в TaskDeadline со связью категории UserTimeCategory пользователя'''
     deadline = user_project_time_models.TaskDeadline(task=task)
     return deadline
@@ -44,8 +45,9 @@ def create_time_category(user: team_models.Employee, **kwargs) -> user_project_t
 def update_deadline(user: team_models.Employee, 
                     task: team_models.Task, 
                     start=None, 
-                    end=None, *args, **kwargs):
-    '''Обновление сроков дедлайна и смена категории'''
+                    end=None, 
+                    *args, **kwargs):
+    '''Обновление сроков дедлайна и смена категории для пользователя'''
     deadline = user_project_time_models.TaskDeadline.objects.get(time_category__employee=user, task=task)
     if start:
         deadline.time_start = start
@@ -54,6 +56,17 @@ def update_deadline(user: team_models.Employee,
     deadline.time_end = end
     deadline.save(*args, **kwargs)
     return deadline
+
+
+def update_deadlines_for_executors(task: team_models.Task,
+                                   start=None,
+                                   end=None,
+                                   *args, **kwargs) -> None:
+    '''Обновление дедлайнов для всех исполнителей задачи'''
+    executors = task.executors.all()
+    for user in executors:
+        update_deadline(user=user, task=task, start=start, end=end)
+    
 
 # /// GET /// 
 

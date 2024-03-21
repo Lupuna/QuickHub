@@ -87,10 +87,19 @@
                 <div>
                     Конец: {{ deadline.time_end|date:"d M Y H:i" }}
                 </div>
+            {% else %}
+                <form method="post" enctype="multipart/form-data">
+                    {%csrf_token%}
+                    {{form.as_p}}
+                    <button type="submit">
+                        {% if button %}
+                            {{ button }}
+                        {% else %}
+                            Установить сроки
+                        {% endif %}
+                    </button>
+                </form>
             {% endif %}
         {% endwith %}
-        <a href="{% url 'team:task_update' company_id=company.id project_id=project.id task_id=task.id %}" type="button">
-            Редактировать
-        </a>
     </div>
 {%endblock%}
