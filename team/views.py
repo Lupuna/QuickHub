@@ -380,17 +380,11 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
         return super().form_valid(subtask)
 
 
-class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
+class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     model = models.Task
-    form_class = upt_forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
     pk_url_kwarg = 'task_id'
-
-    def get_initial(self):
-        return {
-            'time_start': self.kwargs['task'].deadline.first().time_start
-        }
 
     def get_object(self):
         return self.kwargs['task']
@@ -400,11 +394,26 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
                                                  'project_id': self.kwargs['project_id'],
                                                  'task_id': self.kwargs['task_id']})
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
-        context['form'] = upt_forms.SetTaskDeadlineForm()
-        return context
 
+class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
+    model = models.Task
+    fields = ['title', 'text']
+    template_name = 'team/main_functionality/update_views/task.html'
+    pk_url_kwarg = 'task_id'
+
+    def get_success_url(self): 
+        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+                                            'project_id': self.kwargs['project_id'],
+                                            'task_id': self.kwargs['task_id']})
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(TaskUpdateView, self).get_context_data(*args, **kwargs)
+        context['form_time'] = upt_forms.SetTaskDeadlineForm(initial={
+            'time_start': self.kwargs['task'].deadline.first().time_start,
+            'time_end': self.kwargs['task'].deadline.first().time_end
+        })
+        return context
+    
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid():
@@ -422,12 +431,12 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
             start=time_start,
             end=time_end
         )
-
-        return super(TaskDetailView, self).form_valid(form)
+        form.instance.project_id = self.kwargs['project']
+        return super(TaskUpdateView, self).form_valid(form)
     
     def form_invalid(self, form):
         self.object = self.kwargs['task']
-        return super(TaskDetailView, self).form_invalid(form)
+        return super(TaskUpdateView, self).form_invalid(form)
 
 
 class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):

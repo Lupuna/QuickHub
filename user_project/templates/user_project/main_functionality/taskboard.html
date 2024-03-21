@@ -48,7 +48,7 @@
                         </div>
                         <div class="deadline">
                             {% with deadline=task.deadline.first %}
-                            <div class="deadline_row" id="{{ deadline.status }}">
+                            <div class="deadline_row" id="{{ deadline.get_status }}">
                                 {% if deadline.time_end %}
                                     {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
                                 {% else %}
