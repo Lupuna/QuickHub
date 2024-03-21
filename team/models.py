@@ -194,7 +194,7 @@ class Project(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:project', kwargs={'company_id': self.company_id.id,
+        return reverse('team:project', kwargs={'company_id': self.company_id_id,
                                                'project_id': self.id})
 
     @property
@@ -242,8 +242,8 @@ class Task(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
-                                            'project_id': self.project_id.id,
+        return reverse('team:task', kwargs={'company_id': self.project_id.company_id_id,
+                                            'project_id': self.project_id_id,
                                             'task_id': self.id})
 
 
@@ -263,28 +263,6 @@ class TaskFile(models.Model):
         order_with_respect_to = 'task_id'
 
 
-class TaskDeadline(models.Model):
-    class Status(models.TextChoices):
-        OVERTIMED = 'Overtimed'
-        TODAY = 'Today'
-        TOMORROW = 'Tomorrow'
-        WEEK = 'Week'
-        MONTH = 'Month'
-        NOT_SOON = 'Not_soon'
-        PERMANENT = 'Permanent'
-
-    task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
-    time_start = models.DateTimeField(null=True, blank=True)
-    time_end = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
-
-    class Meta:
-        ordering = ['-time_start']
-
-    def __str__(self):
-        return f'{self.task_id.title} : {self.status}'
-
-
 class Subtasks(models.Model):
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='subtasks')
     title = models.CharField(max_length=40)
@@ -299,9 +277,9 @@ class Subtasks(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id.id,
-                                               'project_id': self.task_id.project_id.id,
-                                               'task_id': self.task_id.id,
+        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id_id,
+                                               'project_id': self.task_id.project_id_id,
+                                               'task_id': self.task_id_id,
                                                'subtask_id': self.id})
 
 

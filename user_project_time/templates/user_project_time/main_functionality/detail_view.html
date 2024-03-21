@@ -1,43 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}QuickHub{% endblock %}
+{% block title %}Deadline{% endblock %}
 
 {% block content %}
     <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
-    <div class="add_pad">
-        <a href="{% url 'user_project:create_category' %}">
-            <button class="category__add">
-                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
-                <div class="button-text">
-                    Добавить категорию
-                </div>
-            </button>
-        </a>
-    </div>
     <div class="cards">
-        {% for cat, tasks in categories.items %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
-            <div class="card__top">
+            <div class="card__top" id="{{ category.status }}">
                 <div class="category_title">
-                    {{ cat.title }}
+                    {{ category.status }}
                 </div>
                 <img src="{% static 'img/tasks/tripple-dot.svg'%}">
             </div>
-            {% if cat.title != 'Мои задачи' %}
-            <a href="{% url 'user_project:add_task' category_id=cat.id %}">
-                <button class="card__add">
-                    <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
-                    <div class="button-text">
-                        Добавить задачу
-                    </div>
-                </button>
-            </a>
-            {% endif %}
             <!-- Нижняя часть -->
             <div class="card__bottom">
-            {% for task in tasks %}
+            {% for task in category.tasks.all %}
                 <div class="task">
                     <a href="{{ task.get_absolute_url }}">
                         <div class="title_svg">
@@ -47,8 +26,8 @@
                             </div>
                         </div>
                         <div class="deadline">
-                            {% with deadline=task.deadline.first %}
-                            <div class="deadline_row" id="{{ deadline.get_status }}">
+                            <div class="deadline_row" id="{{ category.status }}">
+                                {% with deadline=task.deadline.first %}
                                 {% if deadline.time_end %}
                                     {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
                                 {% else %}
@@ -80,6 +59,5 @@
             {% endfor %}
             </div>    
         </div>
-        {% endfor %}
     </div>
 {% endblock %}

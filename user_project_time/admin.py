@@ -1,3 +1,12 @@
 from django.contrib import admin
+from . import models
 
-# Register your models here.
+@admin.register(models.TaskDeadline)
+class TaskDeadlineAdmin(admin.ModelAdmin):
+    list_display = ['task', 'time_category', 'time_start', 'time_end']
+    list_filter = ['time_category']
+
+
+@admin.register(models.UserTimeCategory)
+class UserTimeCategoryAdmin(admin.ModelAdmin):
+    list_display = ['employee', 'status']

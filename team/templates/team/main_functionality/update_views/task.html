@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title%}Edit task{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+        {{form.as_p}}
+        {{form_time.as_p}}
+        <button type="submit">
+            Сохранить
+        </button>
+    </form>
+{% endblock %}

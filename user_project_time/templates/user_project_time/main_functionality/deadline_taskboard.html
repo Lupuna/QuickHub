@@ -4,37 +4,19 @@
 
 {% block content %}
     <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
-    <div class="add_pad">
-        <a href="{% url 'user_project:create_category' %}">
-            <button class="category__add">
-                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
-                <div class="button-text">
-                    Добавить категорию
-                </div>
-            </button>
-        </a>
-    </div>
     <div class="cards">
-        {% for cat, tasks in categories.items %}
+        {% for cat, tasks in time_categories.items %}
         <!-- Карточка -->
         <div class="card">
             <!-- Верхняя часть -->
-            <div class="card__top">
-                <div class="category_title">
-                    {{ cat.title }}
-                </div>
-                <img src="{% static 'img/tasks/tripple-dot.svg'%}">
-            </div>
-            {% if cat.title != 'Мои задачи' %}
-            <a href="{% url 'user_project:add_task' category_id=cat.id %}">
-                <button class="card__add">
-                    <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
-                    <div class="button-text">
-                        Добавить задачу
+            <a href="{{ cat.get_absolute_url }}">
+                <div class="card__top" id="{{ cat.status }}">
+                    <div class="category_title">
+                        {{ cat.status }}
                     </div>
-                </button>
+                    <img src="{% static 'img/tasks/tripple-dot.svg'%}">
+                </div>
             </a>
-            {% endif %}
             <!-- Нижняя часть -->
             <div class="card__bottom">
             {% for task in tasks %}
@@ -47,15 +29,15 @@
                             </div>
                         </div>
                         <div class="deadline">
-                            {% with deadline=task.deadline.first %}
-                            <div class="deadline_row" id="{{ deadline.get_status }}">
+                            <div class="deadline_row" id="{{ cat.status }}">
+                                {% with deadline=task.deadline.first %}
                                 {% if deadline.time_end %}
                                     {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}
+                                {% endwith %}
                             </div>
-                            {% endwith %}
                         </div>
                         <div class="executors">
                             {% for executor in task.executors.all %}

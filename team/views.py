@@ -6,8 +6,17 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
+from django.utils import timezone 
 from django.db import IntegrityError
+from django.db.models import Count, Q, QuerySet
+
 from . import forms, models, utils, permissions
+from user_project_time import (
+    models as upt_models,
+    forms as upt_forms,
+    utils as upt_utils,
+    services as upt_services
+    )
 from QuickHub import utils as quickhub_utils
 
 
@@ -44,22 +53,17 @@ class UserProjectsListView(LoginRequiredMixin, ListView):
     template_name = 'team/main_functionality/list_views/user_projects.html'
     context_object_name = 'projects'
 
-    def get_queryset(self):
-        tasks = self.request.user.tasks.select_related('project_id').all()
-        projects = []
-        for task in tasks:
-            project = task.project_id
-            if project not in projects:
-                projects.append(project)
-        return projects
+    def get_queryset(self) -> QuerySet[models.Project]:
+        tasks = self.request.user.tasks.select_related('project_id')
+        projects_ids = tasks.values_list('project_id', flat=True)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        progress = {}
-        for project in self.object_list:
-            progress[project] = {'ready': 3, 'total': 5}
-        context['progress'] = progress
-        return context
+        projects = models.Project.objects\
+            .filter(id__in=projects_ids)\
+            .annotate(
+                tasks_count=Count('tasks'),
+                ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
+            )
+        return projects
 
 
 class UserProfileListView(LoginRequiredMixin, ListView):
@@ -337,12 +341,15 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
 
         self.request.user.tasks.add(task)
         self.request.user.categories.get(title='Мои задачи').tasks.add(task)
+        
+        upt_services.create_task_deadline(user=self.request.user, task=task)
+        
         for executor in form.cleaned_data.get('executor'):
+            if executor == self.request.user:
+                continue
             executor.tasks.add(task)
             executor.categories.get(title='Мои задачи').tasks.add(task)
-
-        deadline = models.TaskDeadline(task_id=task)
-        deadline.save()
+            upt_services.create_task_deadline(user=executor, task=task)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -373,12 +380,19 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
         return super().form_valid(subtask)
 
 
+
 class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
     model = models.Task
-    form_class = forms.SetTaskDeadlineForm
+    form_class = upt_forms.SetTaskDeadlineForm
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
+    extra_context = {'button': 'Установить сроки'}
     pk_url_kwarg = 'task_id'
+
+    def get_initial(self):
+        return {
+            'time_start': self.kwargs['task'].deadline.first().time_start
+        }
 
     def get_object(self):
         return self.kwargs['task']
@@ -390,7 +404,7 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
-        context['form'] = forms.SetTaskDeadlineForm()
+        context['form'] = upt_forms.SetTaskDeadlineForm()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -401,20 +415,63 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
 
     def form_valid(self, form):
         self.object = self.kwargs['task']
-        try:
-            deadline = self.object.deadlines.get()
-        except:
-            deadline = models.TaskDeadline(task_id=self.object)
-        deadline.time_start = form.cleaned_data.get('time_start')
-        deadline.time_end = form.cleaned_data.get('time_end')
-        deadline.status = utils.get_deadline_status(deadline)
-        deadline.save()
+
+        time_start = form.cleaned_data.get('time_start')
+        time_end = form.cleaned_data.get('time_end')
+        upt_services.update_deadlines_for_executors(
+            task=self.object,
+            start=time_start,
+            end=time_end
+        )
 
         return super(TaskDetailView, self).form_valid(form)
     
     def form_invalid(self, form):
         self.object = self.kwargs['task']
         return super(TaskDetailView, self).form_invalid(form)
+
+
+# class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
+#     model = models.Task
+#     fields = ['title', 'text']
+#     template_name = 'team/main_functionality/update_views/task.html'
+#     pk_url_kwarg = 'task_id'
+
+#     def get_success_url(self): 
+#         return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+#                                             'project_id': self.kwargs['project_id'],
+#                                             'task_id': self.kwargs['task_id']})
+
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(TaskUpdateView, self).get_context_data(*args, **kwargs)
+#         context['form_time'] = upt_forms.SetTaskDeadlineForm(initial={
+#             'time_start': self.kwargs['task'].deadline.first().time_start,
+#             'time_end': self.kwargs['task'].deadline.first().time_end
+#         })
+#         return context
+    
+#     def post(self, request, *args, **kwargs):
+#         form = self.get_form()
+#         if form.is_valid():
+#             return self.form_valid(form)
+#         return self.form_invalid(form)
+
+#     def form_valid(self, form):
+#         self.object = self.kwargs['task']
+
+#         time_start = form.cleaned_data.get('time_start')
+#         time_end = form.cleaned_data.get('time_end')
+#         upt_services.update_deadlines(
+#             task=self.object,
+#             start=time_start,
+#             end=time_end
+#         )
+#         form.instance.project_id = self.kwargs['project']
+#         return super(TaskUpdateView, self).form_valid(form)
+    
+#     def form_invalid(self, form):
+#         self.object = self.kwargs['task']
+#         return super(TaskUpdateView, self).form_invalid(form)
 
 
 class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):

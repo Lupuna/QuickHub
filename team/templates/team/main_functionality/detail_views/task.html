@@ -77,15 +77,15 @@
         {% endif %}
     </div>
     <div>
-        {% with task.deadlines.get as deadline %}
+        {% with task.deadline.first as deadline %}
             {% if deadline.time_start %}
                 <div>
-                    Старт: {{ deadline.time_start }}
+                    Старт: {{ deadline.time_start|date:"d M Y H:i" }}
                 </div>
             {% endif %}
             {% if deadline.time_end %}
                 <div>
-                    Конец: {{ deadline.time_end }}
+                    Конец: {{ deadline.time_end|date:"d M Y H:i" }}
                 </div>
             {% else %}
                 <form method="post" enctype="multipart/form-data">
