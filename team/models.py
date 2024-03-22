@@ -231,15 +231,15 @@ class Project(models.Model):
 
 
 class Task(models.Model):
-    project_id = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
-    title = models.CharField(max_length=40)
-    text = models.TextField(blank=True, null=True)
-    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
-    json_with_employee_info = models.JSONField(blank=True, default=dict)
-    task_status = models.CharField(max_length=40)
+    project_id = models.ForeignKey('Project', on_delete=models.CASCADE, related_name='tasks', verbose_name='Проект')
+    title = models.CharField('Задача', max_length=40)
+    text = models.TextField('Описание', blank=True, null=True)
+    parent_id = models.ForeignKey(to='self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs', verbose_name='Родительская задача')
+    json_with_employee_info = models.JSONField('Данные об исполнителях', blank=True, default=dict)
+    task_status = models.CharField('Статус', max_length=40)
     
     time_start = models.DateTimeField(
-        'Начало задачи',
+        'Время начала',
         null=True, 
         blank=True,
     )

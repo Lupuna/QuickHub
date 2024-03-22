@@ -11,6 +11,7 @@ from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
 
 from . import forms, models, utils, permissions
+from .services import tasks_service, projects_service
 from user_project_time import (
     models as upt_models,
     forms as upt_forms,
@@ -330,32 +331,17 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
 
     def form_valid(self, form):
         task = models.Task()
-        task.json_with_employee_info = {
-            'appoint': [self.request.user.email],
-            'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-            'executor': [i.email for i in form.cleaned_data.get('executor')]
-        }
-        task.project_id = self.kwargs['project']
-        task.text = form.cleaned_data.get('text')
-        task.title = form.cleaned_data.get('title')
-        task.parent_id = form.cleaned_data.get('parent_id')
-        
-        time_start = form.cleaned_data.get('time_start')
-        task.time_start = time_start if time_start else timezone.now()
-        task.time_end = form.cleaned_data.get('time_end')
+        task.json_with_employee_info = tasks_service.employee_info(
+            task=task,
+            appoint=self.request.user,
+            form=form,
+        )
+        task = tasks_service.update_task(
+            task=task,
+            form=form,
+            project=self.kwargs['project']
+        )
         task.save()
-
-        self.request.user.tasks.add(task)
-        self.request.user.categories.get(title='Мои задачи').tasks.add(task)
-        
-        self.request.user.time_categories.get(status=task.time_status).tasks.add(task)
-        
-        for executor in form.cleaned_data.get('executor'):
-            if executor == self.request.user:
-                continue
-            executor.tasks.add(task)
-            executor.categories.get(title='Мои задачи').tasks.add(task)
-            executor.time_categories.get(status=task.time_status).tasks.add(task)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
@@ -379,74 +365,57 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
 
 
 class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
-    pass
-#     model = models.Task
-#     # fields = ['title', 'text', 'time_start', 'time_end']
-#     form_class = forms.TaskCreationForm
-#     template_name = 'team/main_functionality/update_views/task.html'
-#     pk_url_kwarg = 'task_id'
+    model = models.Task
+    form_class = forms.TaskCreationForm
+    template_name = 'team/main_functionality/update_views/task.html'
+    pk_url_kwarg = 'task_id'
 
-#     def get_object(self):
-#         return self.kwargs['task']
+    def get_object(self):
+        return self.kwargs['task']
 
-#     def get_initial(self):
-#         initial = super().get_initial()
-#         task = self.get_object()
-#         initial = {
-#             'title': task.title,
-#             'text': task.text,
-#             'time_start': task.time_start,
-#             'time_end': task.time_end,
-#             'responsible': task.json_with_employee_info['responsible'],
-#             'executor': task.json_with_employee_info['executor']
-#         }
-#         return initial
+    def get_initial(self):
+        initial = super().get_initial()
+        task = self.get_object()
+        initial = {
+            'title': task.title,
+            'text': task.text,
+            'time_start': task.time_start,
+            'time_end': task.time_end,
+            'responsible': task.json_with_employee_info['responsible'],
+            'executor': task.json_with_employee_info['executor']
+        }
+        return initial
 
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         kwargs['company_id'] = self.kwargs['company']
-#         kwargs['project_id'] = self.kwargs['project']
-#         kwargs.pop('instance')
-#         return kwargs
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company']
+        kwargs['project_id'] = self.kwargs['project']
+        kwargs.pop('instance')
+        return kwargs
 
-#     def get_success_url(self): 
-#         return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-#                                             'project_id': self.kwargs['project_id'],
-#                                             'task_id': self.kwargs['task_id']})
+    def get_success_url(self): 
+        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+                                            'project_id': self.kwargs['project_id'],
+                                            'task_id': self.kwargs['task_id']})
 
-#     def form_valid(self, form):
-#         task = models.Task()
-#         task.json_with_employee_info = {
-#             'appoint': [self.request.user.email],
-#             'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-#             'executor': [i.email for i in form.cleaned_data.get('executor')]
-#         }
-#         task.project_id = self.kwargs['project']
-#         task.text = form.cleaned_data.get('text')
-#         task.title = form.cleaned_data.get('title')
-#         task.parent_id = form.cleaned_data.get('parent_id')
+    def form_valid(self, form):
+        task = self.get_object()
+
+        task.json_with_employee_info = tasks_service.employee_info(
+            task=task,
+            form=form,
+        )
         
-#         time_start = form.cleaned_data.get('time_start')
-#         task.time_start = time_start if time_start else timezone.now()
-#         task.time_end = form.cleaned_data.get('time_end')
-#         task.save()
+        task = tasks_service.update_task(
+            task=task, 
+            form=form,
+            project=self.kwargs['project']
+        )
 
-#         self.request.user.tasks.add(task)
-#         self.request.user.categories.get(title='Мои задачи').tasks.add(task)
-        
-#         self.request.user.time_categories.get(status=task.time_status).tasks.add(task)
-        
-#         for executor in form.cleaned_data.get('executor'):
-#             if executor == self.request.user:
-#                 continue
-#             executor.tasks.add(task)
-#             executor.categories.get(title='Мои задачи').tasks.add(task)
-#             executor.time_categories.get(status=task.time_status).tasks.add(task)
+        for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
+        for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
+        return super().form_valid(task)
 
-#         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
-#         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
-#         return super().form_valid(task)
-    
 
 # /// SUBTASK ///
 

@@ -3,20 +3,34 @@ from django.db.models import QuerySet
 from . import models as user_project_models
 from team import models as team_models
 
+# /// DECORATORS ///
+
+def set_user_category(func: callable) -> callable:
+    '''Добавление задачи в категорию "Мои задачи" для всех исполнителей'''
+    def wrapper(task: team_models.Task,
+                executors: QuerySet[team_models.Task], 
+                *args, **kwargs) -> team_models.Task:
+        task = func(task, executors)
+        categories = user_project_models.Category.objects.filter(employee_id__in=executors, title='Мои задачи')
+        task.user_category.set(categories, clear=True)
+        return task
+    
+    return wrapper
 
 # /// CREATE ///
 
 def create_category(user: team_models.Task, **kwargs) -> user_project_models.Category:
+    '''Создание пользовательской категории'''
     return user_project_models.Category.objects.create(employee_id=user, **kwargs)
 
 
 def create_taskboard(category: user_project_models.Category, 
-                     tasks: QuerySet[team_models.Task], **kwargs) -> user_project_models.Taskboard:
+                     tasks: QuerySet[team_models.Task], **kwargs) -> user_project_models.Taskboard | None:
     '''
     Создание отображения категории задач пользователя для доски
     '''
-    tasks = tasks.prefetch_related('subtasks')
-    delete_unmarked_tasks_from_taskboard(category=category, tasks=tasks)
+    tasks = tasks.prefetch_related('subtasks').only('id', 'text')
+    set_tasks_to_category(category=category, tasks=tasks)
     taskboard = None
     for task in tasks:
         taskboard = user_project_models.Taskboard(
@@ -28,7 +42,7 @@ def create_taskboard(category: user_project_models.Category,
                 'task_notes': task.text
             }
         )
-        subtasks = task.subtasks.all()
+        subtasks = task.subtasks.only('id', 'text')
         for subtask in subtasks:
             taskboard.json_with_subtask_and_subtask_personal_note[subtask.id] = subtask.text
         taskboard.save()
@@ -36,15 +50,10 @@ def create_taskboard(category: user_project_models.Category,
 
 # /// DELETE ///
 
-def delete_unmarked_tasks_from_taskboard(category: user_project_models.Category, 
-                                        tasks: QuerySet[team_models.Task], **kwargs) -> None:
-    '''Удаление из пользовательской категории неотмеченных в форме задач'''
-    taskboards = user_project_models.Taskboard.objects.filter(category_id=category)
-    
-    if tasks is not None:
-        taskboards.exclude(id__in=tasks.values_list('id')).delete()
-    else:
-        taskboards.delete()
+def set_tasks_to_category(category: user_project_models.Category, 
+                        tasks: QuerySet[team_models.Task], **kwargs) -> None:
+    '''Назначение задач в категорию'''
+    category.tasks.set(tasks, clear=True)
 
 # /// GET ///
     
