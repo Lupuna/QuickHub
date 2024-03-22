@@ -9,7 +9,7 @@ from . import utils as user_project_time_utils
 
 def update_time_category_decorator(func: callable) -> callable:
     '''Обновление статуса срока задачи. Задача помещается в другую категорию для пользователя user
-    пользователя в зависимости от срока
+    в зависимости от срока
     '''
     def wrapper(user: team_models.Employee, 
                 task:team_models.Task, 
@@ -27,7 +27,7 @@ def update_time_category_decorator(func: callable) -> callable:
 
 # /// CREATE ///
 
-@update_time_category_decorator
+# @update_time_category_decorator
 def create_task_deadline(user: team_models.Employee,
                         task: team_models.Task , 
                         *args, **kwargs) -> user_project_time_models.TaskDeadline:
@@ -73,9 +73,29 @@ def update_deadlines_for_executors(task: team_models.Task,
 def get_user_time_categories(user: team_models.Employee, **kwargs):
     '''Получение категорий сроков пользователя user вместе со связанными полями'''
     return user.time_categories.prefetch_related(
+            'tasks',
             'tasks__executors',
             'tasks__subtasks',
             'tasks__project_id__company_id',
-            'tasks__deadline__time_category',
         )
+
+
+def _change_user_task_time_category(task: team_models.Task,
+                                    time_category: user_project_time_models.UserTimeCategory,
+                                    *args,
+                                    **kwargs):
+    deadline = task.deadline.get(time_category__employee=time_category.employee)
+    deadline.time_category = time_category
+    deadline.save(*args, **kwargs)
+
     
+def change_task_time_categories(task: team_models.Task, *args, **kwargs):
+    ''''''
+    status = task.time_status
+    executors = task.executors.prefetch_related(
+        'time_categories',
+        'time_categories__employee',
+    ).only('id')
+    for user in executors:
+        time_category = user.time_categories.only('id', 'employee').get(status=status)
+        _change_user_task_time_category(task=task, time_category=time_category)

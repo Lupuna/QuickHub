@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from user_project_time.models import UserTimeCategory
 from django.urls import reverse
+from django.utils import timezone
+
 from . import utils
 
 
@@ -234,6 +237,17 @@ class Task(models.Model):
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
     json_with_employee_info = models.JSONField(blank=True, default=dict)
     task_status = models.CharField(max_length=40)
+    
+    time_start = models.DateTimeField(
+        'Начало задачи',
+        null=True, 
+        blank=True,
+    )
+    time_end = models.DateTimeField(
+        'Конец срока',
+        null=True, 
+        blank=True
+    )
 
     class Meta:
         ordering = ['project_id', 'title']
@@ -245,6 +259,31 @@ class Task(models.Model):
         return reverse('team:task', kwargs={'company_id': self.project_id.company_id_id,
                                             'project_id': self.project_id_id,
                                             'task_id': self.id})
+
+    @property
+    def time_status(self):
+        '''
+        Получение статуса срока задачи на текущий момент времени
+        '''
+        now = timezone.now()
+        
+        if self.time_end is None:
+            return UserTimeCategory.Status.PERMANENT
+
+        time_interval = (self.time_end - now).days
+
+        if time_interval < 0:
+            return UserTimeCategory.Status.OVERTIMED
+        elif time_interval <= 1:
+            return UserTimeCategory.Status.TODAY
+        elif time_interval < 2:
+            return UserTimeCategory.Status.TOMORROW
+        elif time_interval < 7:
+            return UserTimeCategory.Status.WEEK
+        elif time_interval < 31:
+            return UserTimeCategory.Status.MONTH
+        else:
+            return UserTimeCategory.Status.NOT_SOON
 
 
 class TaskImage(models.Model):

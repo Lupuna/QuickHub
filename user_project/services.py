@@ -17,7 +17,7 @@ def create_taskboard(category: user_project_models.Category,
     '''
     tasks = tasks.prefetch_related('subtasks')
     delete_unmarked_tasks_from_taskboard(category=category, tasks=tasks)
-
+    taskboard = None
     for task in tasks:
         taskboard = user_project_models.Taskboard(
             category_id=category,
@@ -39,10 +39,12 @@ def create_taskboard(category: user_project_models.Category,
 def delete_unmarked_tasks_from_taskboard(category: user_project_models.Category, 
                                         tasks: QuerySet[team_models.Task], **kwargs) -> None:
     '''Удаление из пользовательской категории неотмеченных в форме задач'''
-    user_project_models.Taskboard.objects\
-        .filter(category_id=category)\
-        .exclude(id__in=tasks.values_list('id'))\
-        .delete()
+    taskboards = user_project_models.Taskboard.objects.filter(category_id=category)
+    
+    if tasks is not None:
+        taskboards.exclude(id__in=tasks.values_list('id')).delete()
+    else:
+        taskboards.delete()
 
 # /// GET ///
     
