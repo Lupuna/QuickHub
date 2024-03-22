@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class UserTimeCategory(models.Model):
@@ -53,23 +54,3 @@ class TaskDeadline(models.Model):
         on_delete=models.CASCADE,
         related_name='deadlines',
     )
-    time_start = models.DateTimeField(
-        'Начало задачи',
-        null=True, 
-        blank=True
-    )
-    time_end = models.DateTimeField(
-        'Конец срока',
-        null=True, 
-        blank=True
-    )
-    status = models.CharField(
-        'Статус',
-        max_length=9, 
-        choices=UserTimeCategory.Status.choices,
-        default=UserTimeCategory.Status.PERMANENT
-    )
-
-    class Meta:
-        ordering = ['-time_start']
-    

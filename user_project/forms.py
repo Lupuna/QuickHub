@@ -11,7 +11,7 @@ class CategoryCreationForm(forms.ModelForm):
 
 class TaskboardCreationForm(forms.Form):
     category = forms.ModelChoiceField(queryset=None)
-    tasks = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
+    tasks = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple, required=False)
     text = forms.CharField(widget=forms.Textarea, required=False)
 
     def __init__(self, employee: team_models.Employee, *args, **kwargs):

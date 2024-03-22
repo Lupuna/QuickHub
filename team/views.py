@@ -6,9 +6,12 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
+from django.utils import timezone 
 from django.db import IntegrityError
+from django.db.models import Count, Q, QuerySet
 
 from . import forms, models, utils, permissions
+from .services import tasks_service, projects_service
 from user_project_time import (
     models as upt_models,
     forms as upt_forms,
@@ -51,22 +54,17 @@ class UserProjectsListView(LoginRequiredMixin, ListView):
     template_name = 'team/main_functionality/list_views/user_projects.html'
     context_object_name = 'projects'
 
-    def get_queryset(self):
-        tasks = self.request.user.tasks.select_related('project_id').all()
-        projects = []
-        for task in tasks:
-            project = task.project_id
-            if project not in projects:
-                projects.append(project)
-        return projects
+    def get_queryset(self) -> QuerySet[models.Project]:
+        tasks = self.request.user.tasks.select_related('project_id')
+        projects_ids = tasks.values_list('project_id', flat=True)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        progress = {}
-        for project in self.object_list:
-            progress[project] = {'ready': 3, 'total': 5}
-        context['progress'] = progress
-        return context
+        projects = models.Project.objects\
+            .filter(id__in=projects_ids)\
+            .annotate(
+                tasks_count=Count('tasks'),
+                ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
+            )
+        return projects
 
 
 class UserProfileListView(LoginRequiredMixin, ListView):
@@ -323,6 +321,7 @@ class ProjectDetailView(quickhub_utils.ModifiedDispatch, DetailView):
 
 class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.TaskCreationForm
+    success_url = reverse_lazy('team:create_task')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -332,31 +331,100 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
 
     def form_valid(self, form):
         task = models.Task()
-        task.json_with_employee_info = {
-            'appoint': [self.request.user.email],
-            'responsible': [i.email for i in form.cleaned_data.get('responsible')],
-            'executor': [i.email for i in form.cleaned_data.get('executor')]
-        }
-        task.project_id = self.kwargs['project']
-        task.text = form.cleaned_data.get('text')
-        task.title = form.cleaned_data.get('title')
+        task.json_with_employee_info = tasks_service.employee_info(
+            task=task,
+            appoint=self.request.user,
+            form=form,
+        )
+        task = tasks_service.update_task(
+            task=task,
+            form=form,
+            project=self.kwargs['project']
+        )
         task.save()
-
-        self.request.user.tasks.add(task)
-        self.request.user.categories.get(title='Мои задачи').tasks.add(task)
-        
-        upt_services.create_task_deadline(user=self.request.user, task=task)
-        
-        for executor in form.cleaned_data.get('executor'):
-            if executor == self.request.user:
-                continue
-            executor.tasks.add(task)
-            executor.categories.get(title='Мои задачи').tasks.add(task)
-            upt_services.create_task_deadline(user=executor, task=task)
 
         for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
         for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
         return super().form_valid(task)
+
+
+class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+    model = models.Task
+    template_name = 'team/main_functionality/detail_views/task.html'
+    context_object_name = 'task'
+    extra_context = {'button': 'Редактировать'}
+    pk_url_kwarg = 'task_id'
+
+    def get_object(self):
+        return self.kwargs['task']
+
+    def get_success_url(self):
+        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+                                                 'project_id': self.kwargs['project_id'],
+                                                 'task_id': self.kwargs['task_id']})
+
+
+class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
+    model = models.Task
+    form_class = forms.TaskCreationForm
+    template_name = 'team/main_functionality/update_views/task.html'
+    pk_url_kwarg = 'task_id'
+
+    def get_object(self):
+        return self.kwargs['task']
+
+    def get_initial(self):
+        initial = super().get_initial()
+        task = self.get_object()
+        initial = {
+            'title': task.title,
+            'text': task.text,
+            'time_start': task.time_start,
+            'time_end': task.time_end,
+            'responsible': task.json_with_employee_info['responsible'],
+            'executor': task.json_with_employee_info['executor']
+        }
+        return initial
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs['company']
+        kwargs['project_id'] = self.kwargs['project']
+        kwargs.pop('instance')
+        return kwargs
+
+    def get_success_url(self): 
+        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
+                                            'project_id': self.kwargs['project_id'],
+                                            'task_id': self.kwargs['task_id']})
+
+    def form_valid(self, form):
+        task = self.get_object()
+
+        task.json_with_employee_info = tasks_service.employee_info(
+            task=task,
+            form=form,
+        )
+        
+        task = tasks_service.update_task(
+            task=task, 
+            form=form,
+            project=self.kwargs['project']
+        )
+
+        for f in self.request.FILES.getlist('files'): models.TaskFile.objects.create(file=f, task_id=task)
+        for i in self.request.FILES.getlist('images'): models.TaskImage.objects.create(image=i, task_id=task)
+        return super().form_valid(task)
+
+
+# /// SUBTASK ///
+
+
+class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+    model = models.Subtasks
+    template_name = 'team/main_functionality/detail_views/subtask.html'
+    context_object_name = 'subtask'
+    pk_url_kwarg = 'subtask_id'
 
 
 class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
@@ -381,58 +449,6 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
         for f in self.request.FILES.getlist('files'): models.SubtaskFile.objects.create(file=f, subtask_id=subtask)
         for i in self.request.FILES.getlist('images'): models.SubtaskImage.objects.create(image=i, subtask_id=subtask)
         return super().form_valid(subtask)
-
-
-class TaskDetailView(quickhub_utils.ModifiedDispatch, FormMixin, DetailView):
-    model = models.Task
-    form_class = upt_forms.SetTaskDeadlineForm
-    template_name = 'team/main_functionality/detail_views/task.html'
-    context_object_name = 'task'
-    pk_url_kwarg = 'task_id'
-
-    def get_object(self):
-        return self.kwargs['task']
-
-    def get_success_url(self):
-        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-                                                 'project_id': self.kwargs['project_id'],
-                                                 'task_id': self.kwargs['task_id']})
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(TaskDetailView, self).get_context_data(*args, **kwargs)
-        context['form'] = upt_forms.SetTaskDeadlineForm()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        return self.form_invalid(form)
-
-    def form_valid(self, form):
-        self.object = self.kwargs['task']
-
-        time_start = form.cleaned_data.get('time_start')
-        time_end = form.cleaned_data.get('time_end')
-        upt_services.update_deadline(
-            user=self.request.user,
-            task=self.object,
-            start=time_start,
-            end=time_end
-        )
-
-        return super(TaskDetailView, self).form_valid(form)
-    
-    def form_invalid(self, form):
-        self.object = self.kwargs['task']
-        return super(TaskDetailView, self).form_invalid(form)
-
-
-class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
-    model = models.Subtasks
-    template_name = 'team/main_functionality/detail_views/subtask.html'
-    context_object_name = 'subtask'
-    pk_url_kwarg = 'subtask_id'
 
 
 # ///   Else    ///
