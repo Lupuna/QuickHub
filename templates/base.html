@@ -63,29 +63,29 @@
         </header>
 
 
-        <left_bar class="left_bar">
+        <left_bar class="left_bar" id="left_bar">
 
-            <a href="{% url 'user_project:taskboard' %}" class="my_tasks">
+            <a href="{% url 'user_project:taskboard' %}" class="nav_link">
                 <img src="{% static 'img/left_bar/my_tasks.svg'' %}" alt="#">
                 Мои задачи
             </a>
 
-            <a href="{% url 'team:projects' %}" class="projects">
+            <a href="{% url 'team:projects' %}" class="nav_link">
                 <img src="{% static 'img/left_bar/projects.svg'' %}" alt="#">
                 Проекты
             </a>
 
-            <a href="{% url 'team:companies' %}" class="companies">
+            <a href="{% url 'team:companies' %}" class="nav_link">
                 <img src="{% static 'img/left_bar/companies.svg'' %}" alt="#">
                 Компании
             </a>
 
-            <a href="{% url 'team:settings' %}" class="settings">
+            <a href="{% url 'team:settings' %}" class="nav_link">
                 <img src="{% static 'img/left_bar/settings.svg'' %}" alt="#">
                 Настройки
             </a>
 
-            <a href="{% url 'team:help' %}" class="support">
+            <a href="{% url 'team:help' %}" class="nav_link">
                 <img src="{% static 'img/left_bar/support.svg'' %}" alt="#">
                 Поддержка
             </a>
@@ -94,6 +94,7 @@
         </left_bar>
 
         <content class="content">
+            <div class="loading_overlay"> Wait...</div>
             {% block content %}
     {%endblock%}
         </content>
@@ -101,7 +102,7 @@
     </container>
 
 <script src="{% static 'js/left_bar_close.js' %}"></script>
-
+<script src="{% static 'js/navigation.js' %}"></script>
 </body>
 
 </html>

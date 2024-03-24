@@ -5,7 +5,7 @@
 }
 
 /* 
-* * Logo, burger, search 
+* * Logo, burger
 */
 
 .left_part {
@@ -43,6 +43,15 @@
     width: 24px;
 }
 
+.search img {
+    margin-left: 28px;
+    width: 24px;
+}
+
+/*
+* * Search
+*/
+
 .search {
     display: flex;
     width: 150px;
@@ -62,10 +71,10 @@
     width: 60px;
 }
 
-.search img {
-    margin-left: 28px;
-    width: 24px;
+._open {
+    height: 250px;
 }
+
 
 /* 
 * *Notifications, massages, account 
@@ -135,4 +144,3 @@
 .right_part .account:hover{
     background-color: rgba(217, 217, 217, 0.3);
 }
-

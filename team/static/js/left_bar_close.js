@@ -1,17 +1,17 @@
-const burger = document.querySelector('.btn_burger')
-const menu = document.querySelector('.left_bar a')
-const container = document.querySelector('.container')
+document.addEventListener("DOMContentLoaded", (event) => {
 
-let closed = true
+    const burger = document.querySelector('.btn_burger')
+    const menu = document.getElementById('left_bar')
+    const container = document.querySelector('.container')
 
-burger.onclick = function () {
-    console.log('Hello')
-    if (closed == true){
-        container.style.cssText = 'grid-template-columns: 100px auto;'
-        closed = false
-    } else if (closed == false){
-        container.style.cssText = 'grid-template-columns: 225px auto;'
-        closed = true
+    burger.onclick = function () {
+        if (menu.className === 'left_bar'){
+            container.style.cssText = 'grid-template-columns: 64px auto;'
+            menu.classList.add('_close')
+        } else if (menu.className === 'left_bar _close'){
+            container.style.cssText = 'grid-template-columns: 225px auto;'
+            menu.classList.remove('_close')
+        }
     }
-
-}
+    
+})
