@@ -10,9 +10,9 @@ class TestViews(TestCase):
 
     def setUp(self):
         self.guest_client = Client()
-        self.autorized_client = Client()
+        self.authorized_client = Client()
         self.user = Employee.objects.get(id=1)
-        self.autorized_client.force_login(self.user)
+        self.authorized_client.force_login(self.user)
 
         self.taskboard_url = reverse('user_project_time:taskboard')
         self.category_url = {
@@ -32,42 +32,42 @@ class TestViews(TestCase):
     # /// ТЕСТЫ ДЛЯ АВТОРИЗОВАННОГО ПОЛЬЗОВАТЕЛЯ ///
 
     def test_deadline_categories_list_GET(self):
-        response = self.autorized_client.get(self.taskboard_url)
+        response = self.authorized_client.get(self.taskboard_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.list_template)
 
     def test_deadline_category_OVERTIMED_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Overtimed'])
+        response = self.authorized_client.get(self.category_url['Overtimed'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
         
     def test_deadline_category_TODAY_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Today'])
+        response = self.authorized_client.get(self.category_url['Today'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_TOMORROW_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Tomorrow'])
+        response = self.authorized_client.get(self.category_url['Tomorrow'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_WEEK_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Week'])
+        response = self.authorized_client.get(self.category_url['Week'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_MONTH_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Month'])
+        response = self.authorized_client.get(self.category_url['Month'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_NOT_SOON_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Not_soon'])
+        response = self.authorized_client.get(self.category_url['Not_soon'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_PERMANTENT_detail_GET(self):
-        response = self.autorized_client.get(self.category_url['Permanent'])
+        response = self.authorized_client.get(self.category_url['Permanent'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
@@ -109,7 +109,7 @@ class TestViews(TestCase):
 
     def test_correct_page_context(self):
         '''Проверка количества отображаемых категорий'''
-        response = self.autorized_client.get(self.taskboard_url)
+        response = self.authorized_client.get(self.taskboard_url)
         
         count = len(response.context['time_categories'])
         needed_count = len(UserTimeCategory.Status)

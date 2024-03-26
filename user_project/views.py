@@ -19,7 +19,7 @@ from QuickHub import utils as quickhub_utils
 
 class CreateCategory(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = user_project_forms.CategoryCreationForm
-
+   
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.success_url = reverse_lazy('user_project:taskboard')
@@ -38,28 +38,15 @@ class CreateCategory(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
 
 class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = user_project_forms.TaskboardCreationForm
-
+    
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(self, *args, **kwargs)
         self.success_url = reverse_lazy('user_project:taskboard')
-        
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['employee'] = self.request.user
         return kwargs
-
-    def get_initial(self):
-        if not self.kwargs.get('category_id'):
-            return {}
-        category = user_project_models.Category.objects\
-            .prefetch_related('tasks')\
-            .get(id=self.kwargs['category_id'])
-        
-        initial = {
-                'category': category, 
-                'tasks': category.tasks.all()
-            }
-        return initial
 
     def form_valid(self, form):
         tasks = form.cleaned_data.get('tasks')
@@ -73,9 +60,24 @@ class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView)
                 notes=notes,
             )
         except IntegrityError:
-            return redirect('user_project:add_task', 
-                            category_id=self.kwargs['category_id'])
+            return redirect('user_project:add_task')
         return super().form_valid(form)
+
+
+class EditTaskboard(CreateTaskboard):
+
+    def get_initial(self):
+        if not self.kwargs.get('category_id'):
+            return {}
+        category = user_project_models.Category.objects\
+            .prefetch_related('tasks')\
+            .get(id=self.kwargs['category_id'])
+        
+        initial = {
+            'category': category, 
+            'tasks': category.tasks.all()
+        }
+        return initial
 
 
 class TaskboardListView(LoginRequiredMixin, ListView):
