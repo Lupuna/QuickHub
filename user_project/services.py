@@ -24,36 +24,33 @@ def create_category(user: team_models.Task, **kwargs) -> user_project_models.Cat
     return user_project_models.Category.objects.create(employee_id=user, **kwargs)
 
 
-def create_taskboard(category: user_project_models.Category, 
-                     tasks: QuerySet[team_models.Task], **kwargs) -> user_project_models.Taskboard | None:
+def create_taskboards(category: user_project_models.Category, 
+                     tasks: QuerySet[team_models.Task], **kwargs) -> None:
     '''
     Создание отображения категории задач пользователя для доски
     '''
     tasks = tasks.prefetch_related('subtasks').only('id', 'text')
-    set_tasks_to_category(category=category, tasks=tasks)
-    taskboard = None
+    set_tasks_to_category(category=category, tasks=tasks, title=str(category.title))
     for task in tasks:
-        taskboard = user_project_models.Taskboard(
+        taskboard = user_project_models.Taskboard.objects.get(
             category_id=category,
             task_id=task,
-            title=category.title,
-            task_personal_notes={
-                'notes': kwargs.get('notes'),
-                'task_notes': task.text
-            }
         )
+        taskboard.task_personal_notes = {
+            'notes': kwargs.get('notes'),
+            'task_notes': task.text
+        }
         subtasks = task.subtasks.only('id', 'text')
         for subtask in subtasks:
             taskboard.json_with_subtask_and_subtask_personal_note[subtask.id] = subtask.text
         taskboard.save()
-    return taskboard
 
 # /// DELETE ///
 
 def set_tasks_to_category(category: user_project_models.Category, 
                         tasks: QuerySet[team_models.Task], **kwargs) -> None:
     '''Назначение задач в категорию'''
-    category.tasks.set(tasks, clear=True)
+    category.tasks.set(tasks, clear=True, through_defaults=kwargs)
 
 # /// GET ///
     

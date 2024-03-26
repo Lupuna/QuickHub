@@ -54,7 +54,7 @@ class CreateTaskboard(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView)
         notes = form.cleaned_data.get('text')
 
         try:
-            user_project_services.create_taskboard(
+            user_project_services.create_taskboards(
                 category=category,
                 tasks=tasks,
                 notes=notes,
