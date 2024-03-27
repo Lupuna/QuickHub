@@ -18,28 +18,19 @@ def employee_info(task: models.Task,
                 appoint=None) -> dict:
     '''Заполнение json_with_employee_info объекта Task данными о работниках'''
     if appoint is None:
-        appoint = task.json_with_employee_info['appoint'][0]
+        appoint = task.json_with_employee_info['appoint']
     else:
-        appoint = appoint.email
+        if isinstance(appoint, models.Employee):
+            appoint = [appoint.email]
+        elif isinstance(appoint, str):
+            appoint = [appoint]
 
     json_with_employee_info = {
-        'appoint': [appoint],
+        'appoint': appoint,
         'responsible': [i.email for i in form.cleaned_data.get('responsible')],
         'executor': [i.email for i in form.cleaned_data.get('executor')]
     }
     return json_with_employee_info
-
-# /// ADD ///
-
-def add_task_to_user_categories(task: models.Task,
-                                user: models.Employee) -> None:
-    '''
-    Добавление задачи в категорию "Мои задачи" для user и в категорию
-    задач по срокам
-    '''
-    user.tasks.add(task)
-    user.categories.get(title='Мои задачи').tasks.add(task)
-    user.time_categories.get(status=task.time_status).tasks.add(task)
 
 # /// SET ///
 
@@ -55,6 +46,7 @@ def set_executors(task: models.Task,
 
 @user_project_time_services.set_user_time_category
 def update_task_deadline(task: models.Task,
+                         executors: QuerySet[models.Employee],
                          start=None,
                          end=None,
                          **kwargs) -> models.Task:
