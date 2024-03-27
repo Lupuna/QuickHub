@@ -6,12 +6,12 @@ from user_project_time.models import UserTimeCategory
 
 
 class TestViews(TestCase):
-    fixtures = ['test_data.json']
+    fixtures = ['data.json']
 
     def setUp(self):
         self.guest_client = Client()
         self.authorized_client = Client()
-        self.user = Employee.objects.get(id=1)
+        self.user = Employee.objects.get(id=2)
         self.authorized_client.force_login(self.user)
 
         self.taskboard_url = reverse('user_project_time:taskboard')

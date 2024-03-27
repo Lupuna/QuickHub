@@ -8,7 +8,7 @@ import user_project_time.services as upt_services
 
 
 class TestServices(TestCase):
-    fixtures = ['test_data.json']
+    fixtures = ['data.json']
 
     def setUp(self):
         self.company = team_models.Company.objects.get(id=1)

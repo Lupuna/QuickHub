@@ -12,7 +12,7 @@ def set_user_time_category(func: callable) -> callable:
     def wrapper(task: team_models.Task,
                 executors: team_models.Employee,
                 *args, **kwargs) -> team_models.Task:
-        task = func(task=task, executors=executors)
+        task = func(task=task, executors=executors, **kwargs)
         time_caterories = user_project_time_models.UserTimeCategory.objects.filter(
             employee__in=executors, 
             status=task.time_status

@@ -381,8 +381,9 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
             'text': task.text,
             'time_start': task.time_start,
             'time_end': task.time_end,
-            'responsible': task.json_with_employee_info['responsible'],
-            'executor': task.json_with_employee_info['executor']
+            'parent_id': task.parent_id,
+            'responsible': models.Employee.objects.filter(email__in=task.json_with_employee_info['responsible']),
+            'executor': models.Employee.objects.filter(email__in=task.json_with_employee_info['executor']),
         }
         return initial
 

@@ -60,9 +60,10 @@ def update_task_deadline(task: models.Task,
                          **kwargs) -> models.Task:
     '''Изменение сроков задачи'''
     if start is None:
-        task.time_start = timezone.now()
+        start = timezone.now()
     task.time_start = start
     task.time_end = end
+    task.save()
     return task
 
 

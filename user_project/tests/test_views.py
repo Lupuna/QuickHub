@@ -8,10 +8,10 @@ from user_project import models as user_project_models
 
 
 class TestViews(TestCase):
-    fixtures = ['test_data.json']
+    fixtures = ['data.json']
 
     def setUp(self):
-        self.user = team_models.Employee.objects.get(id=1)
+        self.user = team_models.Employee.objects.get(id=2)
 
         self.guest_client = Client()
         self.authorized_client = Client()
