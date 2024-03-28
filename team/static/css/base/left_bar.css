@@ -1,0 +1,48 @@
+.left_bar a{
+	display: flex;
+	width: 220px;
+	height: 50px;
+	align-items: center;
+	text-decoration: none;
+	color: white;
+	gap: 28px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	border-radius: 10px;
+	white-space: nowrap;
+}
+
+.left_bar img{
+	margin-left: 15px;
+	width: 24px;
+}
+
+._close img{
+	margin-left: 15px;
+	width: 24px;
+}
+
+/* 
+* * Animations
+ */
+
+.left_bar a:hover{
+	background-color: rgba(217, 217, 217, 0.3);
+}
+
+.left_bar a:hover{
+	background-color: rgba(217, 217, 217, 0.3);
+}
+
+._close a:hover{
+	background-color: rgba(217, 217, 217, 0.3);
+}
+
+._close a{
+	width: 54px;
+}
+
+.left_bar a{
+	transition-duration: 0.4s;
+	overflow: hidden;
+}

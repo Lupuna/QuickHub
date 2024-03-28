@@ -1,0 +1,42 @@
+.company_head {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    white-space: nowrap;
+}
+
+.choose_company {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.choose_company p {
+    margin-right: 10px;
+    margin-block: 0;
+}
+
+.company_name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 20px;
+    border: none;
+    width: 250px;
+    height: 40px;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+
+}
+
+.company_name img{
+    width: 16px;
+}
+
+.company_settings {
+    display: flex;
+    border: none;
+    background: none;
+    align-items: center;
+
+}

@@ -19,6 +19,14 @@ body {
 			rgb(0, 213, 200) 100%);
 }
 
+<<<<<<< HEAD
+=======
+input::placeholder{
+	color: white;
+}
+
+
+>>>>>>> base
 .container{
 	width: 100%;
 	height: 100%;
@@ -28,13 +36,18 @@ body {
 	grid-template-areas:
 	"header header"
 	"left_bar content";
+<<<<<<< HEAD
 
+=======
+	transition-duration: 0.4s;
+>>>>>>> base
 }
 
 .header {
 	grid-area: header;
 	padding-right: 20px;
 }
+<<<<<<< HEAD
 .left_bar {
 	grid-area: left_bar;
 }
@@ -42,3 +55,29 @@ body {
 	grid-area: content;
 	padding-right: 20px;
 }
+=======
+
+.left_bar {
+	grid-area: left_bar;
+}
+
+.content {
+	grid-area: content;
+	margin-bottom: 30px;	
+	margin-right: 20px ;
+	margin-left: 5px;
+}
+
+.loading_overlay {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	opacity: 1;
+	transition: opacity 0.5s;
+}
+
+.fade_out {
+	opacity: 0;
+	visibility: hidden;
+}
+>>>>>>> base

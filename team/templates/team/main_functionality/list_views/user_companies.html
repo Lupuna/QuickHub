@@ -4,22 +4,58 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
-    <link href="{% static 'css/taskboard.css' %}" rel="stylesheet">
-    {% for company in companies %}
-        <a class="button" href="{{ company.get_absolute_url }}">
-            <div class="company">
-                {{ company.title }}
+<link href="{% static 'css/user_companies/company_styles.css' %}" rel="stylesheet">
+<link href="{% static 'css/user_companies/company_header.css' %}" rel="stylesheet">
+<link href="{% static 'css/user_companies/company_tools.css' %}" rel="stylesheet">
+
+<company_head class="company_head">
+    <company class="choose_company">
+        <p>Выбрать компанию</p>
+        <button class="company_name">
+            <p>QuickHub</p>
+            <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
+            <div class="sub_menu">
+
             </div>
-        </a>
-    {% endfor %}
-    <div class="add_pad">
-        <a href="{% url 'team:create_company' %}">
-            <button class="category__add">
-                <img src="{% static 'img/tasks/plus.svg' %}" style="margin-right: 12px;">
-                <div class="button-text">
-                    Создать компанию
-                </div>
+        </button>
+
+        <button class="company_settings">
+            <img src="{% static 'img/user_companies/company_settings.svg' %}" alt="#">
+        </button>
+    </company>
+
+    <tool_bar class="tool_bar">
+
+        <nav_bar class="nav_bar">
+            <a href="#" class="employees">Сотрудники</a>
+            <a href="#" class="structure_company">Структура компании</a>
+        </nav_bar>
+
+        <tools class="tools">
+
+            <div class="search_in_content">
+                <img src="{% static 'img/header/header_search.svg' %}" alt=none>
+                <input type="text" placeholder="Поиск сотрудника">
+            </div>
+
+            <button class="filter">
+                <img src="{% static 'img/user_companies/filter.svg' %}" alt=none>
+                Фильтр
             </button>
-        </a>
-    </div>
+
+            <button class="add_employee">
+                <img src="{% static 'img/user_companies/plus.svg' %}" alt=none>
+                Добавить сотрудника
+            </button>
+
+        </tools>
+
+    </tool_bar>
+
+</company_head>
+
+<content_company class="content_company">
+    
+</content_company>
+
 {%endblock%}
