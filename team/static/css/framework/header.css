@@ -1,0 +1,138 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 
+* * Logo, burger, search 
+*/
+
+.left_part {
+    display: flex;
+    align-items: center;
+}
+
+.btn_burger {
+    width: 24px;
+    border: none;
+    background: none;
+    margin-left: 20px;
+    padding: 0;
+}
+
+.left_part button {
+    width: 25px;
+}
+
+.logo_header {
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    margin-left: 28px;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 27px;
+    color: white;
+    width: 126px;
+    height: 40px;
+}
+
+.logo_header img {
+    width: 24px;
+}
+
+.search {
+    display: flex;
+    width: 150px;
+    height: 40px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.2);
+    margin-left: 50px;
+    align-items: center;
+}
+
+.search input {
+    position: absolute;
+    background: none;
+    border: none;
+    outline: none;
+    margin-left: 63px;
+    width: 60px;
+}
+
+.search img {
+    margin-left: 28px;
+    width: 24px;
+}
+
+/* 
+* *Notifications, massages, account 
+*/
+
+.right_part {
+    display: flex;
+    align-items: center;
+}
+
+.messages,
+.notifications {
+    display: flex;
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.messages img,
+.notifications img {
+    height: 24px;
+}
+
+.account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 278px;
+    height: 60px;
+    margin-left: 10px;
+    border: none;
+    background: none;
+    padding: 0;
+    border-radius: 10px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile_icon img {
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+}
+
+.name {
+    margin-left: 20px;
+}
+
+.arrow_down {
+    margin-right: 20px;
+    width: 14px;
+}
+
+/* 
+* *Animations
+ */
+
+.right_part a:hover {
+    background-color: rgba(217, 217, 217, 0.3);
+}
+
+.right_part .account:hover{
+    background-color: rgba(217, 217, 217, 0.3);
+}
+

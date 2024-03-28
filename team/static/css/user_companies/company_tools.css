@@ -1,0 +1,80 @@
+.tool_bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav_bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 320px;
+    height: 40px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    padding-inline: 40px;
+    margin-right: 10px;
+}
+
+.nav_bar a {
+    text-decoration: none;
+    color: white;
+}
+
+.tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search_in_content {
+    display: flex;
+    width: 230px;
+    height: 40px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    align-items: center;
+    
+}
+
+.search_in_content img{
+    height: 16px;
+    width: 16px;
+    margin-left: 25px;
+}
+
+.search_in_content input {
+    background: none;
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 156px;
+    color: white;
+}
+
+.filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding-inline: 25px;
+    height: 40px;
+    border: none;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.2);
+
+}
+
+.add_employee {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding-inline: 25px;
+    height: 40px;
+    border: none;
+    border-radius: 30px;
+    background: rgb(40, 224, 90);
+    color: black;
+    
+}

@@ -1,0 +1,13 @@
+.content {
+    display: grid;
+    grid-template-rows: 100px auto;
+    grid-template-areas:
+        "company_head   "
+        "content_company";
+    row-gap: 10px;
+}
+
+.content_company {
+    border-radius: 10px;
+    background: white;
+}
