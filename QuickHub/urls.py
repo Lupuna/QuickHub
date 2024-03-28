@@ -20,7 +20,10 @@ from QuickHub import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('team-taskboard/', include('user_project.urls', namespace='user_project')),
+    path('team-deadlines/', include('user_project_time.urls', namespace='user_project_time')),
     path('team/', include('team.urls', namespace='team')),
+    path('registration/', include('registration.urls', namespace='registration')),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
 

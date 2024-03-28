@@ -1,0 +1,27 @@
+<li>
+    <details open>
+        <summary>
+            <a href="{% url 'team:department' company_id=company.id department_id=node.id %}">
+                <div class="department">
+                    <div id="title">
+                        {{ node.title }}
+                    </div>
+                    <div id="supervisor">
+                        {{ node.supervisor }}
+                    </div>
+                </div>
+            </a>
+        </summary>
+        {% with childs=node.childs %}
+            {% if childs %}
+            <ul>
+            {% for ch in childs.all %}
+                {% with node=ch template_name='includes/tree_view_template.html'  %}
+                    {% include template_name %}
+                {% endwith %}
+            {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+    </details>
+</li>

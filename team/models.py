@@ -4,6 +4,9 @@ from django.urls import reverse
 from . import utils
 
 
+# ///   Employee    ///
+
+
 class Employee(AbstractUser):
     name = models.CharField(max_length=40)
     email = models.EmailField(unique=True)
@@ -49,6 +52,17 @@ class LinksResources(models.Model):
 
     class Meta:
         order_with_respect_to = 'employee_id'
+
+
+class Customization(models.Model):
+    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True,
+                                            related_name='customization')
+    color_scheme = models.CharField(max_length=40, default='')
+    font_size = models.CharField(max_length=40, default='')
+    background = models.CharField(max_length=40, default='')
+
+
+# ///    Company   ///
 
 
 class Company(models.Model):
@@ -108,6 +122,52 @@ class Positions(models.Model):
                                                 'position_id': self.id})
 
 
+class EmployeeCompany(models.Model):
+    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company')
+    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee')
+    # возможно models.SET_NULL не лучшая идея
+    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True,
+                                    related_name='position')
+    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True,
+                                      related_name='department')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['company_id', 'employee_id'])
+        ]
+
+
+class CompanyEvent(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='events')
+    title = models.CharField(max_length=40)
+    description = models.TextField(blank=True, null=True)
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    time_start = models.DateTimeField()
+    time_end = models.DateTimeField()
+
+    class Meta:
+        ordering = ['-time_start']
+
+
+class CompanyEventImage(models.Model):
+    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='images')
+
+    class Meta:
+        order_with_respect_to = 'company_event'
+
+
+class CompanyEventFile(models.Model):
+    file = models.FileField(upload_to='files/%Y/%m/%d/%H/')
+    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='files')
+
+    class Meta:
+        order_with_respect_to = 'company_event'
+
+
+# ///   Project ///
+
+
 class Project(models.Model):
     class DisplayTypes(models.IntegerChoices):
         ABSOLUTE = 1, 'Absolute'
@@ -164,41 +224,7 @@ class Project(models.Model):
             del self.task_status['status'][to_delete]
 
 
-class EmployeeCompany(models.Model):
-    company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company')
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee')
-    # возможно models.SET_NULL не лучшая идея
-    position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True, related_name='position')
-    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='department')
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['company_id', 'employee_id'])
-        ]
-
-
-class Chat(models.Model):
-    title = models.CharField(max_length=250)
-    employees = models.ManyToManyField(Employee, related_name='chats')
-
-    class Meta:
-        ordering = ['title']
-
-
-class Message(models.Model):
-    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
-    employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='messages')
-    last_update = models.DateTimeField(auto_now=True)
-    is_read = models.BooleanField(default=False)
-    json_with_content = models.JSONField(blank=True, default=dict)
-
-
-class Customization(models.Model):
-    customisation_id = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True,
-                                            related_name='customization')
-    color_scheme = models.CharField(max_length=40, default='')
-    font_size = models.CharField(max_length=40, default='')
-    background = models.CharField(max_length=40, default='')
+# ///   Task    ///
 
 
 class Task(models.Model):
@@ -207,7 +233,6 @@ class Task(models.Model):
     text = models.TextField(blank=True, null=True)
     parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
     json_with_employee_info = models.JSONField(blank=True, default=dict)
-    user_category = models.ManyToManyField('Category', through='Taskboard', related_name='tasks')
     task_status = models.CharField(max_length=40)
 
     class Meta:
@@ -236,6 +261,28 @@ class TaskFile(models.Model):
 
     class Meta:
         order_with_respect_to = 'task_id'
+
+
+class TaskDeadline(models.Model):
+    class Status(models.TextChoices):
+        OVERTIMED = 'Overtimed'
+        TODAY = 'Today'
+        TOMORROW = 'Tomorrow'
+        WEEK = 'Week'
+        MONTH = 'Month'
+        NOT_SOON = 'Not_soon'
+        PERMANENT = 'Permanent'
+
+    task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
+    time_start = models.DateTimeField(null=True, blank=True)
+    time_end = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
+
+    class Meta:
+        ordering = ['-time_start']
+
+    def __str__(self):
+        return f'{self.task_id.title} : {self.status}'
 
 
 class Subtasks(models.Model):
@@ -272,77 +319,3 @@ class SubtaskFile(models.Model):
 
     class Meta:
         order_with_respect_to = 'subtask_id'
-
-
-class Category(models.Model):
-    title = models.CharField(max_length=40)
-    employee_id = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE, related_name='categories')
-    project_personal_notes = models.TextField(blank=True, null=True)
-
-    class Meta:
-        ordering = ['title']
-        unique_together = ['title', 'employee_id']
-
-    def __str__(self):
-        return self.title
-
-
-class TaskDeadline(models.Model):
-    class Status(models.TextChoices):
-        OVERTIMED = 'Overtimed'
-        TODAY = 'Today'
-        TOMORROW = 'Tomorrow'
-        WEEK = 'Week'
-        MONTH = 'Month'
-        NOT_SOON = 'Not_soon'
-        PERMANENT = 'Permanent'
-
-    task_id = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='deadlines')
-    time_start = models.DateTimeField(null=True, blank=True)
-    time_end = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=9, choices=Status.choices, default=Status.PERMANENT)
-
-    class Meta:
-        ordering = ['-time_start']
-
-    def __str__(self):
-        return f'{self.task_id.title} : {self.status}'
-
-
-class Taskboard(models.Model):
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='taskboards')
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
-    title = models.CharField(max_length=40)
-    task_personal_notes = models.JSONField(blank=True, default=dict)
-    json_with_subtask_and_subtask_personal_note = models.JSONField(blank=True, default=dict)
-
-    class Meta:
-        ordering = ['title']
-
-
-class CompanyEvent(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='events')
-    title = models.CharField(max_length=40)
-    description = models.TextField(blank=True, null=True)
-    json_with_employee_info = models.JSONField(blank=True, default=dict)
-    time_start = models.DateTimeField()
-    time_end = models.DateTimeField()
-
-    class Meta:
-        ordering = ['-time_start']
-
-
-class CompanyEventImage(models.Model):
-    image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
-    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='images')
-
-    class Meta:
-        order_with_respect_to = 'company_event'
-
-
-class CompanyEventFile(models.Model):
-    file = models.FileField(upload_to='files/%Y/%m/%d/%H/')
-    company_event = models.ForeignKey(CompanyEvent, on_delete=models.CASCADE, related_name='files')
-
-    class Meta:
-        order_with_respect_to = 'company_event'

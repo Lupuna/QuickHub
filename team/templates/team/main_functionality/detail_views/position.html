@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%block title%}QuickHub{%endblock%}
+
+{%block content%}
+    <div>{{ position.title }}</div>
+    <div>
+        Уровень доступа:
+        {% position.weight %}
+    </div>
+{%endblock%}

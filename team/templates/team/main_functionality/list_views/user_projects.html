@@ -1,4 +1,4 @@
-{% extends 'team/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {%block title%}QuickHub{%endblock%}
@@ -17,12 +17,12 @@
         <div id="project_department">Подразделение</div>
         <div id="project_employees">Участники</div>
     </div>
-    {% for project, prog in progress.items %}
+    {% for project in projects %}
         <a class="button" href="{{ project.get_absolute_url }}">
             <div class="project">
                 <div id="project_title">{{ project.title }}</div>
                 <div id="project_progress">
-                {% with ready=prog.ready total=prog.total %}
+                {% with ready=project.ready_count total=project.tasks_count %}
                     <progress id="project" max="{{ total }}" value="{{ ready }}"></progress>
                     <label for="project">{{ ready }}/{{ total }}</label>
                 {% endwith %}
