@@ -18,15 +18,10 @@ body {
 			rgba(53, 135, 225, 0.72) 50%,
 			rgb(0, 213, 200) 100%);
 }
-
-<<<<<<< HEAD
-=======
 input::placeholder{
 	color: white;
 }
 
-
->>>>>>> base
 .container{
 	width: 100%;
 	height: 100%;
@@ -36,26 +31,22 @@ input::placeholder{
 	grid-template-areas:
 	"header header"
 	"left_bar content";
-<<<<<<< HEAD
-
-=======
 	transition-duration: 0.4s;
->>>>>>> base
 }
 
 .header {
 	grid-area: header;
 	padding-right: 20px;
 }
-<<<<<<< HEAD
+
 .left_bar {
 	grid-area: left_bar;
 }
+
 .content {
 	grid-area: content;
 	padding-right: 20px;
 }
-=======
 
 .left_bar {
 	grid-area: left_bar;
@@ -80,4 +71,3 @@ input::placeholder{
 	opacity: 0;
 	visibility: hidden;
 }
->>>>>>> base
