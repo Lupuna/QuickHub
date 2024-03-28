@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.core.exceptions import ValidationError
 from user_project_time.models import UserTimeCategory
+from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-
 from . import utils
 
 
@@ -50,11 +50,14 @@ class LinksResources(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=200)
 
-    def get_info(self):
-        return {self.title: self.link}
-
     class Meta:
         order_with_respect_to = 'employee_id'
+
+    def __str__(self):
+        return self.title
+
+    def get_info(self):
+        return {self.title: self.link}
 
 
 class Customization(models.Model):
@@ -78,7 +81,7 @@ class Company(models.Model):
 
     def __str__(self):
         return f'{self.owner_id}, {self.title}'
-    
+
     def get_absolute_url(self):
         return reverse('team:company', kwargs={'company_id': self.id})
 
@@ -151,6 +154,14 @@ class CompanyEvent(models.Model):
     class Meta:
         ordering = ['-time_start']
 
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if (self.time_end - self.time_start).total_seconds() <= 0:
+            raise ValidationError('Invalid start or end time', code='invalid')
+        super().save(*args, **kwargs)
+
 
 class CompanyEventImage(models.Model):
     image = models.ImageField(upload_to='images/%Y/%m/%d/%H/')
@@ -197,7 +208,7 @@ class Project(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:project', kwargs={'company_id': self.company_id_id,
+        return reverse('team:project', kwargs={'company_id': self.company_id.id,
                                                'project_id': self.id})
 
     @property
@@ -205,9 +216,10 @@ class Project(models.Model):
         return self._default_task_status
 
     @get_default_task_status.setter
-    def get_default_task_status(self, new_status):
-        if new_status in self.task_status['status']:
-            self._default_task_status = new_status
+    def get_default_task_status(self, new_status: str):
+        if new_status not in self.task_status['status']:
+            raise ValidationError('This status not supported')
+        self._default_task_status = new_status
 
     @property
     def get_default_hand_over_task_status(self):
@@ -215,37 +227,44 @@ class Project(models.Model):
 
     @get_default_hand_over_task_status.setter
     def get_default_hand_over_task_status(self, new_status):
-        if new_status in self.task_status['status']:
-            self._default_hand_over_task_status = new_status
+        if new_status not in self.task_status['status']:
+            raise ValidationError('This status not supported')
+        self._default_hand_over_task_status = new_status
 
     def update_task_status(self, new_satus: list):
-        if new_satus[-1] not in self.task_status['status'].values():
-            self.task_status['status'][new_satus[0]] = new_satus[-1]
+        if new_satus[-1] in self.task_status['status'].values():
+            raise ValidationError('status with this weight already supported')
+        self.task_status['status'][new_satus[0]] = new_satus[-1]
 
     def delete_task_status(self, to_delete: str):
-        if to_delete in self.task_status['status'].keys():
+        if to_delete in self.task_status['status']:
+            if to_delete == self.get_default_task_status:
+                raise ValidationError("You can't delete default task status")
+            if to_delete == self.get_default_hand_over_task_status:
+                raise ValidationError("You can't delete default hand over task status")
             del self.task_status['status'][to_delete]
+        else:
+            raise ValidationError("there is no such status")
 
 
 # ///   Task    ///
 
 
 class Task(models.Model):
-    project_id = models.ForeignKey('Project', on_delete=models.CASCADE, related_name='tasks', verbose_name='Проект')
-    title = models.CharField('Задача', max_length=40)
-    text = models.TextField('Описание', blank=True, null=True)
-    parent_id = models.ForeignKey(to='self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs', verbose_name='Родительская задача')
-    json_with_employee_info = models.JSONField('Данные об исполнителях', blank=True, default=dict)
-    task_status = models.CharField('Статус', max_length=40)
-    
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
+    title = models.CharField(max_length=40)
+    text = models.TextField(blank=True, null=True)
+    parent_id = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='childs')
+    json_with_employee_info = models.JSONField(blank=True, default=dict)
+    task_status = models.CharField(max_length=40, blank=True, null=True)
     time_start = models.DateTimeField(
         'Время начала',
-        null=True, 
+        null=True,
         blank=True,
     )
     time_end = models.DateTimeField(
         'Конец срока',
-        null=True, 
+        null=True,
         blank=True
     )
 
@@ -255,9 +274,13 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        self.task_status = self.project_id.get_default_task_status
+        super().save(*args, **kwargs)
+
     def get_absolute_url(self):
-        return reverse('team:task', kwargs={'company_id': self.project_id.company_id_id,
-                                            'project_id': self.project_id_id,
+        return reverse('team:task', kwargs={'company_id': self.project_id.company_id.id,
+                                            'project_id': self.project_id.id,
                                             'task_id': self.id})
 
     @property
@@ -266,7 +289,7 @@ class Task(models.Model):
         Получение статуса срока задачи на текущий момент времени
         '''
         now = timezone.now()
-        
+
         if self.time_end is None:
             return UserTimeCategory.Status.PERMANENT
 
@@ -316,9 +339,9 @@ class Subtasks(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id_id,
-                                               'project_id': self.task_id.project_id_id,
-                                               'task_id': self.task_id_id,
+        return reverse('team:subtask', kwargs={'company_id': self.task_id.project_id.company_id.id,
+                                               'project_id': self.task_id.project_id.id,
+                                               'task_id': self.task_id.id,
                                                'subtask_id': self.id})
 
 
