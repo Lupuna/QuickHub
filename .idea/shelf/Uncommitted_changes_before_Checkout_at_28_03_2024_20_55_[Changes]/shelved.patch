@@ -1,0 +1,14 @@
+Index: team/tests/test_models.py
+===================================================================
+diff --git a/team/tests/test_models.py b/team/tests/test_models.py
+--- a/team/tests/test_models.py	
++++ b/team/tests/test_models.py	
+@@ -178,7 +178,7 @@
+         correct_meaning = self.task.title
+         self.assertEqual(correct_meaning, str(self.task))
+ 
+-    def test_save_method(self):
++    def test_save_method_task(self):
+         correct_meaning = self.task.project_id.get_default_task_status
+         self.assertEqual(correct_meaning, self.task.task_status)
+ 
