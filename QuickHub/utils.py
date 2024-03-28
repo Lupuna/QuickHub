@@ -70,5 +70,5 @@ class CreatorMixin:
     def __init__(self, *args, **kwargs):
         self.template_name = creator
         self.success_url = reverse_lazy('team:homepage')
-        self.login_url = reverse_lazy('team:login')
+        self.login_url = reverse_lazy('registration:login')
         self.extra_context = {'title': f'QuickHub: {self.__class__.__name__.replace("Create", "")}-create'}

@@ -3,7 +3,7 @@ from . import models
 
 @admin.register(models.TaskDeadline)
 class TaskDeadlineAdmin(admin.ModelAdmin):
-    list_display = ['task', 'time_category', 'time_start', 'time_end']
+    list_display = ['task', 'time_category']
     list_filter = ['time_category']
 
 

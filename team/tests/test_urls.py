@@ -85,9 +85,9 @@ class TestUrls(SimpleTestCase):
         url = reverse('team:projects')
         self.assertEqual(resolve(url).func.view_class, team_views.UserProjectsListView)
 
-    def test_set_deadline_url_is_resolve(self):
-        url = reverse('team:set_deadline', args=[1, 1, 1])
-        self.assertEqual(resolve(url).func.view_class, team_views.CreateTask)
+    def test_update_task_url_is_resolve(self):
+        url = reverse('team:task_update', args=[1, 1, 1])
+        self.assertEqual(resolve(url).func.view_class, team_views.TaskUpdateView)
 
     def test_update_user_profile_url_is_resolve(self):
         url = reverse('team:update_user_profile', args=[1])

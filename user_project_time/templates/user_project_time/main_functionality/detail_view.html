@@ -27,14 +27,12 @@
                         </div>
                         <div class="deadline">
                             <div class="deadline_row" id="{{ category.status }}">
-                                {% with deadline=task.deadline.first %}
-                                {% if deadline.time_end %}
-                                    {{ deadline.time_start|date:"d-M" }} - {{ deadline.time_end|date:"d-M" }}
+                                {% if task.time_end %}
+                                    {{ task.time_start|date:"d-M" }} - {{ task.time_end|date:"d-M" }}
                                 {% else %}
                                     Бессрочный
                                 {% endif %}
                             </div>
-                            {% endwith %}
                         </div>
                         <div class="executors">
                             {% for executor in task.executors.all %}

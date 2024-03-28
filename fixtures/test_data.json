@@ -1,0 +1,2782 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2024-03-17T11:48:51.937Z",
+    "user": 3,
+    "content_type": 6,
+    "object_id": "1",
+    "object_repr": "user1@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Superuser status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2024-03-17T11:49:04.017Z",
+    "user": 3,
+    "content_type": 19,
+    "object_id": "2",
+    "object_repr": "EmployeeCompany object (2)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2024-03-17T16:29:41.101Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "Task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2024-03-17T16:29:41.111Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "Task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.088Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "14",
+    "object_repr": "new task",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.132Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "7",
+    "object_repr": "task",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.155Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "9",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.197Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "8",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.238Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "10",
+    "object_repr": "task3",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.257Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "11",
+    "object_repr": "task5",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.270Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "12",
+    "object_repr": "task6",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2024-03-19T06:18:48.285Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "13",
+    "object_repr": "task7",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.621Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "24",
+    "object_repr": "dfovkdv",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.634Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "23",
+    "object_repr": "dfovkdv",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.639Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "22",
+    "object_repr": "dfovkdv",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.643Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "20",
+    "object_repr": "dfovkdv",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.648Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "16",
+    "object_repr": "task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.652Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "15",
+    "object_repr": "task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.656Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "21",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.661Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "17",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.665Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "18",
+    "object_repr": "task3",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2024-03-21T09:35:56.669Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "19",
+    "object_repr": "task_project2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2024-03-21T10:05:56.012Z",
+    "user": 3,
+    "content_type": 19,
+    "object_id": "3",
+    "object_repr": "EmployeeCompany object (3)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2024-03-21T10:20:04.558Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "25",
+    "object_repr": "task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2024-03-21T10:20:04.568Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "26",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2024-03-21T10:20:04.573Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "27",
+    "object_repr": "task3",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2024-03-21T10:20:04.578Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "28",
+    "object_repr": "task4",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.386Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "33",
+    "object_repr": "NEW",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.402Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "36",
+    "object_repr": "TASK",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.408Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "37",
+    "object_repr": "TASK0",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.415Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "38",
+    "object_repr": "TASK1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.421Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "30",
+    "object_repr": "TASK1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.427Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "35",
+    "object_repr": "my task",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.431Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "29",
+    "object_repr": "task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.436Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "31",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.441Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "32",
+    "object_repr": "task3",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2024-03-22T09:21:02.446Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "34",
+    "object_repr": "test",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2024-03-22T11:39:06.131Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "39",
+    "object_repr": "task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2024-03-22T11:39:06.174Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "40",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 40,
+  "fields": {
+    "action_time": "2024-03-22T11:39:06.184Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "41",
+    "object_repr": "task3",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 41,
+  "fields": {
+    "action_time": "2024-03-22T12:25:48.421Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "44",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 42,
+  "fields": {
+    "action_time": "2024-03-22T12:25:48.480Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "43",
+    "object_repr": "task2",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 43,
+  "fields": {
+    "action_time": "2024-03-22T12:55:15.769Z",
+    "user": 3,
+    "content_type": 11,
+    "object_id": "42",
+    "object_repr": "task1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 1,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 1,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 1,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 1,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 2,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 2,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 2,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 2,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 3,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 3,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 3,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 3,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 4,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 4,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 4,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 4,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 5,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 5,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 5,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 5,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add employee",
+    "content_type": 6,
+    "codename": "add_employee"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change employee",
+    "content_type": 6,
+    "codename": "change_employee"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete employee",
+    "content_type": 6,
+    "codename": "delete_employee"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view employee",
+    "content_type": 6,
+    "codename": "view_employee"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add chat",
+    "content_type": 7,
+    "codename": "add_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change chat",
+    "content_type": 7,
+    "codename": "change_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete chat",
+    "content_type": 7,
+    "codename": "delete_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view chat",
+    "content_type": 7,
+    "codename": "view_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add company",
+    "content_type": 8,
+    "codename": "add_company"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change company",
+    "content_type": 8,
+    "codename": "change_company"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete company",
+    "content_type": 8,
+    "codename": "delete_company"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view company",
+    "content_type": 8,
+    "codename": "view_company"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add department",
+    "content_type": 9,
+    "codename": "add_department"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change department",
+    "content_type": 9,
+    "codename": "change_department"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete department",
+    "content_type": 9,
+    "codename": "delete_department"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view department",
+    "content_type": 9,
+    "codename": "view_department"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add project",
+    "content_type": 10,
+    "codename": "add_project"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change project",
+    "content_type": 10,
+    "codename": "change_project"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete project",
+    "content_type": 10,
+    "codename": "delete_project"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view project",
+    "content_type": 10,
+    "codename": "view_project"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add task",
+    "content_type": 11,
+    "codename": "add_task"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change task",
+    "content_type": 11,
+    "codename": "change_task"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete task",
+    "content_type": 11,
+    "codename": "delete_task"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view task",
+    "content_type": 11,
+    "codename": "view_task"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add customization",
+    "content_type": 12,
+    "codename": "add_customization"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change customization",
+    "content_type": 12,
+    "codename": "change_customization"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete customization",
+    "content_type": 12,
+    "codename": "delete_customization"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view customization",
+    "content_type": 12,
+    "codename": "view_customization"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add subtasks",
+    "content_type": 13,
+    "codename": "add_subtasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change subtasks",
+    "content_type": 13,
+    "codename": "change_subtasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete subtasks",
+    "content_type": 13,
+    "codename": "delete_subtasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view subtasks",
+    "content_type": 13,
+    "codename": "view_subtasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add positions",
+    "content_type": 14,
+    "codename": "add_positions"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change positions",
+    "content_type": 14,
+    "codename": "change_positions"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete positions",
+    "content_type": 14,
+    "codename": "delete_positions"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view positions",
+    "content_type": 14,
+    "codename": "view_positions"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can add message",
+    "content_type": 15,
+    "codename": "add_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can change message",
+    "content_type": 15,
+    "codename": "change_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can delete message",
+    "content_type": 15,
+    "codename": "delete_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can view message",
+    "content_type": 15,
+    "codename": "view_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can add task image",
+    "content_type": 16,
+    "codename": "add_taskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can change task image",
+    "content_type": 16,
+    "codename": "change_taskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can delete task image",
+    "content_type": 16,
+    "codename": "delete_taskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can view task image",
+    "content_type": 16,
+    "codename": "view_taskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 65,
+  "fields": {
+    "name": "Can add task file",
+    "content_type": 17,
+    "codename": "add_taskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 66,
+  "fields": {
+    "name": "Can change task file",
+    "content_type": 17,
+    "codename": "change_taskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 67,
+  "fields": {
+    "name": "Can delete task file",
+    "content_type": 17,
+    "codename": "delete_taskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 68,
+  "fields": {
+    "name": "Can view task file",
+    "content_type": 17,
+    "codename": "view_taskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 69,
+  "fields": {
+    "name": "Can add links resources",
+    "content_type": 18,
+    "codename": "add_linksresources"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 70,
+  "fields": {
+    "name": "Can change links resources",
+    "content_type": 18,
+    "codename": "change_linksresources"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 71,
+  "fields": {
+    "name": "Can delete links resources",
+    "content_type": 18,
+    "codename": "delete_linksresources"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 72,
+  "fields": {
+    "name": "Can view links resources",
+    "content_type": 18,
+    "codename": "view_linksresources"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 73,
+  "fields": {
+    "name": "Can add employee company",
+    "content_type": 19,
+    "codename": "add_employeecompany"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 74,
+  "fields": {
+    "name": "Can change employee company",
+    "content_type": 19,
+    "codename": "change_employeecompany"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 75,
+  "fields": {
+    "name": "Can delete employee company",
+    "content_type": 19,
+    "codename": "delete_employeecompany"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 76,
+  "fields": {
+    "name": "Can view employee company",
+    "content_type": 19,
+    "codename": "view_employeecompany"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 77,
+  "fields": {
+    "name": "Can add subtask image",
+    "content_type": 20,
+    "codename": "add_subtaskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 78,
+  "fields": {
+    "name": "Can change subtask image",
+    "content_type": 20,
+    "codename": "change_subtaskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 79,
+  "fields": {
+    "name": "Can delete subtask image",
+    "content_type": 20,
+    "codename": "delete_subtaskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 80,
+  "fields": {
+    "name": "Can view subtask image",
+    "content_type": 20,
+    "codename": "view_subtaskimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 81,
+  "fields": {
+    "name": "Can add subtask file",
+    "content_type": 21,
+    "codename": "add_subtaskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 82,
+  "fields": {
+    "name": "Can change subtask file",
+    "content_type": 21,
+    "codename": "change_subtaskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 83,
+  "fields": {
+    "name": "Can delete subtask file",
+    "content_type": 21,
+    "codename": "delete_subtaskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 84,
+  "fields": {
+    "name": "Can view subtask file",
+    "content_type": 21,
+    "codename": "view_subtaskfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 85,
+  "fields": {
+    "name": "Can add company event",
+    "content_type": 22,
+    "codename": "add_companyevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 86,
+  "fields": {
+    "name": "Can change company event",
+    "content_type": 22,
+    "codename": "change_companyevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 87,
+  "fields": {
+    "name": "Can delete company event",
+    "content_type": 22,
+    "codename": "delete_companyevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 88,
+  "fields": {
+    "name": "Can view company event",
+    "content_type": 22,
+    "codename": "view_companyevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 89,
+  "fields": {
+    "name": "Can add company event image",
+    "content_type": 23,
+    "codename": "add_companyeventimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 90,
+  "fields": {
+    "name": "Can change company event image",
+    "content_type": 23,
+    "codename": "change_companyeventimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 91,
+  "fields": {
+    "name": "Can delete company event image",
+    "content_type": 23,
+    "codename": "delete_companyeventimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 92,
+  "fields": {
+    "name": "Can view company event image",
+    "content_type": 23,
+    "codename": "view_companyeventimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 93,
+  "fields": {
+    "name": "Can add company event file",
+    "content_type": 24,
+    "codename": "add_companyeventfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 94,
+  "fields": {
+    "name": "Can change company event file",
+    "content_type": 24,
+    "codename": "change_companyeventfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 95,
+  "fields": {
+    "name": "Can delete company event file",
+    "content_type": 24,
+    "codename": "delete_companyeventfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 96,
+  "fields": {
+    "name": "Can view company event file",
+    "content_type": 24,
+    "codename": "view_companyeventfile"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 97,
+  "fields": {
+    "name": "Can add category",
+    "content_type": 25,
+    "codename": "add_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 98,
+  "fields": {
+    "name": "Can change category",
+    "content_type": 25,
+    "codename": "change_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 99,
+  "fields": {
+    "name": "Can delete category",
+    "content_type": 25,
+    "codename": "delete_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 100,
+  "fields": {
+    "name": "Can view category",
+    "content_type": 25,
+    "codename": "view_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 101,
+  "fields": {
+    "name": "Can add taskboard",
+    "content_type": 26,
+    "codename": "add_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 102,
+  "fields": {
+    "name": "Can change taskboard",
+    "content_type": 26,
+    "codename": "change_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 103,
+  "fields": {
+    "name": "Can delete taskboard",
+    "content_type": 26,
+    "codename": "delete_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 104,
+  "fields": {
+    "name": "Can view taskboard",
+    "content_type": 26,
+    "codename": "view_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 105,
+  "fields": {
+    "name": "Can add task deadline",
+    "content_type": 27,
+    "codename": "add_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 106,
+  "fields": {
+    "name": "Can change task deadline",
+    "content_type": 27,
+    "codename": "change_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 107,
+  "fields": {
+    "name": "Can delete task deadline",
+    "content_type": 27,
+    "codename": "delete_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 108,
+  "fields": {
+    "name": "Can view task deadline",
+    "content_type": 27,
+    "codename": "view_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 109,
+  "fields": {
+    "name": "Can add chat",
+    "content_type": 28,
+    "codename": "add_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 110,
+  "fields": {
+    "name": "Can change chat",
+    "content_type": 28,
+    "codename": "change_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 111,
+  "fields": {
+    "name": "Can delete chat",
+    "content_type": 28,
+    "codename": "delete_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 112,
+  "fields": {
+    "name": "Can view chat",
+    "content_type": 28,
+    "codename": "view_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 113,
+  "fields": {
+    "name": "Can add message",
+    "content_type": 29,
+    "codename": "add_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 114,
+  "fields": {
+    "name": "Can change message",
+    "content_type": 29,
+    "codename": "change_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 115,
+  "fields": {
+    "name": "Can delete message",
+    "content_type": 29,
+    "codename": "delete_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 116,
+  "fields": {
+    "name": "Can view message",
+    "content_type": 29,
+    "codename": "view_message"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 117,
+  "fields": {
+    "name": "Can add category",
+    "content_type": 30,
+    "codename": "add_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 118,
+  "fields": {
+    "name": "Can change category",
+    "content_type": 30,
+    "codename": "change_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 119,
+  "fields": {
+    "name": "Can delete category",
+    "content_type": 30,
+    "codename": "delete_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 120,
+  "fields": {
+    "name": "Can view category",
+    "content_type": 30,
+    "codename": "view_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 121,
+  "fields": {
+    "name": "Can add taskboard",
+    "content_type": 31,
+    "codename": "add_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 122,
+  "fields": {
+    "name": "Can change taskboard",
+    "content_type": 31,
+    "codename": "change_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 123,
+  "fields": {
+    "name": "Can delete taskboard",
+    "content_type": 31,
+    "codename": "delete_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 124,
+  "fields": {
+    "name": "Can view taskboard",
+    "content_type": 31,
+    "codename": "view_taskboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 125,
+  "fields": {
+    "name": "Can add user time category",
+    "content_type": 32,
+    "codename": "add_usertimecategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 126,
+  "fields": {
+    "name": "Can change user time category",
+    "content_type": 32,
+    "codename": "change_usertimecategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 127,
+  "fields": {
+    "name": "Can delete user time category",
+    "content_type": 32,
+    "codename": "delete_usertimecategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 128,
+  "fields": {
+    "name": "Can view user time category",
+    "content_type": 32,
+    "codename": "view_usertimecategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 129,
+  "fields": {
+    "name": "Can add task deadline",
+    "content_type": 33,
+    "codename": "add_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 130,
+  "fields": {
+    "name": "Can change task deadline",
+    "content_type": 33,
+    "codename": "change_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 131,
+  "fields": {
+    "name": "Can delete task deadline",
+    "content_type": 33,
+    "codename": "delete_taskdeadline"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 132,
+  "fields": {
+    "name": "Can view task deadline",
+    "content_type": 33,
+    "codename": "view_taskdeadline"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "team",
+    "model": "employee"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "team",
+    "model": "chat"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "team",
+    "model": "company"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "team",
+    "model": "department"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "team",
+    "model": "project"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "team",
+    "model": "task"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "team",
+    "model": "customization"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "team",
+    "model": "subtasks"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "team",
+    "model": "positions"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 15,
+  "fields": {
+    "app_label": "team",
+    "model": "message"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 16,
+  "fields": {
+    "app_label": "team",
+    "model": "taskimage"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 17,
+  "fields": {
+    "app_label": "team",
+    "model": "taskfile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 18,
+  "fields": {
+    "app_label": "team",
+    "model": "linksresources"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 19,
+  "fields": {
+    "app_label": "team",
+    "model": "employeecompany"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 20,
+  "fields": {
+    "app_label": "team",
+    "model": "subtaskimage"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 21,
+  "fields": {
+    "app_label": "team",
+    "model": "subtaskfile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 22,
+  "fields": {
+    "app_label": "team",
+    "model": "companyevent"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 23,
+  "fields": {
+    "app_label": "team",
+    "model": "companyeventimage"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 24,
+  "fields": {
+    "app_label": "team",
+    "model": "companyeventfile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 25,
+  "fields": {
+    "app_label": "team",
+    "model": "category"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 26,
+  "fields": {
+    "app_label": "team",
+    "model": "taskboard"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 27,
+  "fields": {
+    "app_label": "team",
+    "model": "taskdeadline"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 28,
+  "fields": {
+    "app_label": "chats",
+    "model": "chat"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 29,
+  "fields": {
+    "app_label": "chats",
+    "model": "message"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 30,
+  "fields": {
+    "app_label": "user_project",
+    "model": "category"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 31,
+  "fields": {
+    "app_label": "user_project",
+    "model": "taskboard"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 32,
+  "fields": {
+    "app_label": "user_project_time",
+    "model": "usertimecategory"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 33,
+  "fields": {
+    "app_label": "user_project_time",
+    "model": "taskdeadline"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "0kfixkymr511rhdcqqu89es2w98ip4oj",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGll4E_8o6XMGa23v4gCypTipEHeHSCmgfTPzXiLgtpawdVrCnMVFgDj9bhHTg-oO8h3rrcnU6rrMUe6KPGiXU8v0vB7u30HBXr41J2CwoBxrVFYxZjB-ZPSawblkMPpzBJ1GQm0GT6CIjXV5VDp7HKJ4fwDq_zgQ:1riZxK:MuepD1SVJGd_x1k_ubXy1gnZqjA2LU-8H_g-AoTuWiQ",
+    "expire_date": "2024-03-22T13:08:10.966Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "h9j5ep56lghgzmkxo0xeefqddg1k1dcp",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGln-7saU9JzBWv9wADlSnFSIu4OlFNC-mXkv5mnfqt97Xv2c2JlJdvrdAsVHbgOkO7XbwuPStnUOfCj8oJ1fl5Sfl8P9O6jU67e2mSQEyA6TM0aBLsJoAEwCpaKYCLForQeZylRAgZURUKOzwmEM7P0Bvzg2nA:1rnvjX:WQbHwU-SyyYnUPC5mKQ9ZPVthfK4qjMIbib03h2T69Q",
+    "expire_date": "2024-04-06T07:24:03.409Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "it9vz27w0lqcpxotwxymxm4ppf1f0oyx",
+  "fields": {
+    "session_data": ".eJxVjEsOwjAMBe-SNYoSEqsxS_acIXIcmxZQI_Wzqrg7VOoCtm9m3mYyrUuf11mmPFRzMcGcfrdC_JRxB_VB471ZbuMyDcXuij3obG-tyut6uH8HPc39t_YFuIOUmBFRxKOQr13t1CF7LMEzOVByqowhggZU0JRqLOcIDtC8P_gcOCQ:1rgeDD:7o7ZfHtIZmVFJYNouwYmf0yPG2PMctfWi_jo-U_nbK0",
+    "expire_date": "2024-03-17T05:16:35.220Z"
+  }
+},
+{
+  "model": "team.employee",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$lQY86F9ocWuBg1exBcuT8x$FQ90ltYtmGJueIxEQz0eYwgNta7z7OVyIm9bbDRxFck=",
+    "last_login": "2024-03-23T07:24:03.202Z",
+    "is_superuser": true,
+    "username": "User1",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-03-17T11:45:48Z",
+    "name": "User1",
+    "email": "user1@gmail.com",
+    "city": null,
+    "birthday": null,
+    "telephone": null,
+    "online_status": false,
+    "json_with_settings_info": {
+      "settings_info_about_company_employee": [
+        "image",
+        "name",
+        "email",
+        "telephone",
+        "position_title"
+      ]
+    },
+    "image": "",
+    "groups": [],
+    "user_permissions": [],
+    "tasks": [
+      49
+    ]
+  }
+},
+{
+  "model": "team.employee",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$iiUljw6tZwfpqX2omQaVCr$zbE3t5ScBAR7MYEBdZRH8sWldrMwdxQ7PBhmaaS5oB8=",
+    "last_login": "2024-03-23T07:19:51.821Z",
+    "is_superuser": false,
+    "username": "User2",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-03-17T11:47:41.709Z",
+    "name": "User2",
+    "email": "user2@gmail.com",
+    "city": null,
+    "birthday": null,
+    "telephone": null,
+    "online_status": false,
+    "json_with_settings_info": {
+      "settings_info_about_company_employee": [
+        "image",
+        "name",
+        "email",
+        "telephone",
+        "position_title"
+      ]
+    },
+    "image": "",
+    "groups": [],
+    "user_permissions": [],
+    "tasks": [
+      49,
+      45,
+      46,
+      48
+    ]
+  }
+},
+{
+  "model": "team.employee",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$v63C0249rj5LDO8XA508NQ$3wpIQ5dwQDOkW5YmsEaKadmvk/lGbCJMxqkcvPn131Q=",
+    "last_login": "2024-03-22T12:55:03.414Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-03-17T11:48:16.636Z",
+    "name": "",
+    "email": "admin@admin.com",
+    "city": null,
+    "birthday": null,
+    "telephone": null,
+    "online_status": false,
+    "json_with_settings_info": {
+      "settings_info_about_company_employee": [
+        "image",
+        "name",
+        "email",
+        "telephone",
+        "position_title"
+      ]
+    },
+    "image": "",
+    "groups": [],
+    "user_permissions": [],
+    "tasks": []
+  }
+},
+{
+  "model": "team.employee",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$t8zXutQwiCzTT5M8IbF3WT$uHLdZewGt//d22Ol9LEHLDUKWl44jgi5OsOakj8d/b4=",
+    "last_login": "2024-03-21T10:06:09.504Z",
+    "is_superuser": false,
+    "username": "User3",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-03-21T10:05:34.454Z",
+    "name": "User3",
+    "email": "user3@gmail.com",
+    "city": null,
+    "birthday": null,
+    "telephone": null,
+    "online_status": false,
+    "json_with_settings_info": {
+      "settings_info_about_company_employee": [
+        "image",
+        "name",
+        "email",
+        "telephone",
+        "position_title"
+      ]
+    },
+    "image": "",
+    "groups": [],
+    "user_permissions": [],
+    "tasks": [
+      47,
+      45
+    ]
+  }
+},
+{
+  "model": "team.company",
+  "pk": 1,
+  "fields": {
+    "title": "Company",
+    "owner_id": 1
+  }
+},
+{
+  "model": "team.employeecompany",
+  "pk": 1,
+  "fields": {
+    "company_id": 1,
+    "employee_id": 1,
+    "position_id": null,
+    "department_id": null
+  }
+},
+{
+  "model": "team.employeecompany",
+  "pk": 2,
+  "fields": {
+    "company_id": 1,
+    "employee_id": 2,
+    "position_id": null,
+    "department_id": null
+  }
+},
+{
+  "model": "team.employeecompany",
+  "pk": 3,
+  "fields": {
+    "company_id": 1,
+    "employee_id": 4,
+    "position_id": null,
+    "department_id": null
+  }
+},
+{
+  "model": "team.project",
+  "pk": 1,
+  "fields": {
+    "company_id": 1,
+    "title": "Project1",
+    "project_creater": 1,
+    "view_counter": 4,
+    "json_info_with_access_level": {},
+    "task_status": {
+      "status": {
+        "Accepted": 1,
+        "Work": 2,
+        "Inspection": 3,
+        "Revision": 4
+      }
+    }
+  }
+},
+{
+  "model": "team.project",
+  "pk": 2,
+  "fields": {
+    "company_id": 1,
+    "title": "Project2",
+    "project_creater": 1,
+    "view_counter": 4,
+    "json_info_with_access_level": {},
+    "task_status": {
+      "status": {
+        "Accepted": 1,
+        "Work": 2,
+        "Inspection": 3,
+        "Revision": 4
+      }
+    }
+  }
+},
+{
+  "model": "team.project",
+  "pk": 3,
+  "fields": {
+    "company_id": 1,
+    "title": "Project2",
+    "project_creater": 1,
+    "view_counter": 4,
+    "json_info_with_access_level": {},
+    "task_status": {
+      "status": {
+        "Accepted": 1,
+        "Work": 2,
+        "Inspection": 3,
+        "Revision": 4
+      }
+    }
+  }
+},
+{
+  "model": "team.task",
+  "pk": 45,
+  "fields": {
+    "project_id": 1,
+    "title": "task2",
+    "text": "",
+    "parent_id": null,
+    "json_with_employee_info": {
+      "appoint": [
+        "user1@gmail.com"
+      ],
+      "responsible": [
+        "user1@gmail.com"
+      ],
+      "executor": [
+        "user2@gmail.com",
+        "user3@gmail.com"
+      ]
+    },
+    "task_status": "",
+    "time_start": "2024-03-22T12:26:23.203Z",
+    "time_end": null
+  }
+},
+{
+  "model": "team.task",
+  "pk": 46,
+  "fields": {
+    "project_id": 1,
+    "title": "task3",
+    "text": "",
+    "parent_id": null,
+    "json_with_employee_info": {
+      "appoint": [
+        "user1@gmail.com"
+      ],
+      "responsible": [
+        "user2@gmail.com"
+      ],
+      "executor": [
+        "user2@gmail.com"
+      ]
+    },
+    "task_status": "",
+    "time_start": "2024-03-22T12:37:51.921Z",
+    "time_end": null
+  }
+},
+{
+  "model": "team.task",
+  "pk": 47,
+  "fields": {
+    "project_id": 1,
+    "title": "Task1",
+    "text": "TEXT",
+    "parent_id": null,
+    "json_with_employee_info": {
+      "appoint": [
+        "user1@gmail.com"
+      ],
+      "responsible": [
+        "user3@gmail.com"
+      ],
+      "executor": [
+        "user3@gmail.com"
+      ]
+    },
+    "task_status": "",
+    "time_start": null,
+    "time_end": null
+  }
+},
+{
+  "model": "team.task",
+  "pk": 48,
+  "fields": {
+    "project_id": 1,
+    "title": "task4",
+    "text": "TASK",
+    "parent_id": null,
+    "json_with_employee_info": {
+      "appoint": [
+        "user1@gmail.com"
+      ],
+      "responsible": [
+        "user3@gmail.com"
+      ],
+      "executor": [
+        "user2@gmail.com"
+      ]
+    },
+    "task_status": "",
+    "time_start": null,
+    "time_end": null
+  }
+},
+{
+  "model": "team.task",
+  "pk": 49,
+  "fields": {
+    "project_id": 1,
+    "title": "NEW TASK",
+    "text": "tASK",
+    "parent_id": null,
+    "json_with_employee_info": {
+      "appoint": [
+        "user1@gmail.com"
+      ],
+      "responsible": [
+        "user2@gmail.com"
+      ],
+      "executor": [
+        "user1@gmail.com",
+        "user2@gmail.com"
+      ]
+    },
+    "task_status": "",
+    "time_start": null,
+    "time_end": null
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 1,
+  "fields": {
+    "employee": 1,
+    "status": "Overtimed"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 2,
+  "fields": {
+    "employee": 1,
+    "status": "Today"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 3,
+  "fields": {
+    "employee": 1,
+    "status": "Tomorrow"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 4,
+  "fields": {
+    "employee": 1,
+    "status": "Week"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 5,
+  "fields": {
+    "employee": 1,
+    "status": "Month"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 6,
+  "fields": {
+    "employee": 1,
+    "status": "Not_soon"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 7,
+  "fields": {
+    "employee": 1,
+    "status": "Permanent"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 8,
+  "fields": {
+    "employee": 2,
+    "status": "Overtimed"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 9,
+  "fields": {
+    "employee": 2,
+    "status": "Today"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 10,
+  "fields": {
+    "employee": 2,
+    "status": "Tomorrow"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 11,
+  "fields": {
+    "employee": 2,
+    "status": "Week"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 12,
+  "fields": {
+    "employee": 2,
+    "status": "Month"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 13,
+  "fields": {
+    "employee": 2,
+    "status": "Not_soon"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 14,
+  "fields": {
+    "employee": 2,
+    "status": "Permanent"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 15,
+  "fields": {
+    "employee": 4,
+    "status": "Overtimed"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 16,
+  "fields": {
+    "employee": 4,
+    "status": "Today"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 17,
+  "fields": {
+    "employee": 4,
+    "status": "Tomorrow"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 18,
+  "fields": {
+    "employee": 4,
+    "status": "Week"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 19,
+  "fields": {
+    "employee": 4,
+    "status": "Month"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 20,
+  "fields": {
+    "employee": 4,
+    "status": "Not_soon"
+  }
+},
+{
+  "model": "user_project_time.usertimecategory",
+  "pk": 21,
+  "fields": {
+    "employee": 4,
+    "status": "Permanent"
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 85,
+  "fields": {
+    "task": 45,
+    "time_category": 21
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 86,
+  "fields": {
+    "task": 45,
+    "time_category": 14
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 88,
+  "fields": {
+    "task": 46,
+    "time_category": 14
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 98,
+  "fields": {
+    "task": 49,
+    "time_category": 14
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 99,
+  "fields": {
+    "task": 48,
+    "time_category": 14
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 100,
+  "fields": {
+    "task": 49,
+    "time_category": 7
+  }
+},
+{
+  "model": "user_project_time.taskdeadline",
+  "pk": 102,
+  "fields": {
+    "task": 47,
+    "time_category": 21
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 1,
+  "fields": {
+    "title": "Мои задачи",
+    "employee_id": 1,
+    "project_personal_notes": null
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 2,
+  "fields": {
+    "title": "Мои задачи",
+    "employee_id": 2,
+    "project_personal_notes": null
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 3,
+  "fields": {
+    "title": "New category",
+    "employee_id": 1,
+    "project_personal_notes": ""
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 4,
+  "fields": {
+    "title": "Category3",
+    "employee_id": 1,
+    "project_personal_notes": ""
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 5,
+  "fields": {
+    "title": "cats",
+    "employee_id": 1,
+    "project_personal_notes": ""
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 6,
+  "fields": {
+    "title": "Новая категория",
+    "employee_id": 1,
+    "project_personal_notes": ""
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 7,
+  "fields": {
+    "title": "Мои задачи",
+    "employee_id": 4,
+    "project_personal_notes": null
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 8,
+  "fields": {
+    "title": "1",
+    "employee_id": 1,
+    "project_personal_notes": ""
+  }
+},
+{
+  "model": "user_project.category",
+  "pk": 9,
+  "fields": {
+    "title": "My category",
+    "employee_id": 2,
+    "project_personal_notes": ""
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 144,
+  "fields": {
+    "category_id": 2,
+    "task_id": 45,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 145,
+  "fields": {
+    "category_id": 7,
+    "task_id": 45,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 147,
+  "fields": {
+    "category_id": 2,
+    "task_id": 46,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 178,
+  "fields": {
+    "category_id": 2,
+    "task_id": 48,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 179,
+  "fields": {
+    "category_id": 1,
+    "task_id": 49,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 180,
+  "fields": {
+    "category_id": 2,
+    "task_id": 49,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+},
+{
+  "model": "user_project.taskboard",
+  "pk": 185,
+  "fields": {
+    "category_id": 7,
+    "task_id": 47,
+    "title": "",
+    "task_personal_notes": {},
+    "json_with_subtask_and_subtask_personal_note": {}
+  }
+}
+]
