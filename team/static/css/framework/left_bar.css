@@ -1,0 +1,35 @@
+.my_tasks,
+.projects,
+.companies,
+.settings,
+.support {
+	display: flex;
+	width: 225px;
+	height: 50px;
+	align-items: center;
+	text-decoration: none;
+	color: white;
+	gap: 28px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	border-radius: 10px;
+}
+
+.left_bar img{
+	margin-left: 15px;
+	width: 24px;
+}
+
+/* 
+* * Animations
+ */
+
+.left_bar a:hover{
+	background-color: rgba(217, 217, 217, 0.3);
+}
+
+.left_bar a:focus{
+	background-color: rgba(217, 217, 217, 0.3);
+}
+
+

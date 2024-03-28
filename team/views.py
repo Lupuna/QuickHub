@@ -24,29 +24,13 @@ from QuickHub import utils as quickhub_utils
 # ///    Employee   ///
 
 
-class ChoiceParameters(FormView):
-    login_url = reverse_lazy('registration:login')
-    template_name = 'team/main_functionality/choice_parameters.html'
-    form_class = forms.ChoiceEmployeeParametersForm
-
-    def get_success_url(self):
-        return reverse_lazy('team:check_employee', kwargs={'company_id': self.kwargs['company_id']})
-
-    def form_valid(self, form):
-        self.request.user.json_with_settings_info["settings_info_about_company_employee"] = []
-        for item, flag in form.cleaned_data.items():
-            if flag: self.request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
-            self.request.user.save()
-        return super().form_valid(form)
-
-
 class UserCompaniesListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     model = models.Company
     template_name = 'team/main_functionality/list_views/user_companies.html'
     context_object_name = 'companies'
 
     def get_queryset(self):
-        return self.request.user.companies.distinct()
+        return self.request.user.companies.all()
 
 
 class UserProjectsListView(LoginRequiredMixin, ListView):
@@ -74,7 +58,7 @@ class UserProfileListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy('registration:login')
 
     def get_queryset(self):
-        return self.request.user.companies.distinct()
+        return self.request.user.companies.all()
 
 
 class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -236,6 +220,21 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, ListView):
             info_about_employees.append(info_about_employee)
         return info_about_employees
 
+class ChoiceParameters(FormView):
+    login_url = reverse_lazy('registration:login')
+    template_name = 'team/main_functionality/choice_parameters.html'
+    form_class = forms.ChoiceEmployeeParametersForm
+
+    def get_success_url(self):
+        return reverse_lazy('team:check_employee', kwargs={'company_id': self.kwargs['company_id']})
+
+    def form_valid(self, form):
+        self.request.user.json_with_settings_info["settings_info_about_company_employee"] = []
+        for item, flag in form.cleaned_data.items():
+            if flag: self.request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
+            self.request.user.save()
+        return super().form_valid(form)
+
 
 class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     model = models.Company
@@ -265,7 +264,14 @@ class PositionsListView(quickhub_utils.ModifiedDispatch, ListView):
         return self.kwargs['company'].positions.all()
 
 
-class DepartmentDetailView(DetailView):
+class PositionDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+    models = models.Positions
+    context_object_name = 'position'
+    template_name = 'team/main_functionality/detail_views/position.html'
+    pk_url_kwarg = 'position_id'
+
+
+class DepartmentDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'

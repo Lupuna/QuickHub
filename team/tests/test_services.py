@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.utils import timezone
-
 from team.services import tasks_service
 import team.models as team_models
 import team.forms as team_forms
@@ -9,7 +8,7 @@ import user_project_time.models as user_project_time_models
 
 class TestServices(TestCase):
     fixtures = ['data.json']
-    
+
     def setUp(self):
         self.user = team_models.Employee.objects.get(username='User 13')
         self.task = team_models.Task.objects.get(id=36)

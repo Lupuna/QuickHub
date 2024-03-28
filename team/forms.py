@@ -76,7 +76,7 @@ class CompanyEventCreationForm(forms.Form):
         time_start = self.cleaned_data['time_start']
         time_end = self.cleaned_data['time_end']
         if (time_end - time_start).total_seconds() <= 0:
-            raise ValidationError('Invalid start and end time', code='invalid')
+            raise ValidationError('Invalid start or end time', code='invalid')
         return time_end
 
 
