@@ -19,5 +19,4 @@ class TestUrls(SimpleTestCase):
 
     def test_add_task_url_is_resolve(self):
         url = reverse('user_project:add_task', args=[1])
-        print(resolve(url))
         self.assertEqual(resolve(url).func.view_class, user_project_views.CreateTaskboard)

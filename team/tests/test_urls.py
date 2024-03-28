@@ -97,3 +97,6 @@ class TestUrls(SimpleTestCase):
         url = reverse('team:change_password')
         self.assertEqual(resolve(url).func.view_class, team_views.UserPasswordChangeView)
 
+    def test_position_url_is_resolve(self):
+        url = reverse('team:position', args=[1, 1])
+        self.assertEqual(resolve(url).func.view_class, team_views.PositionDetailView)
