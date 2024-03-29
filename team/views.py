@@ -4,20 +4,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, UpdateView, FormMixin
+from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse_lazy
-from django.utils import timezone 
 from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
 
-from . import forms, models, utils, permissions
-from .services import tasks_service, projects_service
-from user_project_time import (
-    models as upt_models,
-    forms as upt_forms,
-    utils as upt_utils,
-    services as upt_services
-    )
+from . import forms, models, utils
+from .services import tasks_service
 from QuickHub import utils as quickhub_utils
 
 
