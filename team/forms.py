@@ -26,6 +26,7 @@ class ChoiceEmployeeParametersForm(forms.Form):
     telephone = forms.BooleanField(required=False)
     position_title = forms.BooleanField(required=False)
     department = forms.BooleanField(required=False)
+    vk = forms.BooleanField(required=False)
 
 
 class DepartmentCreationForm(forms.Form):

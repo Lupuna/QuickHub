@@ -56,6 +56,10 @@ class LinksResources(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        self.title = self.title.lower()
+        super().save(*args, **kwargs)
+
     def get_info(self):
         return {self.title: self.link}
 

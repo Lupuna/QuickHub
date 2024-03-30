@@ -92,7 +92,7 @@ class CreateCompany(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(company)
 
 
-class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.PositionCreationForm
 
     def form_valid(self, form):
@@ -103,7 +103,7 @@ class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixi
         return super().form_valid(position)
 
 
-class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.CompanyEventCreationForm
 
     def get_form_kwargs(self):
@@ -131,7 +131,7 @@ class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.Creator
         return super().form_valid(form)
 
 
-class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.DepartmentCreationForm
 
     def get_form_kwargs(self):
@@ -155,7 +155,6 @@ class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMi
         if department.supervisor not in employees:
             employees += [department.supervisor]
 
-
         for employee in employees:
             employee_company = models.EmployeeCompany.objects \
                 .filter(employee_id=employee,
@@ -175,43 +174,43 @@ class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMi
         return super().form_valid(department)
 
 
-class CheckEmployee(quickhub_utils.ModifiedDispatch, ListView):
+class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     template_name = 'team/main_functionality/list_views/company_employees.html'
     model = models.Employee
-    paginate_by = 10
+    paginate_by = 5
     login_url = reverse_lazy('registration:login')
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         company = self.kwargs['company']
-        # prefetch_related('links', 'positions', 'departments')
-        employees = company.employees.prefetch_related('links').all()
+        employees_company = models.EmployeeCompany.objects.select_related('employee_id').prefetch_related('position_id', 'department_id').filter(company_id=company)
+        employees = models.Employee.objects.prefetch_related('links').filter(id__in=employees_company.values_list('employee_id', flat=True))
         info_about_employees = []
-        for employee in employees:
+        for employee_company, employee in zip(employees_company, employees):
             info_about_employee = dict(
-                filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
+                filter(lambda x: x[0] in info_filter_about_employee, employee_company.employee_id.get_all_info().items()))
             for link in employee.links.all():
                 if link.title in info_filter_about_employee:
                     info_about_employee.update(link.get_info())
-
             if 'position_title' in info_filter_about_employee:
-                position = employee.positions.filter(company_id=company)
+                position = employee_company.position_id
                 if position:
-                    position = position[0].title
+                    position = position.title
                 else:
                     position = None
                 info_about_employee.update({'position_title': position})
 
             if 'department' in info_filter_about_employee:
-                department = employee.departments.filter(company_id=company)
+                department = employee_company.department_id
                 if department:
-                    department = department[0].title
+                    department = department.title
                 else:
                     department = None
                 info_about_employee.update({'department': department})
 
             info_about_employees.append(info_about_employee)
         return info_about_employees
+
 
 class ChoiceParameters(FormView):
     login_url = reverse_lazy('registration:login')

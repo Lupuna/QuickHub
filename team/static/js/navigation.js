@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newContent = doc.querySelector('.content').innerHTML
 
                 contentDiv.classList.add('fade_out');
-                
+
 
                 contentDiv.innerHTML = newContent;
                 document.title = doc.title
