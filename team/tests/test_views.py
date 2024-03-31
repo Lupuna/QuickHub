@@ -77,6 +77,14 @@ class TestEmployeeView(SettingsView):
 
 class TestCompanyView(SettingsView):
 
+    def setUp(self):
+        super().setUp()
+        self.department = team_models.Department.objects.create(
+            company_id=self.company,
+            title='test_title_1',
+            supervisor=self.employee
+        )
+
     def test_create_company(self):
         url = reverse('team:create_company')
         template = 'includes/creator.html'
@@ -158,6 +166,115 @@ class TestCompanyView(SettingsView):
             view.setup(request, company=self.company)
             with self.assertNumQueries(3):
                 view.get_queryset()
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_choice_parameters(self):
+        url = reverse('team:choice_parameters', args=[self.company.id])
+        template = 'team/main_functionality/choice_parameters.html'
+        request = self.factory.get(url)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.ChoiceParameters()
+            view.setup(request, company_id=self.company.id)
+            correct_meaning = reverse('team:check_employee', kwargs={'company_id': self.company.id})
+            self.assertEqual(correct_meaning, view.get_success_url())
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_company_detail_view(self):
+        url = reverse('team:company', args=[self.company.id])
+        template = 'team/main_functionality/detail_views/company.html'
+        request = self.factory.get(url, company_id=self.company.id)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.CompanyDetailView()
+            view.setup(request, company=self.company)
+            with self.subTest('test get_object'):
+                correct_meaning = self.company
+                self.assertEqual(correct_meaning, view.get_object())
+
+            with self.subTest('test get_context_data'):
+                correct_meaning = view.get_object().departments.select_related('supervisor').prefetch_related('childs') \
+                    .filter(parent_id=None)
+                with self.assertNumQueries(2):
+                    self.assertQuerySetEqual(correct_meaning, response.context['roots'])
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_positions_list_view(self):
+        url = reverse('team:positions_list', args=[self.company.id])
+        template = 'team/main_functionality/list_views/positions.html'
+        request = self.factory.get(url, company_id=self.company.id)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.PositionsListView()
+            view.setup(request, company=self.company)
+            correct_meaning = self.company.positions.all()
+            self.assertQuerySetEqual(correct_meaning, view.get_queryset(), ordered=False)
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_department_detail_view(self):
+        url = reverse('team:department', args=[self.company.id, self.department.id])
+        template = 'team/main_functionality/detail_views/department.html'
+        request = self.factory.get(url, company_id=self.company.id, department_id=self.department.id)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.DepartmentDetailView()
+            view.setup(request, company=self.company, department_id=self.department.id)
+            correct_meaning = team_models.Department.objects.select_related('supervisor').get(id=self.department.id)
+            with self.assertNumQueries(1):
+                self.assertEqual(correct_meaning, view.get_object())
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_departments_list_view(self):
+        url = reverse('team:departments_list', args=[self.company.id])
+        template = 'team/main_functionality/list_views/departments.html'
+        request = self.factory.get(url, company=self.company)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.DepartmentsListView()
+            view.setup(request, company=self.company)
+            correct_meaning = self.company.departments.all()
+            with self.assertNumQueries(2):
+                self.assertQuerySetEqual(correct_meaning, view.get_queryset())
 
         with self.subTest('not auth user POST'):
             response = self.client.get(url)

@@ -212,7 +212,7 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListVie
         return info_about_employees
 
 
-class ChoiceParameters(FormView):
+class ChoiceParameters(LoginRequiredMixin, FormView):
     login_url = reverse_lazy('registration:login')
     template_name = 'team/main_functionality/choice_parameters.html'
     form_class = forms.ChoiceEmployeeParametersForm
@@ -228,7 +228,7 @@ class ChoiceParameters(FormView):
         return super().form_valid(form)
 
 
-class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class CompanyDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Company
     template_name = 'team/main_functionality/detail_views/company.html'
     context_object_name = 'company'
@@ -247,7 +247,7 @@ class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
         return context
 
 
-class PositionsListView(quickhub_utils.ModifiedDispatch, ListView):
+class PositionsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     model = models.Positions
     template_name = 'team/main_functionality/list_views/positions.html'
     context_object_name = 'positions'
@@ -256,14 +256,14 @@ class PositionsListView(quickhub_utils.ModifiedDispatch, ListView):
         return self.kwargs['company'].positions.all()
 
 
-class PositionDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class PositionDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     models = models.Positions
     context_object_name = 'position'
     template_name = 'team/main_functionality/detail_views/position.html'
     pk_url_kwarg = 'position_id'
 
 
-class DepartmentDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class DepartmentDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'
@@ -275,7 +275,7 @@ class DepartmentDetailView(quickhub_utils.ModifiedDispatch, DetailView):
             .get(id=self.kwargs[self.pk_url_kwarg])
 
 
-class DepartmentsListView(quickhub_utils.ModifiedDispatch, ListView):
+class DepartmentsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     model = models.Department
     template_name = 'team/main_functionality/list_views/departments.html'
     context_object_name = 'departments'
