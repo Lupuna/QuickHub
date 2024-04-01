@@ -46,17 +46,12 @@ input::placeholder{
 .content {
 	grid-area: content;
 	padding-right: 20px;
+	margin-bottom: 30px;	
+	margin-left: 5px;
 }
 
 .left_bar {
 	grid-area: left_bar;
-}
-
-.content {
-	grid-area: content;
-	margin-bottom: 30px;	
-	margin-right: 20px ;
-	margin-left: 5px;
 }
 
 .loading_overlay {

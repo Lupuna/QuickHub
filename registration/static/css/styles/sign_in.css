@@ -1,0 +1,86 @@
+h1 {
+    color: rgb(65, 95, 243);
+    font-size: 48px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.create_account {
+    display: flex;
+    gap: 20px;
+}
+
+.create_account p {
+    margin: 0;
+    color: black;
+}
+
+.create_account a,
+.forgot_password {
+    text-decoration: none;
+    color: rgb(65, 95, 243);
+}
+
+.account_name ::placeholder,
+.password ::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.account_name,
+.password {
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px 3px rgba(0, 0, 0, 0.2);
+    height: 55px;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 20px;
+}
+
+.account_name input,
+.password input {
+    width: 410px;
+    background: none;
+    border: none;
+    outline: none;
+    color: black;
+}
+
+.account_name img,
+.password img {
+    
+}
+
+.log_in {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.log_in button {
+    width: 150px;
+    height: 50px;
+    border: none;
+    border-radius: 40px;
+    background: rgb(65, 95, 243);
+    color: rgb(255, 255, 255);
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.remember_password {
+    display: flex;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.4);
+    gap: 10px;
+}
+
+.remember_password input{
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+}
+
+.forgot_password{
+    text-align: center;
+}
