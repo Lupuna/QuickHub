@@ -20,33 +20,8 @@
         </left_part>
 
         <content class="content">
-            <h1>Авторизация</h1>
-            <div class="create_account">
-                <p>У вас нет аккаунта?</p>
-                <a href="#">Создайте аккаунт</a>
-            </div>
-
-            <div class="account_name">
-                <input type="text" placeholder="Логин">
-                <img src="{% static 'img/login/login.svg' %}" alt="">
-            </div>
-
-            <div class="password">
-                <input type="text" placeholder="Пароль">
-                <img src="{% static 'img/login/password.svg' %}" alt="">
-            </div>
-
-            <div class="log_in">
-                <button>Войти</button>
-
-                <div class="remember_password">
-                    <input type="checkbox" checked>
-                    Запомнить пароль
-                </div>
-
-            </div>
-
-            <a href="#" class = 'forgot_password'>Забыли пароль?</a>
+            {%block content%}
+            {%endblock%}
         </content>
 
 

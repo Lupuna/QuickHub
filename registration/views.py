@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import login
-
+from django.contrib.auth.views import LoginView
+from registration import forms as reg_form
 from user_project import services as up
 from user_project_time import (
     services as upt_services,
@@ -9,6 +10,11 @@ from user_project_time import (
     )
 
 from . import forms as registration_forms
+
+
+class LoginCustom(LoginView):
+    template_name = "registration/sign_in.html"
+    form_class = reg_form.AuthenticationFormCustom
 
 
 def sign_up(request):
