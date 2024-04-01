@@ -188,7 +188,7 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListVie
         info_about_employees = []
         for employee_company, employee in zip(employees_company, employees):
             info_about_employee = dict(
-                filter(lambda x: x[0] in info_filter_about_employee, employee_company.employee_id.get_all_info().items()))
+                filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
             for link in employee.links.all():
                 if link.title in info_filter_about_employee:
                     info_about_employee.update(link.get_info())
@@ -224,7 +224,8 @@ class ChoiceParameters(LoginRequiredMixin, FormView):
         self.request.user.json_with_settings_info["settings_info_about_company_employee"] = []
         for item, flag in form.cleaned_data.items():
             if flag: self.request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
-            self.request.user.save()
+        self.request.user.json_with_settings_info["settings_info_about_company_employee"].append('online')
+        self.request.user.save()
         return super().form_valid(form)
 
 
