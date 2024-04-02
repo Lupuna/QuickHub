@@ -46,9 +46,10 @@ h1 {
     color: black;
 }
 
-.account_name img,
-.password img {
-    
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }
 
 .log_in {
@@ -83,4 +84,10 @@ h1 {
 
 .forgot_password{
     text-align: center;
+}
+
+.error{
+    position: relative;
+    font-size: 16px;
+    color: rgba(255, 73, 73);
 }

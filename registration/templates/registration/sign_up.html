@@ -3,9 +3,30 @@
 {% block title %}QuickHub: sing_up{%endblock%}
 
 {% block content %}
-    <form method="post">
+
+    <h1>Регистрация</h1>
+    <div class="sign_in_account">
+        <p>У Вас уже есть аккаунт?</p>
+        <a href="{% url 'registration:sign_in' %}">Войти</a>
+    </div>
+
+    <form action="{%url 'registration:login'%}" method="post">
         {%csrf_token%}
-        {{form.as_p}}
-        <button type="submit">Register</button>
-    </form>
+
+        <div class="account_name">
+            {{form.username}}
+            <img src="{% static 'img/login/login.svg' %}" alt="">
+        </div>
+
+        <div class="password">
+            {{form.password}}
+            <img src="{% static 'img/login/password.svg' %}" alt="">
+        </div>
+        {% for error in form.non_field_errors %}
+            <div class="error">{{ error }}</div>
+        {% endfor %}
+
+        <div class="sigh_in">
+
+            <button type="submit" >Зарегистрироваться</button>
 {%endblock%}
