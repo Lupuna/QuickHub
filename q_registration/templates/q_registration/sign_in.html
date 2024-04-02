@@ -1,4 +1,4 @@
-{% extends 'registration/login.html' %}
+{% extends 'q_registration/login.html' %}
 {% load static %}
 
 {%block title%} Log-in {%endblock%}
@@ -30,11 +30,10 @@
             <button type="submit" value="login">Войти</button>
 
             <div class="remember_password">
-                <input type="checkbox" checked>
-                Запомнить пароль
+                {{form.remember_me}} Запомнить пароль
             </div>
         </div>
 
     </form>
-    <a href="#" class = 'forgot_password'>Забыли пароль?</a>
+    <a href="{% url 'registration:password_reset' %}" class = 'forgot_password'>Забыли пароль?</a>
 {%endblock%}

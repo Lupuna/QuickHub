@@ -23,3 +23,5 @@ class AuthenticationFormCustom(AuthenticationForm):
             'placeholder': 'Пароль',
         }),
     )
+
+    remember_me = forms.BooleanField(initial=True, required=False)

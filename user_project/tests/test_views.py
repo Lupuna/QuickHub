@@ -21,7 +21,7 @@ class TestViews(TestCase):
         self.create_taskboard_url = reverse('user_project:create_taskboard')
         self.taskboard_url = reverse('user_project:taskboard')
         self.taskboard_edit_url = reverse('user_project:add_task', args=[1])
-        # self.login_url = reverse('registration:login')
+        # self.login_url = reverse('q_registration:login')
 
         self.taskboard_template = 'user_project/main_functionality/taskboard.html'
         self.creation_template = 'includes/creator.html'

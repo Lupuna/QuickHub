@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'registration.apps.RegistrationConfig',
+    'q_registration.apps.RegistrationConfig',
     'team.apps.TeamConfig',
     'chats.apps.ChatsConfig',
     'user_project_time.apps.UserProjectTimeConfig',
@@ -126,7 +126,7 @@ if DEBUG:
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, "static"),
         os.path.join(BASE_DIR, "team\static"),
-        os.path.join(BASE_DIR, "registration\static"),
+        os.path.join(BASE_DIR, "q_registration\static"),
         os.path.join(BASE_DIR, "user_project\static"),
         os.path.join(BASE_DIR, "user_project_time\static"),
     ]
