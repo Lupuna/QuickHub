@@ -18,9 +18,9 @@
             {{form.password}}
             <img src="{% static 'img/login/password.svg' %}" alt="">
         </div>
-        {% for error in form.non_field_errors %}
-            <div>{{ error }}</div>
-        {% endfor %}
+        {% if form.non_field_errors %}
+            <div>Неверный логин или пароль</div>
+        {% endif %}
 
         <div class="log_in">
             <button type="submit" value="login">Войти</button>
@@ -32,9 +32,4 @@
         </div>
     </form>
     <a href="#" class = 'forgot_password'>Забыли пароль?</a>
-  <form action="{%url 'registration:login'%}" method="post">
-    {%csrf_token%}
-    {{form.as_p}}
-    <button type="submit" value="login">Login</button>
-  </form>
 {%endblock%}
