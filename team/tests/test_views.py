@@ -279,3 +279,27 @@ class TestCompanyView(SettingsView):
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
             self.assertEqual(302, response.status_code)
+
+
+class TestProjectView(SettingsView):
+
+    def test_positions_list_view(self):
+        url = reverse('team:positions_list', args=[self.company.id])
+        template = 'team/main_functionality/list_views/positions.html'
+        request = self.factory.get(url, company=self.company)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.PositionsListView()
+            view.setup(request, company=self.company)
+            correct_meaning = self.company.positions.all()
+            with self.assertNumQueries(2):
+                self.assertQuerySetEqual(correct_meaning, view.get_queryset(), ordered=False)
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
