@@ -303,3 +303,4 @@ class TestProjectView(SettingsView):
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
             self.assertEqual(302, response.status_code)
+
