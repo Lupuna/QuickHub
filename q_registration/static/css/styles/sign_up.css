@@ -1,22 +1,14 @@
-h1 {
-    color: rgb(65, 95, 243);
-    font-size: 48px;
-    font-weight: 500;
-    margin: 0;
-}
-
-.sign_in_account {
+.sign_up_account {
     display: flex;
     gap: 20px;
 }
 
-.sign_in_account p {
+.sign_up_account p {
     margin: 0;
     color: black;
 }
 
-.sign_in_account a,
-.forgot_password {
+.sign_up_account a {
     text-decoration: none;
     color: rgb(65, 95, 243);
 }
@@ -26,8 +18,25 @@ h1 {
     color: rgba(0, 0, 0, 0.4);
 }
 
-.account_name,
-.password {
+.name {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.name div {
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px 3px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    height: 55px;
+    padding-inline: 20px;
+}
+
+.password,
+.email,
+.password1,
+.password2 {
     display: flex;
     border-radius: 10px;
     box-shadow: 0px 4px 16px 3px rgba(0, 0, 0, 0.2);
@@ -37,23 +46,14 @@ h1 {
     padding-inline: 20px;
 }
 
-.account_name input,
-.password input {
-    width: 410px;
-    background: none;
-    border: none;
-    outline: none;
-    color: black;
-}
-
-.sigh_in {
+.sign_up {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.sigh_in button {
-    width: 150px;
+.sign_up button {
+    width: 324px;
     height: 50px;
     border: none;
     border-radius: 40px;
@@ -63,8 +63,23 @@ h1 {
     font-weight: 500;
 }
 
-/* .error{
-    position: relative;
-    font-size: 16px;
-    color: rgba(255, 73, 73);
-} */
+.agreement,
+.password_requirements {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 14px;
+    line-height: 150%;
+}
+
+.password_requirements {
+    margin-left: 35px;
+}
+
+.agreement a {
+    color: rgb(65, 95, 243);
+}
+
+.enter_password{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

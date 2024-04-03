@@ -1,33 +1,54 @@
-{% extends 'q_registration/login.html' %}
-{% load static %}
+<h1>Регистрация</h1>
+            <div class="sign_up_account">
+                <p>У Вас уже есть аккаунт?</p>
+                <a href="#">Войти</a>
+            </div>
 
-{% block title %}QuickHub: sing_up{%endblock%}
+            <form action="#" method="post">
 
-{% block content %}
+                <div class="name">
 
-    <h1>Регистрация</h1>
-    <div class="sign_in_account">
-        <p>У Вас уже есть аккаунт?</p>
-        <a href="{% url 'registration:sign_up' %}">Войти</a>
-    </div>
+                    <div class="first_name">
+                        <input type="text" placeholder="Имя">
+                    </div>
 
-    <form action="{%url 'registration:login'%}" method="post">
-        {%csrf_token%}
+                    <div class="second_name">
+                        <input type="text" placeholder="Фамилия">
+                    </div>
 
-        <div class="account_name">
-            {{form.username}}
-            <img src="{% static 'img/login/login.svg' %}" alt="">
-        </div>
+                </div>
 
-        <div class="password">
-            {{form.password}}
-            <img src="{% static 'img/login/password.svg' %}" alt="">
-        </div>
-        {% for error in form.non_field_errors %}
-            <div class="error">{{ error }}</div>
-        {% endfor %}
+                <div class="email">
+                    <input type="text" placeholder="Почта">
+                </div>
 
-        <div class="sigh_in">
-            <button type="submit" >Зарегистрироваться</button>
-        </div>
-{%endblock%}
+                <div class="enter_password">
+                    <div class="password1">
+                        <input type="text" placeholder="Пароль">
+                    </div>
+
+                    <div class="password_requirements">
+                        <li>Пароль должен содержать не менее 8 символов</li>
+                        <li>Как минимум одна заглавная и одна строчная буква</li>
+                        <li>Должна быть как минимум 1 цифра</li>
+                        <li>Допускается наличие следующих символов: </li>
+                    </div>
+
+                    <div class="password2">
+                        <input type="text" placeholder="Повторите пароль">
+                    </div>
+                </div>
+
+
+            </form>
+
+            <div class="agreement">
+                Регистрируясь, вы подтверждаете, что принимаете <a href="#">Пользовательское соглашение</a> и <a
+                    href="#">Согласие</a> на обработку персональных данных.
+            </div>
+
+            <div class="sign_up">
+                <button type="submit">Зарегистрироваться</button>
+            </div>
+
+            
