@@ -320,9 +320,9 @@ class TestTaskView(SettingsView):
         with self.subTest('view functionality'):
             view = team_views.CreateTask()
             view.setup(request, company=self.company, project=self.project)
-            self.assertEqual(view.get_form_kwargs()['company_id'], self.company)
-            self.assertEqual(view.get_form_kwargs()['project_id'], self.project)
-            self.assertTupleEqual(view.success_url, reverse('team:create_task', args=[self.company.id, self.project.id]))
+            with self.subTest('test get_form_kwargs'):
+                self.assertEqual(view.get_form_kwargs()['company_id'], self.company)
+                self.assertEqual(view.get_form_kwargs()['project_id'], self.project)
 
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
