@@ -279,3 +279,9 @@ class TestCompanyView(SettingsView):
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
             self.assertEqual(302, response.status_code)
+
+
+class TestProjectView(SettingsView):
+
+    def test_create_project(self):
+        pass

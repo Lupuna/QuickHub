@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'q_registration/login.html' %}
+{% load static %}
 
 {% block title %}QuickHub: sing_up{%endblock%}
 
@@ -7,7 +8,7 @@
     <h1>Регистрация</h1>
     <div class="sign_in_account">
         <p>У Вас уже есть аккаунт?</p>
-        <a href="{% url 'registration:sign_in' %}">Войти</a>
+        <a href="{% url 'registration:sign_up' %}">Войти</a>
     </div>
 
     <form action="{%url 'registration:login'%}" method="post">
@@ -27,6 +28,6 @@
         {% endfor %}
 
         <div class="sigh_in">
-
             <button type="submit" >Зарегистрироваться</button>
+        </div>
 {%endblock%}
