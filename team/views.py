@@ -318,7 +318,7 @@ class ProjectDetailView(quickhub_utils.ModifiedDispatch, DetailView):
 # ///   Task    ///
 
 
-class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.TaskCreationForm
     success_url = reverse_lazy('team:create_task')
 

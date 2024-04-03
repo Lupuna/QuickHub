@@ -304,3 +304,26 @@ class TestProjectView(SettingsView):
             response = self.client.get(url)
             self.assertEqual(302, response.status_code)
 
+
+class TestTaskView(SettingsView):
+
+    def test_create_task_view(self):
+        url = reverse('team:create_task', args=[self.company.id, self.project.id])
+        template = 'includes/creator.html'
+        request = self.factory.get(url, company=self.company, project=self.project)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.CreateTask()
+            view.setup(request, company=self.company, project=self.project)
+            self.assertEqual(view.get_form_kwargs()['company_id'], self.company)
+            self.assertEqual(view.get_form_kwargs()['project_id'], self.project)
+            self.assertTupleEqual(view.success_url, reverse('team:create_task', args=[self.company.id, self.project.id]))
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)

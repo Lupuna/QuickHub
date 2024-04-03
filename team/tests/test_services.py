@@ -139,7 +139,7 @@ class TestServices(TestCase):
                 self.assertEqual(user_time_category, task_time_category)
 
     def test_update_task_deadline_START_END_ARE_NOT_NONE(self):
-        start = timezone.datetime(2024, 3, 10, 13, 17, 26, 134531, tzinfo=timezone.utc)
+        start = timezone.now()
         end = timezone.datetime(2024, 4, 10, 13, 17, 26, 134531, tzinfo=timezone.utc)
 
         task = tasks_service.update_task_deadline(
