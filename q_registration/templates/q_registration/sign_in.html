@@ -1,4 +1,4 @@
-{% extends 'registration/login.html' %}
+{% extends 'q_registration/login.html' %}
 {% load static %}
 
 {%block title%} Log-in {%endblock%}
@@ -8,28 +8,32 @@
         <p>У вас нет аккаунта?</p>
         <a href="{% url 'registration:sign_up' %}">Создайте аккаунт</a>
     </div>
+
     <form action="{%url 'registration:login'%}" method="post">
         {%csrf_token%}
+
         <div class="account_name">
             {{form.username}}
             <img src="{% static 'img/login/login.svg' %}" alt="">
         </div>
+
         <div class="password">
             {{form.password}}
             <img src="{% static 'img/login/password.svg' %}" alt="">
         </div>
-        {% if form.non_field_errors %}
-            <div>Неверный логин или пароль</div>
-        {% endif %}
+        {% for error in form.non_field_errors %}
+            <div class="error">{{ error }}</div>
+        {% endfor %}
 
         <div class="log_in">
+
             <button type="submit" value="login">Войти</button>
 
             <div class="remember_password">
-                <input type="checkbox" checked>
-                Запомнить пароль
+                {{form.remember_me}} Запомнить пароль
             </div>
         </div>
+
     </form>
-    <a href="#" class = 'forgot_password'>Забыли пароль?</a>
+    <a href="{% url 'registration:password_reset' %}" class = 'forgot_password'>Забыли пароль?</a>
 {%endblock%}

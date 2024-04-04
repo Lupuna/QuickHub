@@ -1,0 +1,85 @@
+.sign_up_account {
+    display: flex;
+    gap: 20px;
+}
+
+.sign_up_account p {
+    margin: 0;
+    color: black;
+}
+
+.sign_up_account a {
+    text-decoration: none;
+    color: rgb(65, 95, 243);
+}
+
+.account_name ::placeholder,
+.password ::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.name {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.name div {
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px 3px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    height: 55px;
+    padding-inline: 20px;
+}
+
+.password,
+.email,
+.password1,
+.password2 {
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px 3px rgba(0, 0, 0, 0.2);
+    height: 55px;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 20px;
+}
+
+.sign_up {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sign_up button {
+    width: 324px;
+    height: 50px;
+    border: none;
+    border-radius: 40px;
+    background: rgb(65, 95, 243);
+    color: rgb(255, 255, 255);
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.agreement,
+.password_requirements {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 14px;
+    line-height: 150%;
+}
+
+.password_requirements {
+    margin-left: 35px;
+}
+
+.agreement a {
+    color: rgb(65, 95, 243);
+}
+
+.enter_password{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

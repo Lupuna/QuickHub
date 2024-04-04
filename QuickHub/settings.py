@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'registration.apps.RegistrationConfig',
+    'q_registration.apps.RegistrationConfig',
     'team.apps.TeamConfig',
     'chats.apps.ChatsConfig',
     'user_project_time.apps.UserProjectTimeConfig',
@@ -86,16 +86,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'sistemyurf',
-#         'USER': 'sistemyurf',
-#         'PASSWORD': 'UGU*TS67YSLTWhSS',
-#         'HOST': ' pg3.sweb.ru',
-#         'PORT': '5432'
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -136,7 +126,7 @@ if DEBUG:
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, "static"),
         os.path.join(BASE_DIR, "team\static"),
-        os.path.join(BASE_DIR, "registration\static"),
+        os.path.join(BASE_DIR, "q_registration\static"),
         os.path.join(BASE_DIR, "user_project\static"),
         os.path.join(BASE_DIR, "user_project_time\static"),
     ]
@@ -156,17 +146,19 @@ LOGOUT_REDIRECT_URL = '/team'
 
 ASGI_APPLICATION = "QuickHub.asgi.application"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST_USER = 'QuickHub@yandex.ru'
-EMAIL_HOST_PASSWORD = 'gobtppibaxzfeqyj'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-SERVER_EMAIL = EMAIL_HOST_USER
-EMAIL_ADMIN = EMAIL_HOST_USER
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#
+# EMAIL_HOST_USER = 'QuickHub@yandex.ru'
+# EMAIL_HOST_PASSWORD = 'gobtppibaxzfeqyj'
+# EMAIL_HOST = 'smtp.yandex.ru'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+#
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# SERVER_EMAIL = EMAIL_HOST_USER
+# EMAIL_ADMIN = EMAIL_HOST_USER
 
 FIXTURE_DIRS = [
     'fixtures',

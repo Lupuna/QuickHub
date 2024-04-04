@@ -48,14 +48,14 @@ class UserProfileListView(LoginRequiredMixin, ListView):
     model = models.Company
     template_name = 'team/main_functionality/list_views/user_profile.html'
     context_object_name = 'companies'
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
 
     def get_queryset(self):
         return self.request.user.companies.all()
 
 
 class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
     success_url = reverse_lazy('team:user_profile')
     model = models.Employee
     template_name = quickhub_utils.creator
@@ -72,7 +72,7 @@ class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     form_class = forms.SetPasswordForm
     template_name = quickhub_utils.creator
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
     extra_context = {'button': 'update'}
     success_url = reverse_lazy('team:user_profile')
     success_message = 'Ваш пароль был успешно изменен!'
@@ -178,7 +178,7 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListVie
     template_name = 'team/main_functionality/list_views/company_employees.html'
     model = models.Employee
     paginate_by = 5
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
@@ -216,7 +216,7 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListVie
 
 
 class ChoiceParameters(LoginRequiredMixin, FormView):
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
     template_name = 'team/main_functionality/choice_parameters.html'
     form_class = forms.ChoiceEmployeeParametersForm
 
@@ -452,6 +452,6 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
 # ///   Else    ///
 
 
-@login_required(login_url=reverse_lazy('registration:login'))
+@login_required(login_url=reverse_lazy('q_registration:login'))
 def homepage(request):
     return render(request, 'team/main_functionality/homepage.html')
