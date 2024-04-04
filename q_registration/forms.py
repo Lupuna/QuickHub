@@ -5,9 +5,20 @@ from django import forms
 
 
 class CustomUserCreationFrom(UserCreationForm):
+
     class Meta:
         model = team_models.Employee
         fields = ('name', 'username', 'email', 'password1', 'password2')
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Имя'}),
+            'username': forms.TextInput(attrs={'placeholder': 'Логин'}),
+            'email': forms.TextInput(attrs={'placeholder': 'Почта'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationFrom, self).__init__(*args, **kwargs)
+        self.fields['password1'].widget = forms.PasswordInput(attrs={'placeholder': 'Пароль'})
+        self.fields['password2'].widget = forms.PasswordInput(attrs={'placeholder': 'Подтвердите пароль'})
 
 
 class AuthenticationFormCustom(AuthenticationForm):
