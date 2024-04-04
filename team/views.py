@@ -35,12 +35,12 @@ class UserProjectsListView(LoginRequiredMixin, ListView):
         tasks = self.request.user.tasks.select_related('project_id')
         projects_ids = tasks.values_list('project_id', flat=True)
 
-        projects = models.Project.objects\
-            .filter(id__in=projects_ids)\
+        projects = models.Project.objects \
+            .filter(id__in=projects_ids) \
             .annotate(
-                tasks_count=Count('tasks'),
-                ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
-            )
+            tasks_count=Count('tasks'),
+            ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
+        )
         return projects
 
 
@@ -183,8 +183,11 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListVie
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         company = self.kwargs['company']
-        employees_company = models.EmployeeCompany.objects.select_related('employee_id').prefetch_related('position_id', 'department_id').filter(company_id=company)
-        employees = models.Employee.objects.prefetch_related('links').filter(id__in=employees_company.values_list('employee_id', flat=True))
+        employees_company = models.EmployeeCompany.objects.select_related('employee_id').prefetch_related('position_id',
+                                                                                                          'department_id').filter(
+            company_id=company)
+        employees = models.Employee.objects.prefetch_related('links').filter(
+            id__in=employees_company.values_list('employee_id', flat=True))
         info_about_employees = []
         for employee_company, employee in zip(employees_company, employees):
             info_about_employee = dict(
@@ -241,9 +244,9 @@ class CompanyDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, Det
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         company = self.get_object()
-        roots = company.departments.select_related('supervisor')\
-                .prefetch_related('childs')\
-                .filter(parent_id=None)
+        roots = company.departments.select_related('supervisor') \
+            .prefetch_related('childs') \
+            .filter(parent_id=None)
         context['roots'] = roots
         return context
 
@@ -271,8 +274,8 @@ class DepartmentDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, 
     pk_url_kwarg = 'department_id'
 
     def get_object(self):
-        return models.Department.objects\
-            .select_related('supervisor')\
+        return models.Department.objects \
+            .select_related('supervisor') \
             .get(id=self.kwargs[self.pk_url_kwarg])
 
 
@@ -347,7 +350,7 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, L
         return super().form_valid(task)
 
 
-class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class TaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Task
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
@@ -357,13 +360,8 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     def get_object(self):
         return self.kwargs['task']
 
-    def get_success_url(self):
-        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-                                                 'project_id': self.kwargs['project_id'],
-                                                 'task_id': self.kwargs['task_id']})
 
-
-class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
+class TaskUpdateView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, UpdateView):
     model = models.Task
     form_class = forms.TaskCreationForm
     template_name = 'team/main_functionality/update_views/task.html'
@@ -375,7 +373,7 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
     def get_initial(self):
         initial = super().get_initial()
         task = self.get_object()
-        initial = {
+        initial.update({
             'title': task.title,
             'text': task.text,
             'time_start': task.time_start,
@@ -383,20 +381,20 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
             'parent_id': task.parent_id,
             'responsible': models.Employee.objects.filter(email__in=task.json_with_employee_info['responsible']),
             'executor': models.Employee.objects.filter(email__in=task.json_with_employee_info['executor']),
-        }
+        })
         return initial
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['company_id'] = self.kwargs['company']
         kwargs['project_id'] = self.kwargs['project']
-        kwargs.pop('instance')
+        if kwargs.get('instance'):  kwargs.pop('instance')
         return kwargs
 
-    def get_success_url(self): 
+    def get_success_url(self):
         return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-                                            'project_id': self.kwargs['project_id'],
-                                            'task_id': self.kwargs['task_id']})
+                                                 'project_id': self.kwargs['project_id'],
+                                                 'task_id': self.kwargs['task_id']})
 
     def form_valid(self, form):
         task = self.get_object()
@@ -405,9 +403,9 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
             task=task,
             form=form,
         )
-        
+
         task = tasks_service.update_task(
-            task=task, 
+            task=task,
             form=form,
             project=self.kwargs['project']
         )
@@ -420,14 +418,14 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
 # /// SUBTASK ///
 
 
-class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class SubtaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Subtasks
     template_name = 'team/main_functionality/detail_views/subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
 
 
-class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.SubtaskCreationForm
 
     def get_form_kwargs(self):

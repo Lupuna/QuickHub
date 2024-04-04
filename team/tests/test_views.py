@@ -327,3 +327,109 @@ class TestTaskView(SettingsView):
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
             self.assertEqual(302, response.status_code)
+
+    def test_task_detail__view(self):
+        url = reverse('team:task', args=[self.company.id, self.project.id, self.task.id])
+        template = 'team/main_functionality/detail_views/task.html'
+        request = self.factory.get(url, company=self.company, project=self.project, task=self.task)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.TaskDetailView()
+            view.setup(request, company=self.company, project=self.project, task=self.task)
+            with self.subTest('test get_object'):
+                correct_meaning = self.task
+                self.assertEqual(correct_meaning, view.get_object())
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_task_update__view(self):
+        url = reverse('team:task_update', args=[self.company.id, self.project.id, self.task.id])
+        template = 'team/main_functionality/update_views/task.html'
+        request = self.factory.get(url, company=self.company, project=self.project, task=self.task)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.TaskUpdateView()
+            view.setup(request, company=self.company, project=self.project, task=self.task)
+            with self.subTest('test get_object'):
+                correct_meaning = self.task
+                self.assertEqual(correct_meaning, view.get_object())
+
+            with self.subTest('test get_initial'):
+                correct_meaning = {
+                    'title': self.task.title,
+                    'text': self.task.text,
+                    'time_start': self.task.time_start,
+                    'time_end': self.task.time_end,
+                    'parent_id': self.task.parent_id,
+                }
+                initial = view.get_initial()
+                self.assertQuerySetEqual(
+                    team_models.Employee.objects.filter(email__in=self.task.json_with_employee_info['responsible']),
+                    initial.pop('responsible')
+                )
+                self.assertQuerySetEqual(
+                    team_models.Employee.objects.filter(email__in=self.task.json_with_employee_info['executor']),
+                    initial.pop('executor')
+                )
+                self.assertEqual(correct_meaning, initial)
+
+            with self.subTest('test get_form_kwargs'):
+                kwargs = view.get_form_kwargs()
+                self.assertEqual(kwargs['company_id'], self.company)
+                self.assertEqual(kwargs['project_id'], self.project)
+                self.assertEqual(None, kwargs.get('instance'))
+
+            # with self.subTest('test get_success_url'):
+            #
+            #     initial.update({
+            #         'images': self.task.images,
+            #         'files': self.task.files,
+            #         'json_with_employee_info': self.task.json_with_employee_info
+            #     })
+            #     for key, item in initial.items():
+            #         if item is None: initial[key] = ''
+            #     response = self.auth_client.post(url, initial)
+            #     print(response)
+            #     correct_meaning = reverse('team:task', kwargs={
+            #         'company_id': self.company.id,
+            #         'project_id': self.company.id,
+            #         'task_id': self.task.id
+            #     })
+            #     self.assertRedirects(response, correct_meaning)
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
+
+    def test_create_subtask_view(self):
+        url = reverse('team:create_subtask', args=[self.company.id, self.project.id, self.task.id])
+        template = 'includes/creator.html'
+        request = self.factory.get(url, company=self.company, project=self.project, task=self.task)
+        request.user = self.employee
+        with self.subTest('auth user, GET'):
+            response = self.auth_client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, template)
+
+        with self.subTest('view functionality'):
+            view = team_views.CreateSubtask()
+            view.setup(request, company=self.company, project=self.project, task=self.task)
+            with self.subTest('test get_form_kwargs'):
+                kwargs = view.get_form_kwargs()
+                self.assertEqual(kwargs['company_id'], self.company)
+
+        with self.subTest('not auth user POST'):
+            response = self.client.get(url)
+            self.assertEqual(302, response.status_code)
