@@ -231,10 +231,10 @@ class Project(models.Model):
             raise ValidationError('This status not supported')
         self._default_hand_over_task_status = new_status
 
-    def update_task_status(self, new_satus: list):
-        if new_satus[-1] in self.task_status['status'].values():
+    def update_task_status(self, new_status: list):
+        if new_status[-1] in self.task_status['status'].values():
             raise ValidationError('status with this weight already supported')
-        self.task_status['status'][new_satus[0]] = new_satus[-1]
+        self.task_status['status'][new_status[0]] = new_status[-1]
 
     def delete_task_status(self, to_delete: str):
         if to_delete in self.task_status['status']:
