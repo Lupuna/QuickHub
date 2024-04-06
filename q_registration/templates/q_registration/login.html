@@ -9,6 +9,7 @@
     <link href="{% static 'css/styles/style.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles/sign_in.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles/sign_up.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles/password_reset.css' %}" rel="stylesheet">
 
     <title>{% block title %}{% endblock %}</title>
 </head>
@@ -20,8 +21,23 @@
         </left_part>
 
         <content class="content">
-            {%block content%}
-                {%endblock%}
+            <br method="post">
+
+                <h2>Восстановление пароля</h2>
+                <br>Введите почту, к которой привязан Ваш аккаунт.</br> Мы отправим на почту письмо для подтверждения аккаунта
+                
+                <div class="email">
+                    <input type="text" placeholder="Почта">
+                </div>
+
+                <div class="reset">
+                    <button type="submit">Сохранить</button>
+                </div>
+
+            </form>
+
+            <!-- {%block content%}
+                {%endblock%} -->
         </content>
 
     </container>

@@ -11,7 +11,7 @@ body {
 	font-family: 'Manrope', sans-serif;
 	font-weight: 400;
 	font-size: 18px;
-	color: white;
+	color: black;
 	overflow-y: hidden;
 }
 
@@ -46,6 +46,13 @@ h1 {
     margin: 0;
 }
 
+h2 {
+    color: rgb(65, 95, 243);
+    font-size: 30px;
+    font-weight: 500;
+    margin: 0;
+}
+
 input {
     width: 100%;
     background: none;
@@ -60,8 +67,27 @@ form{
     gap: 30px;
 }
 
+button {
+    display: inline-block;
+    height: 50px;
+    border: none;
+    border-radius: 40px;
+    background: rgb(65, 95, 243);
+    color: rgb(255, 255, 255);
+    font-size: 24px;
+    font-weight: 500;
+    padding-inline: 40px;
+}
+
 .error{
     position: relative;
-    font-size: 16px;
+    font-size: 14px;
     color: rgba(255, 73, 73);
 }
+
+.errorlist{
+	line-height: 150%;
+	margin: 0;
+	list-style-type: none;
+}
+
