@@ -19,6 +19,7 @@ class PasswordResetCompleteViewCustom(PasswordResetCompleteView):
 class PasswordResetConfirmViewCustom(PasswordResetConfirmView):
     template_name = 'q_registration/password_reset_confirm.html'
     success_url = reverse_lazy("registration:password_reset_complete")
+    form_class = reg_form.CustomSetPasswordForm
 
 
 class PasswordResetDoneViewCustom(PasswordResetDoneView):
@@ -29,6 +30,7 @@ class PasswordResetViewCustom(PasswordResetView):
     template_name = 'q_registration/password_reset.html'
     email_template_name = 'q_registration/password_reset_email.html'
     success_url = reverse_lazy('q_registration:password_reset_done')
+    form_class = reg_form.CustomPasswordResetForm
 
 
 class LoginCustom(LoginView):

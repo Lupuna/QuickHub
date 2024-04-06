@@ -41,11 +41,12 @@
                 {{form.password2}}
             </div>
         </div>
-        <div class="">
+        <div class="errors_block">
             {% for field in form %}
                 <div class="error">{{ field.errors }}</div>
             {% endfor %}
         </div>
+
         <div class="sign_up">
             <button type="submit">Зарегистрироваться</button>
         </div>
