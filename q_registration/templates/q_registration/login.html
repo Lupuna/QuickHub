@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'style0.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles/sign_in.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles/sign_up.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles/password_reset.css' %}" rel="stylesheet">
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    <container class="container">
+        <left_part class="left_part">
+            <img src="{% static 'img/login/background.svg' %}" alt="">
+        </left_part>
+
+        <content class="content">
+            {%block content%}
+                {%endblock%}
+        </content>
+
+    </container>
+
+</body>
+
+</html>

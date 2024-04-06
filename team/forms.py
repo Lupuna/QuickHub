@@ -20,12 +20,14 @@ class CompanyCreationForm(forms.ModelForm):
 
 
 class ChoiceEmployeeParametersForm(forms.Form):
+    # аккуратно! для этой формы любая информация в любом виде будет валидна
     image = forms.BooleanField(required=False, initial=True)
     name = forms.BooleanField(required=False, initial=True)
     email = forms.BooleanField(required=False, initial=True)
     telephone = forms.BooleanField(required=False)
     position_title = forms.BooleanField(required=False)
     department = forms.BooleanField(required=False)
+    vk = forms.BooleanField(required=False)
 
 
 class DepartmentCreationForm(forms.Form):
@@ -68,7 +70,6 @@ class CompanyEventCreationForm(forms.Form):
 
     def __init__(self, company_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.fields['present_employees'].queryset = utils.create_employee_list(company_id=company_id)
         self.fields['present_employees'].queryset = company_id.employees.distinct()
 
     # Валидатор кастомный

@@ -14,6 +14,14 @@
                 {% include "includes/if_else.html" with value=value value_1=value value_2='Должность не указана' %}
             {% elif key == 'department' %}
                 {% include "includes/if_else.html" with value=value value_1=value value_2='Отдел не указан' %}
+            {% elif key == 'name' %}
+                <p>{{value}}</p>
+                {% if employee.online %}
+                    <p>Онлайн</p>
+                {% elif employee.online == False%}
+                    <p>Не в сети</p>
+                {%endif%}
+            {% elif key == 'online' %}
             {%else%}
                 <div>{{value}}</div>
             {%endif%}

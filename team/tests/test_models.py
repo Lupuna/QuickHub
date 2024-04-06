@@ -9,7 +9,7 @@ class TestEmployeeModel(Settings):
     def setUp(self):
         self.test_link = test_models.LinksResources.objects.create(
             employee_id=self.employee,
-            title='test_title_1',
+            title='Test_title_1',
             link='https://store.steampowered.com/app/1337520/Risk_of_Rain_Returns/'
         )
 
@@ -35,6 +35,10 @@ class TestEmployeeModel(Settings):
     def test_get_info_method_links_resources(self):
         correct_meaning = {self.test_link.title: self.test_link.link}
         self.assertEqual(correct_meaning, self.test_link.get_info())
+
+    def test_save_method_links_resources(self):
+        correct_meaning = self.test_link.title.lower()
+        self.assertEqual(correct_meaning, self.test_link.title)
 
 
 class TestCompanyModel(Settings):

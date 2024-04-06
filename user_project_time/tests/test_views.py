@@ -24,7 +24,7 @@ class TestViews(TestCase):
             'Not_soon': reverse('user_project_time:deadline_detail', args=['Not_soon']),
             'Permanent': reverse('user_project_time:deadline_detail', args=['Permanent']),
         }
-        self.login_url = reverse('registration:login')
+        self.login_url = reverse('q_registration:login')
 
         self.list_template = 'user_project_time/main_functionality/deadline_taskboard.html'
         self.detail_tempalte = 'user_project_time/main_functionality/detail_view.html'
