@@ -4,20 +4,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, UpdateView, FormMixin
+from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse_lazy
-from django.utils import timezone 
 from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
 
-from . import forms, models, utils, permissions
-from .services import tasks_service, projects_service
-from user_project_time import (
-    models as upt_models,
-    forms as upt_forms,
-    utils as upt_utils,
-    services as upt_services
-    )
+from . import forms, models, utils
+from .services import tasks_service
 from QuickHub import utils as quickhub_utils
 
 
@@ -42,12 +35,12 @@ class UserProjectsListView(LoginRequiredMixin, ListView):
         tasks = self.request.user.tasks.select_related('project_id')
         projects_ids = tasks.values_list('project_id', flat=True)
 
-        projects = models.Project.objects\
-            .filter(id__in=projects_ids)\
+        projects = models.Project.objects \
+            .filter(id__in=projects_ids) \
             .annotate(
-                tasks_count=Count('tasks'),
-                ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
-            )
+            tasks_count=Count('tasks'),
+            ready_count=Count('tasks', filter=Q(tasks__task_status='Ready'))
+        )
         return projects
 
 
@@ -55,14 +48,14 @@ class UserProfileListView(LoginRequiredMixin, ListView):
     model = models.Company
     template_name = 'team/main_functionality/list_views/user_profile.html'
     context_object_name = 'companies'
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
 
     def get_queryset(self):
         return self.request.user.companies.all()
 
 
 class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
     success_url = reverse_lazy('team:user_profile')
     model = models.Employee
     template_name = quickhub_utils.creator
@@ -79,7 +72,7 @@ class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     form_class = forms.SetPasswordForm
     template_name = quickhub_utils.creator
-    login_url = reverse_lazy('registration:login')
+    login_url = reverse_lazy('q_registration:login')
     extra_context = {'button': 'update'}
     success_url = reverse_lazy('team:user_profile')
     success_message = 'Ваш пароль был успешно изменен!'
@@ -99,7 +92,7 @@ class CreateCompany(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(company)
 
 
-class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.PositionCreationForm
 
     def form_valid(self, form):
@@ -110,7 +103,7 @@ class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixi
         return super().form_valid(position)
 
 
-class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.CompanyEventCreationForm
 
     def get_form_kwargs(self):
@@ -138,7 +131,7 @@ class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.Creator
         return super().form_valid(form)
 
 
-class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.DepartmentCreationForm
 
     def get_form_kwargs(self):
@@ -162,7 +155,6 @@ class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMi
         if department.supervisor not in employees:
             employees += [department.supervisor]
 
-
         for employee in employees:
             employee_company = models.EmployeeCompany.objects \
                 .filter(employee_id=employee,
@@ -182,37 +174,39 @@ class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMi
         return super().form_valid(department)
 
 
-class CheckEmployee(quickhub_utils.ModifiedDispatch, ListView):
+class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     template_name = 'team/main_functionality/list_views/company_employees.html'
     model = models.Employee
-    paginate_by = 10
-    login_url = reverse_lazy('registration:login')
+    paginate_by = 5
+    login_url = reverse_lazy('q_registration:login')
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info["settings_info_about_company_employee"]
         company = self.kwargs['company']
-        # prefetch_related('links', 'positions', 'departments')
-        employees = company.employees.prefetch_related('links').all()
+        employees_company = models.EmployeeCompany.objects.select_related('employee_id').prefetch_related('position_id',
+                                                                                                          'department_id').filter(
+            company_id=company)
+        employees = models.Employee.objects.prefetch_related('links').filter(
+            id__in=employees_company.values_list('employee_id', flat=True))
         info_about_employees = []
-        for employee in employees:
+        for employee_company, employee in zip(employees_company, employees):
             info_about_employee = dict(
                 filter(lambda x: x[0] in info_filter_about_employee, employee.get_all_info().items()))
             for link in employee.links.all():
                 if link.title in info_filter_about_employee:
                     info_about_employee.update(link.get_info())
-
             if 'position_title' in info_filter_about_employee:
-                position = employee.positions.filter(company_id=company)
+                position = employee_company.position_id
                 if position:
-                    position = position[0].title
+                    position = position.title
                 else:
                     position = None
                 info_about_employee.update({'position_title': position})
 
             if 'department' in info_filter_about_employee:
-                department = employee.departments.filter(company_id=company)
+                department = employee_company.department_id
                 if department:
-                    department = department[0].title
+                    department = department.title
                 else:
                     department = None
                 info_about_employee.update({'department': department})
@@ -220,8 +214,9 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch, ListView):
             info_about_employees.append(info_about_employee)
         return info_about_employees
 
-class ChoiceParameters(FormView):
-    login_url = reverse_lazy('registration:login')
+
+class ChoiceParameters(LoginRequiredMixin, FormView):
+    login_url = reverse_lazy('q_registration:login')
     template_name = 'team/main_functionality/choice_parameters.html'
     form_class = forms.ChoiceEmployeeParametersForm
 
@@ -232,11 +227,12 @@ class ChoiceParameters(FormView):
         self.request.user.json_with_settings_info["settings_info_about_company_employee"] = []
         for item, flag in form.cleaned_data.items():
             if flag: self.request.user.json_with_settings_info["settings_info_about_company_employee"].append(item)
-            self.request.user.save()
+        self.request.user.json_with_settings_info["settings_info_about_company_employee"].append('online')
+        self.request.user.save()
         return super().form_valid(form)
 
 
-class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class CompanyDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Company
     template_name = 'team/main_functionality/detail_views/company.html'
     context_object_name = 'company'
@@ -248,14 +244,14 @@ class CompanyDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         company = self.get_object()
-        roots = company.departments.select_related('supervisor')\
-                .prefetch_related('childs')\
-                .filter(parent_id=None)
+        roots = company.departments.select_related('supervisor') \
+            .prefetch_related('childs') \
+            .filter(parent_id=None)
         context['roots'] = roots
         return context
 
 
-class PositionsListView(quickhub_utils.ModifiedDispatch, ListView):
+class PositionsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     model = models.Positions
     template_name = 'team/main_functionality/list_views/positions.html'
     context_object_name = 'positions'
@@ -264,26 +260,26 @@ class PositionsListView(quickhub_utils.ModifiedDispatch, ListView):
         return self.kwargs['company'].positions.all()
 
 
-class PositionDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class PositionDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     models = models.Positions
     context_object_name = 'position'
     template_name = 'team/main_functionality/detail_views/position.html'
     pk_url_kwarg = 'position_id'
 
 
-class DepartmentDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class DepartmentDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'
     pk_url_kwarg = 'department_id'
 
     def get_object(self):
-        return models.Department.objects\
-            .select_related('supervisor')\
+        return models.Department.objects \
+            .select_related('supervisor') \
             .get(id=self.kwargs[self.pk_url_kwarg])
 
 
-class DepartmentsListView(quickhub_utils.ModifiedDispatch, ListView):
+class DepartmentsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
     model = models.Department
     template_name = 'team/main_functionality/list_views/departments.html'
     context_object_name = 'departments'
@@ -325,7 +321,7 @@ class ProjectDetailView(quickhub_utils.ModifiedDispatch, DetailView):
 # ///   Task    ///
 
 
-class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.TaskCreationForm
     success_url = reverse_lazy('team:create_task')
 
@@ -354,7 +350,7 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, F
         return super().form_valid(task)
 
 
-class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class TaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Task
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
@@ -364,13 +360,8 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
     def get_object(self):
         return self.kwargs['task']
 
-    def get_success_url(self):
-        return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-                                                 'project_id': self.kwargs['project_id'],
-                                                 'task_id': self.kwargs['task_id']})
 
-
-class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
+class TaskUpdateView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, UpdateView):
     model = models.Task
     form_class = forms.TaskCreationForm
     template_name = 'team/main_functionality/update_views/task.html'
@@ -382,7 +373,7 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
     def get_initial(self):
         initial = super().get_initial()
         task = self.get_object()
-        initial = {
+        initial.update({
             'title': task.title,
             'text': task.text,
             'time_start': task.time_start,
@@ -390,20 +381,20 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
             'parent_id': task.parent_id,
             'responsible': models.Employee.objects.filter(email__in=task.json_with_employee_info['responsible']),
             'executor': models.Employee.objects.filter(email__in=task.json_with_employee_info['executor']),
-        }
+        })
         return initial
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['company_id'] = self.kwargs['company']
         kwargs['project_id'] = self.kwargs['project']
-        kwargs.pop('instance')
+        if kwargs.get('instance'):  kwargs.pop('instance')
         return kwargs
 
-    def get_success_url(self): 
+    def get_success_url(self):
         return reverse_lazy('team:task', kwargs={'company_id': self.kwargs['company_id'],
-                                            'project_id': self.kwargs['project_id'],
-                                            'task_id': self.kwargs['task_id']})
+                                                 'project_id': self.kwargs['project_id'],
+                                                 'task_id': self.kwargs['task_id']})
 
     def form_valid(self, form):
         task = self.get_object()
@@ -412,9 +403,9 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
             task=task,
             form=form,
         )
-        
+
         task = tasks_service.update_task(
-            task=task, 
+            task=task,
             form=form,
             project=self.kwargs['project']
         )
@@ -427,14 +418,14 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, UpdateView):
 # /// SUBTASK ///
 
 
-class SubtaskDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class SubtaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
     model = models.Subtasks
     template_name = 'team/main_functionality/detail_views/subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
 
 
-class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
     form_class = forms.SubtaskCreationForm
 
     def get_form_kwargs(self):
@@ -461,6 +452,6 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
 # ///   Else    ///
 
 
-@login_required(login_url=reverse_lazy('registration:login'))
+@login_required(login_url=reverse_lazy('q_registration:login'))
 def homepage(request):
     return render(request, 'team/main_functionality/homepage.html')

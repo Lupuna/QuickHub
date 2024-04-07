@@ -1,0 +1,60 @@
+{% extends 'q_registration/login.html' %}
+{% load static %}
+
+{%block title%} Sing-up {%endblock%}
+
+{%block content%}
+    <h1>Регистрация</h1>
+    <div class="sign_up_account">
+        <p>У Вас уже есть аккаунт?</p>
+        <a href="{%url 'registration:login'%}">Войти</a>
+    </div>
+
+    <form action="{% url 'registration:sign_up' %}" method="post">
+        {%csrf_token%}
+        <div class="name">
+
+            <div class="first_name">
+                {{form.name}}
+            </div>
+
+            <div class="second_name">
+                {{form.username}}
+            </div>
+
+        </div>
+
+        <div class="email">
+            {{form.email}}
+        </div>
+
+        <div class="enter_password">
+            <div class="password1">
+                {{form.password1}}
+            </div>
+
+            <div class="password_requirements">
+                {{form.password1.help_text}}
+            </div>
+
+            <div class="password2">
+                {{form.password2}}
+            </div>
+        </div>
+        <div class="errors_block">
+            {% for field in form %}
+                <div class="error">{{ field.errors }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="sign_up">
+            <button type="submit">Зарегистрироваться</button>
+        </div>
+
+    </form>
+
+    <div class="agreement">
+        Регистрируясь, вы подтверждаете, что принимаете <a href="#">Пользовательское соглашение</a> и <a
+            href="#">Согласие</a> на обработку персональных данных.
+    </div>
+{%endblock%}

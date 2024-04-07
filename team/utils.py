@@ -5,7 +5,7 @@ from . import models
 
 def create_base_settings_json_to_employee():
     js = {
-        "settings_info_about_company_employee": ["image", "name", "email", "telephone", "position_title"]
+        "settings_info_about_company_employee": ["image", "name", 'online', "email", "telephone", "position_title"]
     }
     return js
 

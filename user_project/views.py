@@ -1,19 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, ListView
-from django.db.models import F
 from django.db import IntegrityError
-
 from team import models as team_models
-from team import utils as team_utils
-
 from . import forms as user_project_forms
 from . import models as user_project_models
-from . import services as user_project_services 
-
-from user_project_time import utils as user_project_time_utils 
+from . import services as user_project_services
 from QuickHub import utils as quickhub_utils
 
 

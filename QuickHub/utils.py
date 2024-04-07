@@ -44,7 +44,6 @@ class ModifiedDispatch:
                 self.kwargs['project'] = team_models.Project.objects.select_related('company_id').get(id=self.kwargs['project_id'])
                 self.kwargs['company'] = self.kwargs['project'].company_id
                 self.kwargs['task'] = self.kwargs['project'].tasks.get(id=self.kwargs['task_id'])
-                                # .prefetch_related('subtasks')\
             elif self.kwargs.get('company_id') and self.kwargs.get('project_id'):
                 self.kwargs['project'] = team_models.Project.objects.select_related('company_id').get(id=self.kwargs['project_id'])
                 self.kwargs['company'] = self.kwargs['project'].company_id            
@@ -70,5 +69,5 @@ class CreatorMixin:
     def __init__(self, *args, **kwargs):
         self.template_name = creator
         self.success_url = reverse_lazy('team:homepage')
-        self.login_url = reverse_lazy('registration:login')
+        self.login_url = reverse_lazy('q_registration:login')
         self.extra_context = {'title': f'QuickHub: {self.__class__.__name__.replace("Create", "")}-create'}
