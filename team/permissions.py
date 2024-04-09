@@ -36,10 +36,10 @@ class TaskAccessMixin(AccessMixin):
     def has_permissions(self):
         # return self.kwargs['task'].project_id in self.request.user.tasks.values_list('project_id', flat=True)
         return True
-    
+
 
 class SubtaskAccessMixin(AccessMixin):
     '''Проверка доступа к подзадаче для пользователя'''
-    
+
     def has_permissions(self):
         return True
