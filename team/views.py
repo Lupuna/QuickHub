@@ -9,9 +9,10 @@ from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
 
-from . import forms, models, utils
+from . import forms, models, utils, permissions
 from .services import tasks_service
 from QuickHub import utils as quickhub_utils
+
 
 
 # ///    Employee   ///
@@ -92,7 +93,7 @@ class CreateCompany(quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
         return super().form_valid(company)
 
 
-class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
+class CreatePosition(permissions.CompanyAccessMixin, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.PositionCreationForm
 
     def form_valid(self, form):
@@ -103,7 +104,7 @@ class CreatePosition(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixi
         return super().form_valid(position)
 
 
-class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
+class CreateCompanyEvent(permissions.CompanyAccessMixin, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.CompanyEventCreationForm
 
     def get_form_kwargs(self):
@@ -131,7 +132,7 @@ class CreateCompanyEvent(quickhub_utils.ModifiedDispatch, quickhub_utils.Creator
         return super().form_valid(form)
 
 
-class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
+class CreateDepartment(permissions.CompanyAccessMixin, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.DepartmentCreationForm
 
     def get_form_kwargs(self):
@@ -174,7 +175,7 @@ class CreateDepartment(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMi
         return super().form_valid(department)
 
 
-class CheckEmployee(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+class CheckEmployee(permissions.CompanyAccessMixin, ListView):
     template_name = 'team/main_functionality/list_views/company_employees.html'
     model = models.Employee
     paginate_by = 5
@@ -232,7 +233,7 @@ class ChoiceParameters(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class CompanyDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
+class CompanyDetailView(permissions.CompanyAccessMixin, DetailView):
     model = models.Company
     template_name = 'team/main_functionality/detail_views/company.html'
     context_object_name = 'company'
@@ -251,7 +252,7 @@ class CompanyDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, Det
         return context
 
 
-class PositionsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+class PositionsListView(permissions.CompanyAccessMixin, ListView):
     model = models.Positions
     template_name = 'team/main_functionality/list_views/positions.html'
     context_object_name = 'positions'
@@ -260,14 +261,14 @@ class PositionsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, Lis
         return self.kwargs['company'].positions.all()
 
 
-class PositionDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
+class PositionDetailView(permissions.CompanyAccessMixin, DetailView):
     models = models.Positions
     context_object_name = 'position'
     template_name = 'team/main_functionality/detail_views/position.html'
     pk_url_kwarg = 'position_id'
 
 
-class DepartmentDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
+class DepartmentDetailView(permissions.CompanyAccessMixin, DetailView):
     model = models.Department
     template_name = 'team/main_functionality/detail_views/department.html'
     context_object_name = 'department'
@@ -279,7 +280,7 @@ class DepartmentDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, 
             .get(id=self.kwargs[self.pk_url_kwarg])
 
 
-class DepartmentsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, ListView):
+class DepartmentsListView(permissions.CompanyAccessMixin, ListView):
     model = models.Department
     template_name = 'team/main_functionality/list_views/departments.html'
     context_object_name = 'departments'
@@ -291,7 +292,7 @@ class DepartmentsListView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, L
 # ///   Project    ///
 
 
-class CreateProject(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, FormView):
+class CreateProject(permissions.CompanyAccessMixin, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.ProjectCreationForm
 
     def form_valid(self, form):
@@ -302,7 +303,7 @@ class CreateProject(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin
         return super().form_valid(form)
 
 
-class ProjectsListView(quickhub_utils.ModifiedDispatch, ListView):
+class ProjectsListView(permissions.CompanyAccessMixin, ListView):
     model = models.Project
     template_name = 'team/main_functionality/list_views/projects.html'
     context_object_name = 'projects'
@@ -311,7 +312,7 @@ class ProjectsListView(quickhub_utils.ModifiedDispatch, ListView):
         return self.kwargs['company'].projects.all()
 
 
-class ProjectDetailView(quickhub_utils.ModifiedDispatch, DetailView):
+class ProjectDetailView(permissions.ProjectAccessMixin, DetailView):
     model = models.Project
     template_name = 'team/main_functionality/detail_views/project.html'
     context_object_name = 'project'
@@ -321,7 +322,7 @@ class ProjectDetailView(quickhub_utils.ModifiedDispatch, DetailView):
 # ///   Task    ///
 
 
-class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
+class CreateTask(permissions.ProjectAccessMixin, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.TaskCreationForm
     success_url = reverse_lazy('team:create_task')
 
@@ -350,7 +351,7 @@ class CreateTask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, L
         return super().form_valid(task)
 
 
-class TaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
+class TaskDetailView(permissions.TaskAccessMixin, DetailView):
     model = models.Task
     template_name = 'team/main_functionality/detail_views/task.html'
     context_object_name = 'task'
@@ -361,7 +362,7 @@ class TaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, Detail
         return self.kwargs['task']
 
 
-class TaskUpdateView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, UpdateView):
+class TaskUpdateView(permissions.TaskAccessMixin, UpdateView):
     model = models.Task
     form_class = forms.TaskCreationForm
     template_name = 'team/main_functionality/update_views/task.html'
@@ -418,14 +419,14 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, Update
 # /// SUBTASK ///
 
 
-class SubtaskDetailView(quickhub_utils.ModifiedDispatch, LoginRequiredMixin, DetailView):
+class SubtaskDetailView(permissions.SubtaskAccessMixin, DetailView):
     model = models.Subtasks
     template_name = 'team/main_functionality/detail_views/subtask.html'
     context_object_name = 'subtask'
     pk_url_kwarg = 'subtask_id'
 
 
-class CreateSubtask(quickhub_utils.ModifiedDispatch, quickhub_utils.CreatorMixin, LoginRequiredMixin, FormView):
+class CreateSubtask(permissions.TaskAccessMixin, quickhub_utils.CreatorMixin, FormView):
     form_class = forms.SubtaskCreationForm
 
     def get_form_kwargs(self):
