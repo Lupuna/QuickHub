@@ -35,6 +35,6 @@ class SettingsView(TestCase):
         self.auth_client = Client()
         self.employee = team_models.Employee.objects.get(id=45)
         self.auth_client.force_login(self.employee)
-        self.company = team_models.Company.objects.get(id=1)
-        self.project = team_models.Project.objects.get(id=5)
+        self.company = team_models.Company.objects.get(id=8)
+        self.project = team_models.Project.objects.get(id=109)
         self.task = self.project.tasks.all()[0]

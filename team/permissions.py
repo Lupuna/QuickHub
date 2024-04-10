@@ -1,14 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
 from django.contrib import messages
 
-from QuickHub.utils import ModifiedDispatch
 
-
-class AccessMixin(ModifiedDispatch, LoginRequiredMixin):
+class AccessMixin:
     '''Базовый миксин обработки доступа'''
+    login_url = reverse_lazy('q_registration:login')
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permissions():
@@ -34,12 +30,8 @@ class TaskAccessMixin(AccessMixin):
     '''Проверка доступа к задаче для пользователя'''
 
     def has_permissions(self):
-        # return self.kwargs['task'].project_id in self.request.user.tasks.values_list('project_id', flat=True)
-        return True
+        return self.kwargs['task'].project_id.id in self.request.user.tasks.values_list('project_id', flat=True)
 
 
-class SubtaskAccessMixin(AccessMixin):
+class SubtaskAccessMixin(TaskAccessMixin):
     '''Проверка доступа к подзадаче для пользователя'''
-
-    def has_permissions(self):
-        return True
