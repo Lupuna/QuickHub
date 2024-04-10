@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.contrib import messages
-
+from django.core.exceptions import PermissionDenied
 
 class AccessMixin:
     '''Базовый миксин обработки доступа'''
@@ -8,7 +8,7 @@ class AccessMixin:
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permissions():
-            raise PermissionError('Нет доступа')
+            raise PermissionDenied('Нет доступа')
         return super().dispatch(request, *args, **kwargs)
 
 
