@@ -36,9 +36,9 @@ class ChoiceSortParametersForm(forms.Form):
         ('reverse_name', 'ФИО: от Я до А')
     ))
 
-    # def __init__(self, sort_param, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.initial['sorted_fields'] = sort_param
+    def __init__(self, sort_param, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.initial['sorted_fields'] = sort_param
 
 
 class DepartmentCreationForm(forms.Form):

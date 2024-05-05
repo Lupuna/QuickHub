@@ -217,21 +217,27 @@ class CheckEmployee(FormMixin, quickhub_utils.ModifiedDispatch,
     login_url = reverse_lazy('q_registration:login')
     form_class = forms.ChoiceSortParametersForm
 
-    def post(self, request, *args, **kwargs):
+    def get_success_url(self):
+        return reverse_lazy('team:check_employee', kwargs={'company_id': self.kwargs['company_id']})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
         sort_param = self.request.user.json_with_settings_info.get('company_employee_sort')
         if sort_param is None: sort_param = 'name'
-        form = forms.ChoiceSortParametersForm(sort_param, request.POST, *args, **kwargs)
-        if form.is_valid():
-            self.request.user.json_with_settings_info['company_employee_sort'] = form.cleaned_data['sorted_fields']
+        kwargs['sort_param'] = sort_param
+        return kwargs
 
-            return redirect(reverse_lazy('team:check_employee', kwargs={'company_id': self.kwargs['company_id']}))
+    def form_valid(self, form):
+        self.request.user.json_with_settings_info['company_employee_sort'] = form.cleaned_data['sorted_fields']
+        self.request.user.save()
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
         else:
-            context = {
-                'form': forms.ChoiceSortParametersForm(),
-                'company_id': self.kwargs['company_id']
-            }
-            return render(request, 'team/main_functionality/list_views/company_employees.html',
-                          context)
+            return self.form_invalid(form)
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info[
