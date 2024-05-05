@@ -34,11 +34,11 @@ class TestUrls(SimpleTestCase):
         self.assertEqual(resolve(url).func.view_class, team_views.CreateCompanyEvent)
 
     def test_check_employee_event_url_is_resolve(self):
-        url = reverse('team:check_employee', args=[1])
+        url = reverse('team:check_employee', args=[1, 'test'])
         self.assertEqual(resolve(url).func.view_class, team_views.CheckEmployee)
 
     def test_choice_parameters_event_url_is_resolve(self):
-        url = reverse('team:choice_parameters', args=[1])
+        url = reverse('team:choice_parameters', args=[1, 'test'])
         self.assertEqual(resolve(url).func.view_class, team_views.ChoiceParameters)
 
     def test_user_profile_event_url_is_resolve(self):

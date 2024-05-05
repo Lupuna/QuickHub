@@ -146,6 +146,10 @@ class EmployeeCompany(models.Model):
             models.Index(fields=['company_id', 'employee_id'])
         ]
 
+    # написать тест
+    def __str__(self):
+        return f'{self.company_id} : {self.employee_id} : {self.position_id} : {self.department_id}'
+
 
 class CompanyEvent(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='events')

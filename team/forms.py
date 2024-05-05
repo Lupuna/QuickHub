@@ -30,6 +30,17 @@ class ChoiceEmployeeParametersForm(forms.Form):
     vk = forms.BooleanField(required=False)
 
 
+class ChoiceSortParametersForm(forms.Form):
+    sorted_fields = forms.ChoiceField(choices=(
+        ('name', 'ФИО: от А до Я'),
+        ('reverse_name', 'ФИО: от Я до А')
+    ))
+
+    # def __init__(self, sort_param, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.initial['sorted_fields'] = sort_param
+
+
 class DepartmentCreationForm(forms.Form):
     title = forms.CharField(max_length=40)
     parent = forms.ModelChoiceField(queryset=None, required=False)

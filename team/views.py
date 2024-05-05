@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
@@ -207,7 +207,7 @@ class CreateDepartment(quickhub_utils.ModifiedDispatch,
         return super().form_valid(department)
 
 
-class CheckEmployee(quickhub_utils.ModifiedDispatch, 
+class CheckEmployee(FormMixin, quickhub_utils.ModifiedDispatch,
                     LoginRequiredMixin,
                     permissions.CompanyAccessMixin, 
                     ListView):
@@ -215,16 +215,46 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch,
     model = models.Employee
     paginate_by = 5
     login_url = reverse_lazy('q_registration:login')
+    form_class = forms.ChoiceSortParametersForm
+
+    def get_success_url(self):
+        return reverse_lazy('team:check_employee', kwargs={'company_id': self.kwargs['company_id']})
+
+    def post(self, request, *args, **kwargs):
+        sort_param = self.request.user.json_with_settings_info.get('company_employee_sort')
+        if sort_param is None: sort_param = 'name'
+        form = forms.ChoiceSortParametersForm(request.POST, *args, **kwargs)
+        if form.is_valid():
+            self.request.user.json_with_settings_info['company_employee_sort'] = form.cleaned_data['sorted_fields']
+            context = {
+                'form': forms.ChoiceSortParametersForm(request.POST),
+                'company_id': self.kwargs['company_id']
+            }
+            return render(request, 'team/main_functionality/list_views/company_employees.html',
+                          context=context)
+        else:
+            context = {
+                'form': forms.ChoiceSortParametersForm(),
+                'company_id': self.kwargs['company_id']
+            }
+            return render(request, 'team/main_functionality/list_views/company_employees.html',
+                          context)
 
     def get_queryset(self):
         info_filter_about_employee = self.request.user.json_with_settings_info[
             "settings_info_about_company_employee"]
-        company = self.kwargs['company']
-        employees_company = models.EmployeeCompany.objects.select_related('employee_id').prefetch_related('position_id',
-                                                                                                          'department_id').filter(
-            company_id=company)
+        sort_param = self.request.user.json_with_settings_info.get('company_employee_sort')
+        employees_company = models.EmployeeCompany.objects.select_related('employee_id').prefetch_related(
+            'position_id', 'department_id').filter(company_id=self.kwargs['company'])
         employees = models.Employee.objects.prefetch_related('links').filter(
             id__in=employees_company.values_list('employee_id', flat=True))
+        if sort_param == 'name':
+            employees = employees.order_by('name')
+            employees_company = employees_company.order_by('employee_id__name')
+        elif sort_param == 'reverse_name':
+            employees = employees.order_by('-name')
+            employees_company = employees_company.order_by('-employee_id__name')
+
         info_about_employees = []
         for employee_company, employee in zip(employees_company, employees):
             info_about_employee = dict(
@@ -249,6 +279,7 @@ class CheckEmployee(quickhub_utils.ModifiedDispatch,
                 info_about_employee.update({'department': department})
 
             info_about_employees.append(info_about_employee)
+
         return info_about_employees
 
 
