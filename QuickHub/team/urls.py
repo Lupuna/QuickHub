@@ -24,7 +24,6 @@ urlpatterns = [
          views.CheckEmployee.as_view(), name='check_employee'),
     path('<int:company_id>/check-employee/choice-parameters',
          views.ChoiceParameters.as_view(), name='choice_parameters'),
-    path('profile', views.UserProfileListView.as_view(), name='user_profile'),
     # Детальные отображения
     path('company/<int:company_id>/',
          views.CompanyDetailView.as_view(), name='company'),
@@ -45,6 +44,7 @@ urlpatterns = [
          views.PositionsListView.as_view(), name='positions_list'),
     path('<int:company_id>/departments/',
          views.DepartmentsListView.as_view(), name='departments_list'),
+    path('profile', views.UserProfileListView.as_view(), name='user_profile'),
     path('companies/', views.UserCompaniesListView.as_view(), name='companies'),
     path('projects/', views.UserProjectsListView.as_view(), name='projects'),
     # Редактирование

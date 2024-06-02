@@ -4,6 +4,13 @@
 {%block title%}QuickHub{%endblock%}
 
 {%block content%}
+    <form method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+        {{ form.as_p }}
+        <button type="submit">
+            Отфильтровать
+        </button>
+    </form>
     {% for employee in page_obj %}
         {% for key, value in employee.items %}
             {% if key == 'image' %}

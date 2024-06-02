@@ -33,6 +33,14 @@ class TestCompanyForm(Settings):
             form = team_forms.ChoiceEmployeeParametersForm(data=data)
             self.assertTrue(form.is_valid())
 
+    def test_choice_sort_parameters_form(self):
+        with self.subTest('valid data'):
+            data = {
+                'sorted_fields': 'name'
+            }
+            form = team_forms.ChoiceEmployeeParametersForm(data=data)
+            self.assertTrue(form.is_valid())
+
     def test_department_creation_form(self):
         with self.subTest('valid data'):
             queryset = self.company.employees.distinct()

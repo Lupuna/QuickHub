@@ -163,9 +163,17 @@ class TestCompanyView(SettingsView):
 
         with self.subTest('view functionality'):
             view = team_views.CheckEmployee()
-            view.setup(request, company=self.company)
+            view.setup(request, company=self.company, company_id=self.company.id)
             with self.assertNumQueries(3):
                 view.get_queryset()
+
+            with self.subTest('get_success'):
+                correct_meaning = reverse('team:check_employee', kwargs={'company_id': self.company.id})
+                self.assertEqual(view.get_success_url(), correct_meaning)
+
+            with self.subTest('get_form_kwargs'):
+                correct_meaning = 'name'
+                self.assertEqual(view.get_form_kwargs()['sort_param'], correct_meaning)
 
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
