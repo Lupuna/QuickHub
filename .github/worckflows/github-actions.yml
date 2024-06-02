@@ -1,0 +1,43 @@
+name: Django CI
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Set up Docker Compose
+      run: sudo apt-get install docker-compose -y
+
+    - name: Build and start containers
+      run: docker-compose up --build -d
+
+    - name: Wait for database to be ready
+      run: |
+        until docker-compose exec -T database pg_isready -h database -p 5432; do
+          echo "Waiting for database..."
+          sleep 3
+        done
+
+    - name: Run migrations
+      run: docker-compose exec -T web-app python manage.py migrate
+
+    - name: Run tests
+      run: docker-compose exec -T web-app python manage.py test
+
+    - name: Stop and remove containers
+      if: always()
+      run: docker-compose down
