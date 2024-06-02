@@ -4,7 +4,7 @@
 *.ppt
 *.xlsx
 **/__pycache__/
-
+.idea
 QuickHub/media/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
