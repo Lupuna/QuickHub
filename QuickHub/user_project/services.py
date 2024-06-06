@@ -1,41 +1,34 @@
 from django.db.models import QuerySet
 
-from . import models as user_project_models
-from team import models as team_models
+from . import models
+import team
 
 
-# /// DECORATORS ///
-
-def set_user_category(func: callable) -> callable:
-    '''Добавление задачи в категорию "Мои задачи" для всех исполнителей'''
-
-    def wrapper(task: team_models.Task,
-                executors: QuerySet[team_models.Task],
-                *args, **kwargs) -> team_models.Task:
-        task = func(task, executors)
-        categories = user_project_models.Category.objects.filter(employee_id__in=executors, title='Мои задачи')
-        task.user_category.set(categories, clear=True)
-        return task
-
-    return wrapper
+def set_user_category(
+    task: team.models.Task,
+    executors: QuerySet[team.models.Task],
+    default="Мои задачи"
+) -> team.models.Task:
+    """Добавление задачи в категорию "Мои задачи" для всех исполнителей"""
+    categories = models.Category.objects.filter(employee_id__in=executors, title=default)
+    task.user_category.set(categories, clear=True)
+    return task
 
 
-# /// CREATE ///
-
-def create_category(user: team_models.Task, **kwargs) -> user_project_models.Category:
-    '''Создание пользовательской категории'''
-    return user_project_models.Category.objects.create(employee_id=user, **kwargs)
+def create_category(user: team.models.Task, **kwargs) -> models.Category:
+    """Создание пользовательской категории"""
+    return models.Category.objects.create(employee_id=user, **kwargs)
 
 
-def create_taskboards(category: user_project_models.Category,
-                      tasks: QuerySet[team_models.Task], **kwargs) -> None:
-    '''
+def create_taskboards(category: models.Category,
+                      tasks: QuerySet[team.models.Task], **kwargs) -> None:
+    """
     Создание отображения категории задач пользователя для доски
-    '''
+    """
     tasks = tasks.prefetch_related('subtasks').only('id', 'text')
     set_tasks_to_category(category=category, tasks=tasks, title=str(category.title))
     for task in tasks:
-        taskboard = user_project_models.Taskboard.objects.get(
+        taskboard = models.Taskboard.objects.get(
             category_id=category,
             task_id=task,
         )
@@ -49,22 +42,17 @@ def create_taskboards(category: user_project_models.Category,
         taskboard.save()
 
 
-# /// DELETE ///
-
-def set_tasks_to_category(category: user_project_models.Category,
-                          tasks: QuerySet[team_models.Task], **kwargs) -> None:
-    '''Назначение задач в категорию'''
+def set_tasks_to_category(category: models.Category,
+                          tasks: QuerySet[team.models.Task], **kwargs) -> None:
+    """Назначение задач в категорию"""
     category.tasks.set(tasks, clear=True, through_defaults=kwargs)
 
 
-# /// GET ///
-
-def get_user_categories(user: team_models.Employee, **kwargs):
-    '''Получение всех категорий задач пользователя вместе с полями'''
+def get_user_categories(user: team.models.Employee):
+    """Получение всех категорий задач пользователя вместе с полями"""
     return user.categories.prefetch_related(
         'tasks__executors',
         'tasks__subtasks',
         'tasks__project_id__company_id',
         'tasks__deadline__time_category',
-        # 'tasks__time_categories',
     )

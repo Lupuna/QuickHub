@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,6 +83,9 @@ WSGI_APPLICATION = 'QuickHub.wsgi.application'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

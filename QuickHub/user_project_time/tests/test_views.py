@@ -1,18 +1,22 @@
-from django.test import TestCase, Client
+from django.test import Client
 from django.urls import reverse
 
+from team.tests.test_base import SettingsView
 from team.models import Employee
 from user_project_time.models import UserTimeCategory
 
 
-class TestViews(TestCase):
-    fixtures = ['data.json']
+class TestViews(SettingsView):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        for status in UserTimeCategory.Status:
+            UserTimeCategory.objects.create(employee=cls.employee, status=status)
 
     def setUp(self):
-        self.guest_client = Client()
-        self.authorized_client = Client()
-        self.user = Employee.objects.get(id=2)
-        self.authorized_client.force_login(self.user)
+        super().setUp()
 
         self.taskboard_url = reverse('user_project_time:taskboard')
         self.category_url = {
@@ -32,84 +36,84 @@ class TestViews(TestCase):
     # /// ТЕСТЫ ДЛЯ АВТОРИЗОВАННОГО ПОЛЬЗОВАТЕЛЯ ///
 
     def test_deadline_categories_list_GET(self):
-        response = self.authorized_client.get(self.taskboard_url)
+        response = self.auth_client.get(self.taskboard_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.list_template)
 
     def test_deadline_category_OVERTIMED_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Overtimed'])
+        response = self.auth_client.get(self.category_url['Overtimed'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
         
     def test_deadline_category_TODAY_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Today'])
+        response = self.auth_client.get(self.category_url['Today'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_TOMORROW_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Tomorrow'])
+        response = self.auth_client.get(self.category_url['Tomorrow'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_WEEK_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Week'])
+        response = self.auth_client.get(self.category_url['Week'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_MONTH_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Month'])
+        response = self.auth_client.get(self.category_url['Month'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_NOT_SOON_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Not_soon'])
+        response = self.auth_client.get(self.category_url['Not_soon'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     def test_deadline_category_PERMANTENT_detail_GET(self):
-        response = self.authorized_client.get(self.category_url['Permanent'])
+        response = self.auth_client.get(self.category_url['Permanent'])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, self.detail_tempalte)
 
     # /// ТЕСТЫ ДЛЯ НЕАВТОРИЗОВАННОГО ПОЛЬЗОВАТЕЛЯ ///
 
     def test_deadline_categories_list_GET_guest(self):
-        response = self.guest_client.get(self.taskboard_url)
+        response = self.client.get(self.taskboard_url)
         self.assertEqual(response.status_code, 302)
 
     def test_deadline_category_OVERTIMED_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Overtimed'])
+        response = self.client.get(self.category_url['Overtimed'])
         self.assertEqual(response.status_code, 302)
         
     def test_deadline_category_TODAY_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Today'])
+        response = self.client.get(self.category_url['Today'])
         self.assertEqual(response.status_code, 302)
 
     def test_deadline_category_TOMORROW_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Tomorrow'])
+        response = self.client.get(self.category_url['Tomorrow'])
         self.assertEqual(response.status_code, 302)
 
     def test_deadline_category_WEEK_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Week'])
+        response = self.client.get(self.category_url['Week'])
         self.assertEqual(response.status_code, 302)
 
     def test_deadline_category_MONTH_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Month'])
+        response = self.client.get(self.category_url['Month'])
         self.assertEqual(response.status_code, 302)
 
     def test_deadline_category_NOT_SOON_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Not_soon'])
+        response = self.client.get(self.category_url['Not_soon'])
         self.assertEqual(response.status_code, 302)
 
     def test_deadline_category_PERMANTENT_detail_GET_guest(self):
-        response = self.guest_client.get(self.category_url['Permanent'])
+        response = self.client.get(self.category_url['Permanent'])
         self.assertEqual(response.status_code, 302)
 
     # /// ПРОВЕРКА ФУНКЦИОНАЛЬНОСТИ ///
 
     def test_correct_page_context(self):
-        '''Проверка количества отображаемых категорий'''
-        response = self.authorized_client.get(self.taskboard_url)
+        """Проверка количества отображаемых категорий"""
+        response = self.auth_client.get(self.taskboard_url)
         
         count = len(response.context['time_categories'])
         needed_count = len(UserTimeCategory.Status)

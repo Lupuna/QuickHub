@@ -462,8 +462,8 @@ class TaskUpdateView(quickhub_utils.ModifiedDispatch,
             'time_start': task.time_start,
             'time_end': task.time_end,
             'parent_id': task.parent_id,
-            'responsible': models.Employee.objects.filter(email__in=task.json_with_employee_info['responsible']),
-            'executor': models.Employee.objects.filter(email__in=task.json_with_employee_info['executor']),
+            'responsible': models.Employee.objects.filter(email__in=task.json_with_employee_info.get('responsible', [])),
+            'executor': models.Employee.objects.filter(email__in=task.json_with_employee_info.get('executor', [])),
         })
         return initial
 
@@ -552,3 +552,7 @@ class CreateSubtask(quickhub_utils.ModifiedDispatch,
 @login_required(login_url=reverse_lazy('q_registration:login'))
 def homepage(request):
     return render(request, 'team/main_functionality/homepage.html')
+
+
+def error403(request, exception):
+    return render(request, 'team/main_functionality/exceptions/error403.html', status=403)

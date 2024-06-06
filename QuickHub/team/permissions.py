@@ -1,14 +1,14 @@
-from django.urls import reverse_lazy
-from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
+
 
 class AccessMixin:
     '''Базовый миксин обработки доступа'''
-    login_url = reverse_lazy('q_registration:login')
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permissions():
-            raise PermissionDenied('Нет доступа')
+            raise PermissionDenied
+            # return HttpResponseForbidden()
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -23,7 +23,9 @@ class ProjectAccessMixin(AccessMixin):
     '''Проверка принадлежности пользователя к проекту'''
 
     def has_permissions(self):
-        return self.kwargs['project_id'] in self.request.user.tasks.values_list('project_id', flat=True)
+        if self.kwargs['project'].tasks.exists():
+            return self.kwargs['project_id'] in self.request.user.tasks.values_list('project_id', flat=True)
+        return True
 
 
 class TaskAccessMixin(AccessMixin):
