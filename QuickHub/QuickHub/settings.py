@@ -209,42 +209,32 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
-        "SQL": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, 'logs/SQL_queries.log'),
-            "formatter": "info",
-        },
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, 'logs/.log'),
-            "formatter": "verbose",
-        }
+        # "SQL": {
+        #     "level": "DEBUG",
+        #     "class": "logging.FileHandler",
+        #     "filename": os.path.join(BASE_DIR, 'logs/SQL_queries.log'),
+        #     "formatter": "info",
+        # },
+        # "file": {
+        #     "level": "INFO",
+        #     "class": "logging.FileHandler",
+        #     "filename": os.path.join(BASE_DIR, 'logs/.log'),
+        #     "formatter": "verbose",
+        # }
     },
     "loggers": {
         "django.db.backends": {
-            "handlers": ["console", "SQL"],
+            "handlers": ["console", ],
             "level": "DEBUG",
             "propagate": False,
         },
-        "team": {
+        "QuickHub": {
             "handlers": ["console", ],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-        "user_project": {
-            "handlers": ["console", ],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-        "user_project_time": {
-            "handlers": ["console", ],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": True,
         },
     },
