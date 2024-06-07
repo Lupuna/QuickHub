@@ -6,6 +6,7 @@
 **/__pycache__/
 .idea
 QuickHub/media/*
+**/logs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

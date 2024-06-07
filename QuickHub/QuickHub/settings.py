@@ -189,3 +189,63 @@ CACHES = {
 }
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+        "info": {
+            "format": "{asctime} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "SQL": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, 'logs/SQL_queries.log'),
+            "formatter": "info",
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, 'logs/.log'),
+            "formatter": "verbose",
+        }
+    },
+    "loggers": {
+        "django.db.backends": {
+            "handlers": ["console", "SQL"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "team": {
+            "handlers": ["console", ],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "user_project": {
+            "handlers": ["console", ],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "user_project_time": {
+            "handlers": ["console", ],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}

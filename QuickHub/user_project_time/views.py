@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 
@@ -7,13 +9,15 @@ from . import models
 from . import services
 
 
+logger = logging.getLogger(__name__)
+
+
 class DeadlineCategoriesListView(LoginRequiredMixin, ListView):
     template_name = 'user_project_time/main_functionality/deadline_taskboard.html'
     context_object_name = 'time_categories'
 
     def get_queryset(self) -> dict[models.UserTimeCategory, team_models.Task]:
         categories = services.get_user_time_categories(user=self.request.user)
-                                                
         objects = {}
         for cat in categories:
             objects[cat] = cat.tasks.all()
