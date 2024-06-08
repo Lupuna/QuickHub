@@ -8,7 +8,6 @@ from django.views.generic.edit import FormView, UpdateView, FormMixin
 from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.db.models import Count, Q, QuerySet
-
 from . import forms, models, utils, permissions
 from .services import tasks_service
 from QuickHub import utils as quickhub_utils
