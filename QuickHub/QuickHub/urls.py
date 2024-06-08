@@ -18,14 +18,16 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from QuickHub import settings
 
+handler403 = 'team.views.error403'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('team-taskboard/', include('user_project.urls', namespace='user_project')),
     path('team-deadlines/', include('user_project_time.urls', namespace='user_project_time')),
     path('team/', include('team.urls', namespace='team')),
     path('account/', include('q_registration.urls', namespace='q_registration')),
-    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 if settings.DEBUG:
+    urlpatterns += [path("__debug__/", include("debug_toolbar.urls")), ]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

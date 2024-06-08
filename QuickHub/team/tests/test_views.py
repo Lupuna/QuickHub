@@ -384,11 +384,11 @@ class TestTaskView(SettingsView):
                 }
                 initial = view.get_initial()
                 self.assertQuerySetEqual(
-                    team_models.Employee.objects.filter(email__in=self.task.json_with_employee_info['responsible']),
+                    team_models.Employee.objects.filter(email__in=self.task.json_with_employee_info.get('responsible', [])),
                     initial.pop('responsible')
                 )
                 self.assertQuerySetEqual(
-                    team_models.Employee.objects.filter(email__in=self.task.json_with_employee_info['executor']),
+                    team_models.Employee.objects.filter(email__in=self.task.json_with_employee_info.get('executor', [])),
                     initial.pop('executor')
                 )
                 self.assertEqual(correct_meaning, initial)

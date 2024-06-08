@@ -1,33 +1,43 @@
-from django.test import TestCase
-
-import team.models as team_models
+from team.tests.test_base import Settings
+import team
 from user_project import services
 from user_project import models
 
 
-class TestServices(TestCase):
-    fixtures = ['data.json']
+class TestServices(Settings):
 
     def setUp(self):
-        self.user = team_models.Employee.objects.get(id=2)
-        self.tasks = self.user.tasks.prefetch_related('subtasks').all()
+        super().setUp()
         self.category = models.Category.objects.create(
-            title='TEST',
-            employee_id=self.user
+            title="TEST-category",
+            employee_id=self.employee
+        )
+        self.task1 = self._create_task(1)
+        self.task2 = self._create_task(2)
+        self.task3 = self._create_task(3)
+
+        self.tasks = self.project.tasks.all()
+
+    def _create_task(self, id: int):
+        return team.models.Task.objects.create(
+            title=f"task_test{id}",
+            project_id=self.project
         )
 
     def test_create_category(self):
+        """Проверка создания категории для пользователя"""
         models.Category.objects.filter(title='TEST').delete()
         
-        category = services.create_category(user=self.user, title='TEST')
+        category = services.create_category(user=self.employee, title='TEST')
         
         self.assertEqual(category.title, 'TEST')
-        self.assertEqual(category.employee_id, self.user)
+        self.assertEqual(category.employee_id, self.employee)
 
     def test_set_tasks_to_category(self):
+        """Проверка назначения задач в нужную категорию"""
         self.assertQuerySetEqual(
             self.category.tasks.all(),
-            models.Category.objects.none()
+            models.Category.objects.none(),
         )
 
         services.set_tasks_to_category(
@@ -41,6 +51,7 @@ class TestServices(TestCase):
         )
 
     def test_create_taskboard_with_tasks(self):
+        """Проверка создания досок с задачами для нужной категории"""
         models.Taskboard.objects.filter(category_id=self.category).delete()
 
         services.create_taskboards(
@@ -49,7 +60,7 @@ class TestServices(TestCase):
         )
 
         for task in self.tasks:
-            with self.subTest():
+            with self.subTest("Проверка создания записей в таблице Taskboard"):
                 taskboard = models.Taskboard.objects.get(
                     category_id=self.category,
                     task_id=task,
