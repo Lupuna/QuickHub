@@ -11,6 +11,4 @@ RUN pip install -r /temp/requirements.txt
 
 RUN adduser --disabled-password service-user
 
-RUN mkdir -p /QuickHub/logs && chown service-user:service-user /QuickHub/logs
-
 USER service-user
