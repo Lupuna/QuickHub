@@ -27,16 +27,32 @@ jobs:
 
     - name: Wait for database to be ready
       run: |
+        set -e
         until docker-compose exec -T database pg_isready -h database -p 5432; do
           echo "Waiting for database..."
           sleep 3
         done
 
+    - name: Check containers status
+      run: docker-compose ps
+
     - name: Run migrations
-      run: docker-compose exec -T web-app python manage.py migrate
+      run: |
+        set -e
+        docker-compose exec -T web-app python manage.py migrate || {
+          echo "Migration failed. Displaying web-app logs:";
+          docker-compose logs web-app;
+          exit 1;
+        }
 
     - name: Run tests
-      run: docker-compose exec -T web-app python manage.py test
+      run: |
+        set -e
+        docker-compose exec -T web-app python manage.py test || {
+          echo "Tests failed. Displaying web-app logs:";
+          docker-compose logs web-app;
+          exit 1;
+        }
 
     - name: Stop and remove containers
       if: always()
