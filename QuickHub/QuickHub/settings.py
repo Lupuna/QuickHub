@@ -190,6 +190,11 @@ CACHES = {
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
+
+LOG_FOLDER = Path("logs/")
+if not os.path.exists(LOG_FOLDER):
+    os.mkdir(LOG_FOLDER)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -209,33 +214,33 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
-        # "SQL": {
-        #     "level": "DEBUG",
-        #     "class": "logging.FileHandler",
-        #     "filename": os.path.join(BASE_DIR, 'logs/SQL_queries.log'),
-        #     "formatter": "info",
-        # },
-        # "file": {
-        #     "level": "INFO",
-        #     "class": "logging.FileHandler",
-        #     "filename": os.path.join(BASE_DIR, 'logs/.log'),
-        #     "formatter": "verbose",
-        # }
+        "SQL": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": LOG_FOLDER / "SQL.log",
+            "formatter": "info",
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOG_FOLDER / "info.log",
+            "formatter": "verbose",
+        }
     },
     "loggers": {
         "django.db.backends": {
-            "handlers": ["console", ],
+            "handlers": ["SQL", ],
             "level": "DEBUG",
             "propagate": False,
         },
         "QuickHub": {
-            "handlers": ["console", ],
+            "handlers": ["console", "file"],
             "level": "INFO",
-            "propagate": True,
+            "propagate": False,
         },
     },
 }
