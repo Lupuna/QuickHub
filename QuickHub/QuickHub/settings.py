@@ -191,7 +191,7 @@ CACHES = {
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 
-LOG_FOLDER = Path("logs/")
+LOG_FOLDER = Path("QuickHub/logs/")
 if not os.path.exists(LOG_FOLDER):
     os.mkdir(LOG_FOLDER)
 
