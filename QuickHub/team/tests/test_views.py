@@ -399,24 +399,6 @@ class TestTaskView(SettingsView):
                 self.assertEqual(kwargs['project_id'], self.project)
                 self.assertEqual(None, kwargs.get('instance'))
 
-            # with self.subTest('test get_success_url'):
-            #
-            #     initial.update({
-            #         'images': self.task.images,
-            #         'files': self.task.files,
-            #         'json_with_employee_info': self.task.json_with_employee_info
-            #     })
-            #     for key, item in initial.items():
-            #         if item is None: initial[key] = ''
-            #     response = self.auth_client.post(url, initial)
-            #     print(response)
-            #     correct_meaning = reverse('team:task', kwargs={
-            #         'company_id': self.company.id,
-            #         'project_id': self.company.id,
-            #         'task_id': self.task.id
-            #     })
-            #     self.assertRedirects(response, correct_meaning)
-
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
             self.assertEqual(302, response.status_code)

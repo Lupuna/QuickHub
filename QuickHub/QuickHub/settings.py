@@ -28,8 +28,9 @@ INSTALLED_APPS = [
 
 
     'debug_toolbar',
+    'rest_framework',
 
-
+    'api.apps.ApiConfig',
     'q_registration.apps.RegistrationConfig',
     'team.apps.TeamConfig',
     'chats.apps.ChatsConfig',

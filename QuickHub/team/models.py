@@ -135,7 +135,6 @@ class Positions(models.Model):
 class EmployeeCompany(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company')
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee')
-    # возможно models.SET_NULL не лучшая идея
     position_id = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True,
                                     related_name='position')
     department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True,
@@ -291,6 +290,7 @@ class Task(models.Model):
                                             'project_id': self.project_id.id,
                                             'task_id': self.id})
 
+    # переписать через match case
     @property
     def time_status(self):
         '''
