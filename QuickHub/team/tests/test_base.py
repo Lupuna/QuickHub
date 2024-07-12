@@ -38,6 +38,7 @@ class SettingsView(Settings):
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.employee)
 
+
 class SettingsPermissions(SettingsView):
     @classmethod
     def setUpClass(cls):

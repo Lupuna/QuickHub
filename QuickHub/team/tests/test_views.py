@@ -163,9 +163,17 @@ class TestCompanyView(SettingsView):
 
         with self.subTest('view functionality'):
             view = team_views.CheckEmployee()
-            view.setup(request, company=self.company)
+            view.setup(request, company=self.company, company_id=self.company.id)
             with self.assertNumQueries(3):
                 view.get_queryset()
+
+            with self.subTest('get_success'):
+                correct_meaning = reverse('team:check_employee', kwargs={'company_id': self.company.id})
+                self.assertEqual(view.get_success_url(), correct_meaning)
+
+            with self.subTest('get_form_kwargs'):
+                correct_meaning = 'name'
+                self.assertEqual(view.get_form_kwargs()['sort_param'], correct_meaning)
 
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
@@ -390,24 +398,6 @@ class TestTaskView(SettingsView):
                 self.assertEqual(kwargs['company_id'], self.company)
                 self.assertEqual(kwargs['project_id'], self.project)
                 self.assertEqual(None, kwargs.get('instance'))
-
-            # with self.subTest('test get_success_url'):
-            #
-            #     initial.update({
-            #         'images': self.task.images,
-            #         'files': self.task.files,
-            #         'json_with_employee_info': self.task.json_with_employee_info
-            #     })
-            #     for key, item in initial.items():
-            #         if item is None: initial[key] = ''
-            #     response = self.auth_client.post(url, initial)
-            #     print(response)
-            #     correct_meaning = reverse('team:task', kwargs={
-            #         'company_id': self.company.id,
-            #         'project_id': self.company.id,
-            #         'task_id': self.task.id
-            #     })
-            #     self.assertRedirects(response, correct_meaning)
 
         with self.subTest('not auth user POST'):
             response = self.client.get(url)
