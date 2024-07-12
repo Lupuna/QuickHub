@@ -28,6 +28,7 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
     'rest_framework',
+    'drf_spectacular',
 
     'q_registration.apps.RegistrationConfig',
     'team.apps.TeamConfig',
@@ -246,3 +247,13 @@ CELERY_BROKER_URL = 'redis://redis:6379/0'
 #         },
 #     },
 # }
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Schema',
+    'DESCRIPTION': 'Guide for the REST API',
+    'VERSION': '1.0.0',
+}

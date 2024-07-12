@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
 from QuickHub import settings
 
 from APIs.core.routers import DefaultRouter
@@ -40,6 +42,9 @@ urlpatterns = [
     path('account/', include('q_registration.urls', namespace='q_registration')),
 
     path(r'api/v1/', include(router.urls)),
+
+    path('api_schema/', SpectacularAPIView.as_view(), name='api_schema'),
+    path('docs/', SpectacularSwaggerView.as_view(url_name='api_schema'), name='swagger-ui'),
 ]
 
 if settings.DEBUG:
