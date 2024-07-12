@@ -26,18 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     'debug_toolbar',
     'rest_framework',
 
-    'api.apps.ApiConfig',
     'q_registration.apps.RegistrationConfig',
     'team.apps.TeamConfig',
     'chats.apps.ChatsConfig',
     'user_project_time.apps.UserProjectTimeConfig',
     'user_project.apps.UserProjectConfig',
-
-    'rest_framework',
 
     'team.team_api.apps.TeamApiConfig',
     'user_project.taskboards_api.apps.UserProjectApiConfig',
@@ -52,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
