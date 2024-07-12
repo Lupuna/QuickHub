@@ -17,7 +17,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,6 +27,8 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
     'drf_spectacular',
 
     'q_registration.apps.RegistrationConfig',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'user_project.taskboards_api.apps.UserProjectApiConfig',
     'user_project_time.deadlines_api.apps.UserProjectTimeApiConfig',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -250,6 +252,13 @@ CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        # дефолтная авторизация drf
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ]
 }
 
 SPECTACULAR_SETTINGS = {
