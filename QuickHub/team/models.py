@@ -292,11 +292,11 @@ class Task(models.Model):
         '''
         Получение статуса срока задачи на текущий момент времени
         '''
-        now = timezone.now()
 
         if self.time_end is None:
             return UserTimeCategory.Status.PERMANENT
 
+        now = timezone.now()
         time_interval = (self.time_end - now).days
 
         if time_interval < 0:

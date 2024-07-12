@@ -35,6 +35,12 @@ INSTALLED_APPS = [
     'chats.apps.ChatsConfig',
     'user_project_time.apps.UserProjectTimeConfig',
     'user_project.apps.UserProjectConfig',
+
+    'rest_framework',
+
+    'team.team_api.apps.TeamApiConfig',
+    'user_project.taskboards_api.apps.UserProjectApiConfig',
+    'user_project_time.deadlines_api.apps.UserProjectTimeApiConfig',
 ]
 
 MIDDLEWARE = [

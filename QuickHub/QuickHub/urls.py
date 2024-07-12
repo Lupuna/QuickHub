@@ -16,9 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
+
 from QuickHub import settings
 
+from APIs.core.routers import DefaultRouter
+from team.team_api.urls import router as team_router
+from user_project.taskboards_api.urls import router as user_project_router
+from user_project_time.deadlines_api.urls import router as user_project_time_router
+
+
 handler403 = 'team.views.error403'
+
+router = DefaultRouter()
+router.extend(team_router)
+router.extend(user_project_router)
+router.extend(user_project_time_router)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +38,8 @@ urlpatterns = [
     path('team-deadlines/', include('user_project_time.urls', namespace='user_project_time')),
     path('team/', include('team.urls', namespace='team')),
     path('account/', include('q_registration.urls', namespace='q_registration')),
+
+    path(r'api/v1/', include(router.urls)),
 ]
 
 if settings.DEBUG:
