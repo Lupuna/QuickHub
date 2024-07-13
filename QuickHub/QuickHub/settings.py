@@ -140,7 +140,6 @@ if DEBUG:
         os.path.join(BASE_DIR, "static"),
         os.path.join(BASE_DIR, "team/static"),
         os.path.join(BASE_DIR, "q_registration/static"),
-        os.path.join(BASE_DIR, "user_project/static"),
         os.path.join(BASE_DIR, "user_project_time/static"),
     ]
 else:

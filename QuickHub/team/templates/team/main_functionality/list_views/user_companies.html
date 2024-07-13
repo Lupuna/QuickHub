@@ -7,22 +7,94 @@
 <link href="{% static 'css/user_companies/company_styles.css' %}" rel="stylesheet">
 <link href="{% static 'css/user_companies/company_header.css' %}" rel="stylesheet">
 <link href="{% static 'css/user_companies/company_tools.css' %}" rel="stylesheet">
+<link href="{% static 'css/user_companies/company_settings.css' %}" rel="stylesheet">
+<link href="{% static 'css/user_companies/company_choose.css' %}" rel="stylesheet">
 
 <company_head class="company_head">
-    <company class="choose_company">
+
+    <company class="company">
         <p>Выбрать компанию</p>
-        <button class="company_name">
-            <p>QuickHub</p>
-            <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
-            <!-- <div class="sub_menu">
 
-            </div> -->
-        </button>
+        <div class="company_choose">
 
-        <button class="company_settings">
+            <button class="company_name">
+                <p>QuickHub</p>
+                <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
+            </button>
+
+            <div class="menu_company">
+
+                <div class="create_company">
+                    <img src="{% static 'img/user_companies/plus.svg' %}" alt="#">
+                    <p>Создать компанию</p>
+                </div>
+
+            </div>
+        </div>
+        
+
+        <button class="btn_company_settings">
             <img src="{% static 'img/user_companies/company_settings.svg' %}" alt="#">
         </button>
     </company>
+
+    <company_settings class="company_settings">
+        <div class="settings_conteiner">
+            <div class="settings_body">
+                <h1>
+                    Настройки компании
+                    <img src="{% static 'img/user_companies/X.svg' %}" alt=none class="btn_close">
+                </h1>
+
+                <div class="line"></div>
+
+                <div class="settings">
+                    <div class="setting">
+                        <p>Кто может редактировать должности сотрудников</p>
+                        <div class="change_setting">
+                            <p>Все пользователи</p>
+                            <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
+                        </div>
+                        
+                    </div>
+
+                    <div class="setting">
+                        <p>Кто может создавать проекты</p>
+                        <div class="change_setting">
+                            <p>Все пользователи</p>
+                            <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
+                        </div>
+                    </div>
+
+                    <div class="setting">
+                        <p>Кто может добавлять сотрудников </p>
+                        <div class="change_setting">
+                            <p>Все пользователи</p>
+                            <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
+                        </div>
+                    </div>
+
+                    <div class="setting">
+                        <p>Кто может изменять контактную информацию сотрудников</p>
+                        <div class="change_setting">
+                            <p>Все пользователи</p>
+                            <img src="{% static 'img/user_companies/arrow.svg' %}" alt="#">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="save">
+                    <button class="btn_save">
+                        Сохранить
+                    </button>
+                    <button class="btn_cancel">
+                        Отмена
+                    </button>
+                </div>
+            </div>
+        </div>
+    </company_settings>
 
     <tool_bar class="tool_bar">
 
@@ -58,4 +130,6 @@
     
 </content_company>
 
+<script src="{% static 'js/company_settings.js' %}"></script>
+<script src="{% static 'js/company_choose.js' %}"></script>
 {%endblock%}

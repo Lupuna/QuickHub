@@ -5,14 +5,13 @@
     white-space: nowrap;
 }
 
-.choose_company {
+.company {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.choose_company p {
-    margin-right: 10px;
+.company p {
     margin-block: 0;
 }
 
@@ -26,17 +25,15 @@
     height: 40px;
     border-radius: 10px;
     color: rgb(0, 0, 0);
-
 }
 
 .company_name img{
     width: 16px;
 }
 
-.company_settings {
+.btn_company_settings {
     display: flex;
     border: none;
     background: none;
     align-items: center;
-
 }

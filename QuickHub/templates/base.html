@@ -5,11 +5,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <link href="{% static 'style0.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style0.css' %}" rel="stylesheet">
     <link href="{% static 'css/base/styles.css' %}" rel="stylesheet">
     <link href="{% static 'css/base/header.css' %}" rel="stylesheet">
     <link href="{% static 'css/base/left_bar.css' %}" rel="stylesheet">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'img/logoSVG.svg' %}" />
 </head>
 
 <body>
@@ -100,13 +101,11 @@
             {% block content %}
     {%endblock%}
         </content>
-        
-        <div class="loading_overlay"> Wait...</div>
 
     </container>
 
 <script src="{% static 'js/left_bar_close.js' %}"></script>
-<script src="{% static 'js/navigation.js' %}"></script>
+<!-- <script src="{% static 'js/navigation.js' %}"></script> -->
 </body>
 
 </html>
