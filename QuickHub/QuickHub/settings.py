@@ -17,7 +17,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,17 +25,23 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     'debug_toolbar',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'drf_spectacular',
 
-    'api.apps.ApiConfig',
     'q_registration.apps.RegistrationConfig',
     'team.apps.TeamConfig',
     'chats.apps.ChatsConfig',
     'user_project_time.apps.UserProjectTimeConfig',
     'user_project.apps.UserProjectConfig',
+
+    'team.team_api.apps.TeamApiConfig',
+    'user_project.taskboards_api.apps.UserProjectApiConfig',
+    'user_project_time.deadlines_api.apps.UserProjectTimeApiConfig',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -46,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
@@ -245,3 +249,20 @@ CELERY_BROKER_URL = 'redis://redis:6379/0'
 #         },
 #     },
 # }
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        # дефолтная авторизация drf
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ]
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Schema',
+    'DESCRIPTION': 'Guide for the REST API',
+    'VERSION': '1.0.0',
+}

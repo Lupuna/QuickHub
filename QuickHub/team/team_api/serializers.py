@@ -1,9 +1,15 @@
 from rest_framework import serializers
+
 from team import models
 
 
-class CompanySerializer(serializers.ModelSerializer):
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Task
+        fields = "__all__"
 
+
+class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Company
         fields = ('id', 'title', 'owner_id')

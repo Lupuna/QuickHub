@@ -26,7 +26,6 @@ urlpatterns = [
     path('team-deadlines/', include('user_project_time.urls', namespace='user_project_time')),
     path('team/', include('team.urls', namespace='team')),
     path('account/', include('q_registration.urls', namespace='q_registration')),
-    path('api/', include('api.urls'))
 ]
 
 if settings.DEBUG:
