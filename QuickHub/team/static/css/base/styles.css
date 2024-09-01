@@ -54,14 +54,6 @@ input::placeholder{
 	grid-area: left_bar;
 }
 
-.loading_overlay {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	opacity: 1;
-	transition: opacity 0.5s;
-}
-
 .fade_out {
 	opacity: 0;
 	visibility: hidden;

@@ -1,0 +1,29 @@
+.company{
+
+}
+
+.menu_company{
+    display: none;
+    width: 250px;
+    background: rgb(225, 225, 225);
+    border-radius: 0 0 10px 10px;
+    position: absolute;
+}
+
+.menu_company.active{
+    display: block;
+}
+
+.create_company {
+    display: flex;
+    color: rgb(38, 104, 176);
+    padding-bottom: 15px;
+    padding-top: 10px; 
+    padding-inline: 20px;
+    margin: 0;
+    justify-content: space-between;
+}
+
+.create_company img{
+    fill: rgb(38, 104, 176);
+}

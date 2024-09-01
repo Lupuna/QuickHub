@@ -1,10 +1,16 @@
-const search = document.querySelector('.search')
+const search = document.querySelector('.placeholder')
 
-burger.onclick = function () {
-    if (search.className === 'search'){
-        search.classList.add('_open')
-    } else if (search.className === 'search _open'){
-        search.classList.remove('_open')
+function searchOpen() {
+    console.log('Clicked')
+    if (search.classList.contains ('open') == false){
+        search.classList.add('open')
+    } 
+    else if (search.classList.contains ('open') == true){
+        search.classList.remove('open')
     }
 
 }
+
+document.addEventListener("DOMContentLoaded", (event) => {
+    search.onclick = searchOpen
+})

@@ -17,7 +17,7 @@
 	width: 24px;
 }
 
-._close img{
+.close img{
 	margin-left: 15px;
 	width: 24px;
 }
@@ -34,11 +34,11 @@
 	background-color: rgba(217, 217, 217, 0.3);
 }
 
-._close a:hover{
+.close a:hover{
 	background-color: rgba(217, 217, 217, 0.3);
 }
 
-._close a{
+.close a{
 	width: 54px;
 }
 
@@ -46,3 +46,4 @@
 	transition-duration: 0.4s;
 	overflow: hidden;
 }
+

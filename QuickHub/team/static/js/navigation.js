@@ -1,3 +1,5 @@
+/** 
+* TODO: добавить аякс-запросы
 document.addEventListener('DOMContentLoaded', () => {
 
     const contentDiv = document.querySelector('.content')
@@ -55,4 +57,4 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
 })
-
+*/
